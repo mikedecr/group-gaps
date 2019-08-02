@@ -1,0 +1,36 @@
+
+digraph {
+
+  center = 1
+  rankdir = LR
+  // node [fontname = "Minion Pro" shape = record]
+    node [shape = record]
+
+  subgraph cluster_d {
+    style = filled
+    color = white
+    ndmw [label="Net Dem Mobilization, Women"]
+    ndmm [label = "Net Dem Mobilization, Men"]
+    gm [label = "Gap in Mobilization"]
+  }
+
+  subgraph cluster_r {
+    style = filled
+    color = white
+    ndpw [label="Net Dem Persuasion, Women"]
+    ndpm [label = "Net Dem Persuasion, Men"]
+    gp [label = "Gap in Persuasion"]
+  }
+
+  ndv [label = "Net Gender Gap"]
+
+  ndmw -> gm [label = "+"]
+  ndmm -> gm [label = "–"]
+
+  ndpw -> gp [label = "+"]
+  ndpm -> gp [label = "–"]
+
+  {gm, gp} -> ndv [label = "+"]
+  
+        
+}

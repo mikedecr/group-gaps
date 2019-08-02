@@ -1,0 +1,32 @@
+
+digraph {
+
+  center = 1
+  rankdir = LR
+  // node [fontname = "Minion Pro" shape = record]
+  node [shape = record]
+
+  subgraph cluster_d {
+    style = filled
+    color = white
+    md [label="Mobilization of Democrats"]
+    pr [label = "Persuasion of Republicans"]
+    dv [label = "Democratic Votes"]
+  }
+
+  subgraph cluster_r {
+    style = filled
+    color = white
+    mr [label="Mobilization of Republicans"]
+    pd [label = "Persuasion of Democrats"]
+    rv [label = "Republican Votes"]
+  }
+
+  ndv [label = "Net Democratic Votes"]
+
+  {md, pr} -> dv [label = "+"]
+  {mr, pd} -> rv [label = "+"]
+  {dv} -> ndv [label = "+"]
+  {rv} -> ndv [label = "–"]
+        
+}

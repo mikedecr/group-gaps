@@ -1,0 +1,518 @@
+---
+# global document parameters
+title: "Memo: The Racial Voting Gap and the Democratic Vote"
+author: 
+- Michael G. DeCrescenzo^[Ph.D. Candidate, Political Science, University of Wisconsin--Madison]
+date: "Updated `r format(Sys.time(), '%B %d, %Y')`"
+abstract: "This document applies the method laid out in @burden-decrescenzo-gap to the political cleavage of race (White and Nonwhite). This case is of interest because the groups are of vastly different sizes, so the benefit of targeting one group over the other is obscured."
+bibliography: /Users/michaeldecrescenzo/Dropbox/bib.bib
+biblio-style: chicago-authordate 
+
+# specification of output
+# bookdown::pdf_document2 for better cross-referencing
+output: 
+  bookdown::pdf_document2: 
+    latex_engine: pdflatex
+    toc: false
+    keep_tex: true
+    includes: 
+      in_header: 
+        - assets/rmd-preamble.text
+        - assets/mgd-fonts.tex
+    number_sections: true
+    highlight: kate
+    fig_caption: true
+    citation_package: biblatex
+fontsize: 12pt
+geometry: margin = 1.25in
+indent: true
+linkcolor: red 
+urlcolor: blue 
+citecolor: black
+subparagraph: yes
+---
+
+<!-- Document body is a combination of text and code
+
+- Text is markdown format (way easier) but allows LaTeX
+- Code chunks implement R code
+  - Chunk output can be cached so they don't need to run during each build
+- Document is automatically passed through {pandoc} to become a LaTeX pdf
+
+ -->
+
+```{r setup-knit, echo = FALSE}
+# chunks:
+# hide code and messages
+# cache everything
+knitr::opts_chunk$set(
+  eval = TRUE, echo = FALSE, include = FALSE, 
+  warning = FALSE, message = FALSE,
+  cache = TRUE, collapse = TRUE,
+  fig.path = "figs/",
+  # cache path = ...,
+  # fig.retina = 2, dpi = 100,
+  dev = "cairo_pdf", fig.align = "center"
+)
+```
+
+
+```{r setup-R, cache = FALSE}
+# don't cache this: R session always loads packages and graphics theme
+library("knitr")
+library("here")
+library("magrittr")
+library("tidyverse")
+library("ggplot2")
+library("scales")
+library("latex2exp")
+library("rstan")
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+
+# graphics 
+# source("~/Box Sync/workshops/math-camp/R/theme_mathcamp.R")
+theme_set(ggthemes::theme_base(base_family = "Myriad Pro", base_size = 14) + 
+          theme(plot.background = element_blank(), 
+                axis.ticks = element_line(lineend = "square"),
+                axis.ticks.length = unit(0.25, "lines"),
+                axis.text = element_text(size = 10)))
+```
+
+
+
+
+```{r anes-read}
+# 2016 version
+anes_raw <- 
+  haven::read_dta(here("data", "ANES", "2016", "anes_timeseries_cdf.dta")) %>%
+  mutate_all(labelled::remove_labels)
+```
+
+```{r anes-clean}
+anes_raw %>%
+  count(VCF0105a)
+
+# 1. White non-Hispanic (1948-2012)
+# 2. Black non-Hispanic (1948-2012)
+# 3. Asian or Pacific Islander, non-Hispanic (1966-2012)
+# 4. American Indian or Alaska Native non-Hispanic (1966-2012)
+# 5. Hispanic (1966-2012)
+# 6. Other or multiple races, non-Hispanic (1968-2012)
+# 7. Non-white and non-black (1948-1964)
+
+# -> 1 == white, 2 == black, everything else, c(9, NA) == missing
+
+anes_recode <- anes_raw %>%
+  rename(cycle = VCF0004, 
+         wt = VCF0009z) %>%
+  mutate(gender = case_when(VCF0104 %in% c(1, 2) ~ VCF0104),
+         race = case_when(VCF0105a == 1 ~ 1L,
+                          VCF0105a %in% 2:7 ~ 2L,
+                          TRUE ~ as.integer(NA)),
+         pid7 = case_when(VCF0301 %in% seq(1, 7, 1) ~ VCF0301),
+         pid_init = case_when(VCF0301 %in% c(1, 2) ~ 1,
+                              VCF0301 %in% c(6, 7) ~ 2,
+                              VCF0301 %in% c(3, 4, 5) ~ 3),
+         pid_lean = case_when(VCF0301 %in% c(1, 2, 3) ~ 1,
+                              VCF0301 %in% c(5, 6, 7) ~ 2,
+                              VCF0301 == 4 ~ 3),
+         voted = case_when(VCF0702 == 1 ~ "Did not vote",
+                           VCF0702 == 2 ~ "Voted"),
+         vote_choice = case_when(VCF0705 == 1 ~ "Dem",
+                                 VCF0705 == 2 ~ "Rep",
+                                 VCF0705 == 3 ~ "Other")) %>%
+  print()
+
+anes_recode %>% count(race, VCF0105a)
+anes_recode %>% count(cycle, race)
+```
+
+
+# Exposition
+
+We begin with data that codes each voter along race (white or nonwhite), party affiliation (Democrat, Republican, or unaffiliated) and vote choice (Democrat, Republican, or other). This results in $18$ possible outcome categories in each election, each with an associated probability of incidence in the electorate. 
+
+```{r sampler-data}
+anes <- anes_recode %>%
+  filter(cycle %% 4 == 0) %>%
+  filter(cycle > 1948) %>%
+  mutate(vote_code = case_when(vote_choice == "Dem" ~ 1, 
+                               vote_choice == "Rep" ~ 2, 
+                               voted == "Did not vote" | 
+                                 vote_choice == "Other" ~ 3),
+         offset_pid_init = case_when(pid_init == 1 ~ 0, 
+                                     pid_init == 2 ~ 3, 
+                                     pid_init == 3 ~ 6), 
+         offset_pid_lean = case_when(pid_lean == 1 ~ 0, 
+                                     pid_lean == 2 ~ 3, 
+                                     pid_lean == 3 ~ 6),
+         offset_race = case_when(race == 1 ~ 0, 
+                                 race == 2 ~ 9),
+         outcome_code_init = vote_code + offset_pid_init + offset_race,
+         outcome_code_lean = vote_code + offset_pid_lean + offset_race,
+         cycle_code = 1 + ((cycle - 1952) / 4))
+
+anes %>% 
+  count(pid_init, outcome_code_init) %>%
+  print(n = nrow(.))
+
+count(anes, pid7, pid_init, pid_lean)
+count(anes, voted, vote_choice, vote_code)
+count(anes, VCF0702, VCF0705, voted)
+```
+
+
+<!-- 
+  Is there a way to get good information out of a multinomial regression on time dummies? 
+  It could be easier than getting people to hand-compute probabilities
+-->
+
+```{r brm, eval = FALSE}
+# library("brms")
+# test_race <- brm(outcome_code_init ~ -1 + as.factor(cycle_code), 
+#                  family = categorical(link = "logit"), 
+#                  data = anes,
+#                  iter = 500,
+#                  cores = parallel::detectCores())
+
+# beepr::beep(2)
+
+# test_race
+```
+
+
+```{r bayes-data}
+mcmc_data_init <- anes %>%
+  select(outcome_code_init, cycle, cycle_code, wt) %>%
+  na.omit() %>%
+  as_data_frame() %>%
+  group_by(cycle) %>%  
+  mutate(nt = sum(wt)) %$% 
+  list(N = nrow(.),
+     T = max(cycle_code),
+     # nt = unique(nt),
+     J = max(outcome_code_init),
+     y = outcome_code_init,
+     wt = wt,
+     t = cycle_code,
+     alpha = rep(1, max(outcome_code_init))) 
+
+mcmc_data_lean <- anes %>%
+  select(outcome_code_lean, cycle, cycle_code, wt) %>%
+  na.omit() %>%
+  as_data_frame() %>%
+  group_by(cycle) %>%  
+  mutate(nt = sum(wt)) %$% 
+  list(N = nrow(.),
+     T = max(cycle_code),
+     # nt = unique(nt),
+     J = max(outcome_code_lean),
+     y = outcome_code_lean,
+     wt = wt,
+     t = cycle_code,
+     alpha = rep(1, max(outcome_code_lean))) 
+```
+
+```{r stan-params}
+# tuning parameters
+(n_iterations <- 2000)
+(n_warmup <- 1000)
+(thin_interval <- 1)
+(n_chains <- parallel::detectCores())
+```
+
+
+
+<!-- READ ME
+
+  Sampler doesn't run when compiling Rmd.
+  Instead, run in interactive session, save samples.
+  Then, Rmd reads in samples.
+
+ -->
+
+```{r do-MCMC, eval = FALSE}
+# read and compile .stan model
+c_mod <- stanc(file = "R/gaps.stan")
+compiled_mod <- stan_model(stanc_ret = c_mod, verbose = TRUE)
+
+# for peak replication
+set.seed(999)
+
+# run sampler for init and lean
+bayes_init <- sampling(data = mcmc_data_init,
+                       object = compiled_mod, 
+                       iter = n_iterations, warmup = n_warmup, 
+                       thin = thin_interval, chains = n_chains)
+
+bayes_lean <- sampling(data = mcmc_data_lean,
+                       object = compiled_mod, 
+                       iter = n_iterations, warmup = n_warmup, 
+                       thin = thin_interval, chains = n_chains)
+
+dir.create(here("code", "rmd", "race-out"))
+saveRDS(bayes_init, here("code", "rmd", "race-out", "mcmc-race-init.Rds"))
+saveRDS(bayes_lean, here("code", "rmd", "race-out", "mcmc-race-lean.Rds"))
+
+beepr::beep(2)
+```
+
+
+
+
+<!-- SAMPLES CREATED BEFORE COMPILE RMD -->
+
+```{r read-samples}
+mcmc_init <- readRDS(here("code", "rmd", "race-out", "mcmc-race-init.Rds"))
+mcmc_lean <- readRDS(here("code", "rmd", "race-out", "mcmc-race-lean.Rds"))
+```
+
+
+As before, we estimate these probabilities with uncertainty using Markov chain Monte Carlo. MCMC generates a distribution of parameter estimates that are compatible with the model and the data. The "posterior" distribution of samples reflects a flat Dirichlet prior and thus should be proportional to the likelihood of the data. 
+
+We run the sampler on `r english::words(n_chains)` chains with `r comma(n_iterations)` iterations per chain, setting aside the first `r comma(n_warmup)` that are used for adaptive warmup. Following @Link2011, we elect not to thin the parameter chains.
+
+
+# Model Estimates
+
+This exercise would benefit from one figure that we don't include: a comparison of the size of the White and Nonwhite groups in the total electorate. We would do this by summing all of the "White" and "Nonwhite" probabilities, respectively, to show the fraction of the electorate in each group.
+
+```{r get-rhs}
+# tidy both models and combine
+tidy_init <- 
+  broom::tidy(mcmc_init, estimate.method = "median", conf.int = TRUE) %>%
+  mutate(leaners = "Unaffiliated") %>%
+  as_data_frame() %>%
+  print()
+
+tidy_lean <- 
+  broom::tidy(mcmc_lean, estimate.method = "median", conf.int = TRUE) %>%
+  mutate(leaners = "Partisans") %>%
+  as_data_frame() %>%
+  print() 
+
+# combining also parses party, gender, 
+tidy_bayes <- bind_rows(tidy_init, tidy_lean) %>%
+  mutate(leaners = fct_rev(leaners),
+         party = case_when(str_detect(term, "dem") ~ "Democratic",
+                             str_detect(term, "rep") ~ "Republican"),
+         race = case_when(str_detect(term, "women") ~ "Nonwhite", 
+                            str_detect(term, "men") ~ "White"),
+         cycle = case_when(str_detect(term, ",") ~ 
+                             str_extract(term, "(?<=\\[)(.*)(?=,)"),
+                           TRUE ~ as.character(parse_number(term))),
+         cycle = (4 * as.numeric(cycle)) + 1948) %>%  
+  as_data_frame() %>% 
+  # filter(cycle >= 1988) %>%
+  print()
+
+rhs <- tidy_bayes %>%
+  filter(!str_detect(term, "theta") & 
+         !str_detect(term, "adv_") &
+         !str_detect(term, "gap_") &
+         !str_detect(term, "mobilization")) %>% 
+  mutate(PG = paste(party, race),
+         term = case_when(str_detect(term, "partisanship") ~ "Partisanship",
+                          str_detect(term, "loyal") ~ "Partisanship +\nMobilization",
+                          str_detect(term, "persuasion") ~ "Persuasion",
+                          str_detect(term, "unaffiliated") ~ "Unaffiliated"),
+         term = fct_relevel(term, "Partisanship", "Partisanship +\nMobilization", "Persuasion", "Unaffiliated")) %>%
+  print()
+
+rhs_labels <- 
+  data_frame(x = c(1964, 1980) ,
+             y = c(0.15, 0.45),
+             lab = c("Nonwhite", "White"), 
+             term = as.factor("Partisanship")) %>% 
+  print() 
+```
+
+```{r plot-rhs, include = TRUE, cache = TRUE, fig.width = 6, fig.height = 4, fig.cap = "Right-hand side terms", out.width = "100%"}
+ggplot(rhs, aes(x = cycle, y = estimate, color = PG)) +
+  facet_grid(leaners ~ term) +
+  geom_hline(yintercept = 0, color = "gray", size = 0.5) +
+  geom_line(size = 0.4, show.legend = FALSE) +
+  geom_point(aes(shape = PG), fill = "white", show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_color_manual(values = c("dodgerblue", "dodgerblue", "firebrick1", "firebrick1")) +
+  scale_shape_manual(values = c(16, 21, 16, 21)) +
+  labs(x = "Election Cycle", 
+       y = "Percent of Eligible Electorate", 
+       shape = NULL, 
+       color = NULL) +
+  scale_x_continuous(breaks = seq(1952, 2016, 12)) +
+  theme(axis.text.x = element_text(angle = 45, vjust=0.75),
+        legend.position = "bottom",
+        panel.grid.minor.x = element_blank()) +
+  geom_text(data = rhs_labels, aes(x = x, y = y, label = lab),
+            color = "black", size = 2.75) +
+  NULL
+```
+
+Showing group totals would help explain the results in Figure&nbsp;\@ref(fig:plot-rhs), where the share of white Democrats is falling precipitously, but white Republicans isn't gaining nearly as fast. This is because the nonwhite share of the electorate is growing while white voters are converting from Democrats to Republicans. The racial composition of Democratic partisans changes dramatically, but the distribution of partisanship in the electorate is barely affected at the high level. 
+
+\FloatBarrier
+
+# Creating the Race Gap
+
+```{r gap}
+race_labels_gap <- 
+  data_frame(x = c(1964, 1980, 1970, 1970) ,
+             y = c(.14, -.125, -0.07, 0.21), 
+             lab = c("Nonwhite", "White", "Nonwhite", "White"), 
+             mech = as.factor(rep(c("Partisanship", "Mobilization"), 
+                                  each = 2))) %>% 
+  mutate(mech = fct_relevel(mech, "Partisanship", "Mobilization", 
+                            "Persuasion", "Unaffiliated", 
+                            "Net Dem Vote")) %>%
+  print()
+
+
+
+tidy_bayes %>%
+  count(cycle) %>%
+  as.data.frame
+
+
+
+# gaps frame
+mc_gap <- tidy_bayes %>%
+  filter(str_detect(term, "gap")) %>%
+  mutate(mech = case_when(str_detect(term, "partisanship") ~ "Partisanship",
+                          str_detect(term, "mobilization") ~ "Mobilization",
+                          str_detect(term, "persuasion") ~ "Persuasion",
+                          str_detect(term, "unaffiliated") ~ "Unaffiliated",
+                          str_detect(term, "total") ~ "Net Race Gap"),
+         mech = fct_relevel(mech, "Partisanship", "Mobilization", "Persuasion", "Unaffiliated", "Net Race Gap")) %>%
+  select(-party, -race, -std.error) %>% 
+  select(cycle, mech, estimate, contains("conf"), leaners, matches(".")) %>%   
+  print()
+
+gap_partials <- tidy_bayes %>%
+  filter(str_detect(term, "women") | str_detect(term, "men")) %>% 
+  filter(str_detect(term, "adv_")) %>% 
+  filter(!str_detect(term, "loyal")) %>% 
+  filter(!str_detect(term, "vote")) %>% 
+  mutate(PG = paste(party, race),
+         mech = case_when(str_detect(term, "partisanship") ~ "Partisanship",
+                          str_detect(term, "mobilization") ~ "Mobilization",
+                          str_detect(term, "persuasion") ~ "Persuasion",
+                          str_detect(term, "unaffiliated") ~ "Unaffiliated",
+                          str_detect(term, "gap") ~ "Net Race Gap"),
+         mech = fct_relevel(mech, "Partisanship", "Mobilization", "Persuasion", "Unaffiliated", "Net Race Gap"),
+         estimate = ifelse(race == "White", -1 * estimate, estimate)) %>%
+  print()
+```
+
+
+
+```{r plot-gap, include = TRUE, fig.width = 8, fig.height = 4, fig.cap = "Effects on Gap", fig.env = "sidewaysfigure", out.width = "100%"}
+ggplot(gap_partials, aes(x = cycle, y = estimate)) +
+    facet_grid(leaners ~ mech) +
+    geom_hline(yintercept = 0, color = "gray", size = 0.25) +
+    geom_ribbon(data = mc_gap, 
+                aes(x = cycle, y = estimate, 
+                    ymin = conf.low, ymax = conf.high),
+                color = NA, fill = "gray",
+                alpha = 0.5) +
+    geom_line(data = mc_gap, aes(x = cycle, y = estimate)) +
+    geom_line(aes(color = race), show.legend = FALSE, size = 0.5) +
+    geom_point(aes(shape = race, color = race),
+               fill = "white", size = 2, 
+               show.legend = FALSE) +
+    scale_shape_manual(values = c(16, 22)) +
+    scale_linetype_manual(values = c(1, 2)) +
+    scale_color_manual(values = c("Nonwhite" = "darkcyan", "White" = "darkorange")) +
+    scale_fill_manual(values = c("Nonwhite" = "darkcyan", "White" = "darkorange")) +
+    scale_y_continuous(labels = scales::percent) +
+    scale_x_continuous(breaks = seq(1952, 2016, 12)) +
+    theme(axis.text.x = element_text(angle = 45, vjust=0.75),
+          panel.grid.minor.x = element_blank(),
+          legend.position = "bottom") +
+    labs(x = "Election Cycle",
+         y = "Effect of Democartic Advantage \n on Net Race Gap",
+         color = NULL) +
+    geom_text(data = race_labels_gap, aes(x = x, y = y, label = lab),
+              size = 2.75) +
+    NULL
+```
+
+Figure&nbsp;\@ref(fig:plot-gap) shows how Democratic advantages in each mechanism affect the racial voting gap. Democratic advantage is positively related to the gap for Nonwhites, and negatively related for Whites. 
+
+Nonwhites' contribution to the gap is essentially partisanship (mostly population growth?). Whites contribute the gap primarily by a higher Republican mobilization and persuasion advantages in the early years (a positive effect on the gap that diminishes over time), and a strong partisan drift across the entire series (a negative effect that becomes a positive effect). The final panel shows that a race gap has existed throughout the entire series, but the underlying mechanisms for it have changed dramatically over time. 
+
+
+
+\FloatBarrier 
+
+# Creating the Democratic Vote
+
+```{r vote}
+race_labels_vote <- 
+  data_frame(x = c(1996, 1996), 
+             y = c(0.2, -0.15), 
+             lab = c("Nonwhite", "White"), 
+             # leaners = "Unaffiliated", 
+             mech = as.factor("Partisanship")) %>% 
+  mutate(mech = fct_relevel(mech, 
+                            "Partisanship", 
+                            "Mobilization", 
+                            "Persuasion", 
+                            "Unaffiliated", 
+                            "Net Dem Vote")) %>%
+  print()
+
+
+vote_partials <- tidy_bayes %>% 
+  filter(str_detect(term, "women") | str_detect(term, "men")) %>% 
+  filter(str_detect(term, "adv_")) %>% 
+  filter(!str_detect(term, "gap_")) %>% 
+  filter(!str_detect(term, "loyal")) %>% 
+  mutate(PG = paste(party, race),
+         mech = case_when(str_detect(term, "partisanship") ~ "Partisanship",
+                          str_detect(term, "mobilization") ~ "Mobilization",
+                          str_detect(term, "persuasion") ~ "Persuasion",
+                          str_detect(term, "unaffiliated") ~ "Unaffiliated",
+                          str_detect(term, "vote") ~ "Net Dem Vote"),
+         mech = fct_relevel(mech, "Partisanship", "Mobilization", "Persuasion", "Unaffiliated", "Net Dem Vote")) %>%
+  print()
+```
+
+```{r plot-vote, include = TRUE, fig.width = 8, fig.height = 4, fig.cap = "Effects on Vote", fig.env = "sidewaysfigure", out.width = "100%"}
+ggplot(vote_partials, aes(x = cycle, y = estimate)) +
+  facet_grid(leaners ~ mech) +
+  geom_hline(yintercept = 0, color = "gray50", size = 0.5) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high,
+                  fill = race),
+              color = NA,
+              alpha = 0.3,
+              show.legend = FALSE) +
+  geom_line(aes(color = race),
+            show.legend = FALSE) +
+  geom_point(aes(shape = race, color = race),
+             fill = "white",
+             show.legend = FALSE) +
+  scale_shape_manual(values = c("White" = 22, "Nonwhite" = 16)) +
+  scale_linetype_manual(values = c(1, 2)) +
+  scale_color_manual(values = c("White" = "darkorange", "Nonwhite" = "darkcyan")) +
+  scale_fill_manual(values = c("White" = "darkorange", "Nonwhite" = "darkcyan")) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(breaks = seq(1952, 2016, 12)) +
+  theme(axis.text.x = element_text(angle = 45, vjust=0.75),
+        panel.grid.minor.x = element_blank()) +
+  labs(x = "Election Cycle",
+       y = "Effect of Democratic Advantage \n on Net Democratic Votes") +
+  geom_text(data = race_labels_vote, aes(x = x, y = y, label = lab),
+            size = 2.75) +
+  NULL
+```
+
+Figure&nbsp;\@ref(fig:plot-vote) shows how the Democratic advantage in each mechanism affects the vote. The race gap is positive when Democrats net more votes from Nonwhites than they do from Whites.
+
+In partisanship, we can see the Democratic advantage among Nonwhites slowly growing, while Democratic support among whites shifts and turns a "negative" race gap into a positive one. 
+
+Mobilization shows the advantage among non-mobilized votes. We find that the numerical impact of Nonwhite mobilization is mostly flat. This means that Democrats lose more nonwhite voters than Republicans in an an absolute number, but there are more Democratic voters to start with. The stability in the trend is striking; if we assume a fixed non-mobilization rate among Nonwhite Democrats, then the number of lost votes should increase as the number of Nonwhite Democrats. Instead, we find that non-mobilization stays constant even as the number of partisans increases. This could indicate that there are two forces in equilibrium: an increasing number of Nonwhite Democrats and increasingly turnout among Nonwhites at the same time. We would want to divide the proportion of Nonwhite Democratic voters by the proportion of Nonwhite Democratic identifiers to get the turnout rate among Nonwhite Democrats. 
+
+The final panel clearly shows the trade-off between White and Non-white votes. Democrats have nearly always netted more votes from Nonwhite voters than from White voters, but since 2008 has Democratic performance among Nonwhites *made up* for their losses among Whites. The racial voting gap has grown gradually from the growth of Nonwhite Democratic partisans, but acute change in the gap is driven largely by short-term movement among Whites. 
+
