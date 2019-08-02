@@ -1,0 +1,38 @@
+
+For a given respondent profile, the sample weight is the ratio of the sample probability to the population probability.
+
+```{r}
+wt = pr_sample / pr_pop
+```
+
+To create a new weight, we need to find a new sample probability.
+
+```{r}
+sprobs <- anes %>% 
+					group_by(wt) %>% 
+					summarize(pr_sample = n() / nrow(anes)) %>% 
+					# store nrow before grouping if necessary 
+					mutate(pr_pop = pr_sample / w) %>% 
+					print
+```
+
+Result of this is a dataframe at the `wt` level, with a sample probability for each
+
+```{r}
+boot <- resample(anes) %>% print
+bprobs <- 
+	boot %>%
+	group_by(wt) %>%
+	summarize(pr_boot = n() / nrow(boot)) %>%
+	print
+```
+
+Join weight tables
+
+```{r}
+bridge_probs <- 
+	full_join(boot, anes, by = "wt") %>%
+	mutate(w_star = pr_boot / pr_pop) %>%
+	print
+```
+

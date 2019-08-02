@@ -1,0 +1,121 @@
+# Panel paper notes
+
+to do
+
+- run w/ non-hispanic whites
+- play with bootstrapping
+
+
+writing exercise 
+
+- punch up the substantive things
+- reorder the empirical
+- people need more help following the time series
+- emphasize theoretical discussion applies to lots of groups
+
+
+
+
+## Kelly: Affective Polarization and Age: Do Young People Like (the) Parties?
+
+
+Argument: What explains the age gap?
+
+- party ID differences? No
+- Weaker affective attachments to the parties among younger people (less crystallized attitudes)
+	+ how would you be able to distinguish this from age?
+
+
+
+Table 1 could potentially be a three-panel graphic
+
+- panels are party ID, two trends for each age group
+- depends what you want to get out of it
+
+
+Question:
+
+- if this is generally about less-crystallizes attitudes, why does the gap only appear for these elections rather than appearing continuously? This should be something generally applicable? What's the interaction?
+	+ weak ties x strong partisan directional forces
+	+ then why 2012?
+- what if it is social issues? Democrats move strongly left over this time period, and young people are (probably) more attached to social issues than they are to economic issues (since they are younger, lower income, fewer married, fewer children)
+- Could it be that the mean attitudes of voters and non-voters are more similar for older voters than for younger voters? Maybe looking only at voters will show a clearer picture?
+	+ in general it could be the case that the age gap isn't significant in the first place because of the small number of younger voters?
+- lower baseline affect for young people?
+
+
+
+
+# Refugee voting
+
+What might this be:
+
+- Selection effect?
+- time lag: initial resistance followed by acceptance?
+- function of economic integration?
+- partisan effect depends on incumbent party at state or presidential level?
+- level vs. first difference
+	+ first difference may be driven by economic activity that also attracts young liberals?
+- perceptions maybe matter more than actual refugee population
+
+
+Suggestions:
+
+- bandwidth of refugee population: how does this change things?
+- Perceptions matter more than presence?
+- Where are people from?
+- population change rather than level?
+- benefit of identifying "treatment," which discretizes the difference you want to study, rather than just measuring the year-over-year change in refugee population
+
+Questions:
+
+- what is the treatment exactly? An increase of at least what percent over how many years?
+	+ interval should probably be the election period?
+- GSC plot:
+	+ looks like the vote share is just trending downward even before these treatments
+	+ Do you know the Demographics of these counties aside from refugee resettlement? Are we concerned about political and economic determinants of refugee resettlement?
+- Treatment:
+	+ moving 0 to 0.05 is treated same as .049 to .051
+
+
+
+
+# Lieske
+
+
+Why discretize the racial context variable?
+
+- "high, moderate, low levels of diversity"
+
+
+Geographic context and southiness?
+
+Interaction with education?
+
+
+how does this test heritable nepotism in particular? what does evolution perspective allow? The effects change over time, and unless we're evolving very quickly, this seems to not fit
+
+
+
+
+
+
+
+
+
+
+# Testa comments for us
+
+- rates v totals is nice. going to other groups would be good
+- decompose not-loyal further
+- normalizing puts us back in rates
+- you could interpret party ID advantage plus shoring up loyalty as a "positive" gender gap effect for Democrats
+- race, age
+- clean up graph and text explanation
+
+
+
+
+
+
+
