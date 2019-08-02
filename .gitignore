@@ -1,0 +1,77 @@
+# general BS
+*.DS_Store
+*.Rapp.history
+
+# got lost in a git shuffle =[
+forum/
+ignored
+
+# code
+code/*/*.tex
+
+# presentation output and overhead
+slides/*/*.html
+slides/*/*.css
+slides/*/*_cache/
+slides/*/*_files/
+# slides/*/data/
+# slides/*/imgs/
+
+# contains news-clippings
+lit
+
+# --- tex things --- 
+# hide tex as a rule, keep tex, pdf, bib, diagrams
+# hide outputs (graphics, tables, refs)
+tex/*
+!tex/*.tex
+!tex/*.pdf
+!tex/diagrams
+!tex/bib
+
+
+
+data/posts/
+ggmcmc-output.pdf
+
+
+
+.Rproj.user
+
+
+
+
+
+data/r-dump/
+
+writing-rmd/test-r-markdown\.pdf
+writing-rmd/test-r-markdown\.Rmd
+writing-rmd/test-r-markdown\.tex
+writing-rmd/figs/
+
+code/rmd-race/explore-race-gap_cache/
+code/rmd-race/figs/
+code/rmd-race/race-out/
+
+writing-rmd/gender-gap-new_cache/
+writing-rmd/test-r-markdown_files/
+writing-rmd/assets/img/
+writing-rmd/gender-gap-new\.aux
+writing-rmd/gender-gap-new\.bbl
+writing-rmd/gender-gap-new\.blg
+writing-rmd/gender-gap-new\.out
+writing-rmd/gender-gap-new.tex
+writing-rmd/assets/r-dump/03-descriptives.Rdata
+writing-rmd/assets/r-dump/05-viz.Rdata
+
+
+rmd-practice
+rmd-practice/test-r-markdown_files/
+
+data/cleaned-anes-cdf.dta
+data/cleaned-anes-cdf.RDS
+data/ANES/2016/docs/anes_timeseries_cdf_codebook_pdf
+data/ANES/2016/docs/anes_timeseries_cdf_codebook_ascii
+data/ANES/docs
+
+anes_timeseries_cdf.dta

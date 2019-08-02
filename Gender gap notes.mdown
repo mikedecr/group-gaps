@@ -1,0 +1,240 @@
+# Gender gap notes
+
+# Revisions
+
+Introduce probability model earlier?
+
+
+Integrate methods with example?
+
+- you can derive some quantity, as we do here...
+
+
+# apw
+
+see notebook for written comments
+
+Reorder the paper
+
+- theory, then case
+  - how do we get to the need for the theory
+    - Daron Shaw: why/how are elections not just partisanship
+      - need to get to groups
+      - parties are already coalitions
+      - race is a helpful motivator
+  - how do we get away with doing just one case
+    - hype the conventional wisdom
+  - If we're going to put theory first, 
+
+Fight Axelrod more?
+
+Fight gender gap lit more? (partisanship)
+
+Defining persuasion (disloyal and voted) and mobilized (loyal and voted)
+
+Color, legends bigger
+
+Here's what you can do:
+
+- multichotomous groups
+- change over time
+- unequally sized groups
+  - math for this???
+- enfranchisement and compositional change
+
+
+Try race:
+
+- Rmd report
+- if race, then QJPS??
+- if race, PB or BJPS?
+
+Send Marcy an email
+
+
+Amp up the energy level of the talk
+
+- slow doesn't have to be bland
+- be 10-20% more of yourself
+
+
+Check most recent email from APR?
+
+
+Chunk up the math and the graphics?
+
+- subsections for what you can learn
+- advertises the method but not the case findings
+
+
+Why start at party:
+
+- standing decision, a starting point
+- if you're a campaign, you start there
+
+
+What to cut?
+
+- This will become clear?
+
+
+What next?
+
+- I'll look at race
+- We'll let each other know
+
+
+
+
+# Weights
+
+Ask Barry and Alex about rescaling weights so `max(wt) == 1`
+
+Approximate binomial? k and n in each group are a rounding of weighted data
+
+
+# Revisions
+
+we promise "trace how mechanisms create the gender gap and the democratic vote" but we don't really visualize the gender gap
+
+"net gender gap"
+
+- it is an important concept, but we need to do something to visualize it
+  + in the operationalization: show a comparison of gender gap to net gender gap (and net votes to dem margin)
+  + net gender gap looks so similar because the groups are evenly sized. For any other group this would look quite different. Not that it's a no-value-added measure.
+- Normal measure doesn't have the information we need in it. New measure looks similar, constructed in a way that lets us back out important quantities
+
+
+Figure pathway:
+
+- gender gap
+- scatters (make this three panels?)
+- Party ID (cut? collapse panels into one by differencing across party?)
+- RHS (both party assumptions)
+- gap partials
+- vote partials
+
+
+
+
+
+- How they make the gap
+  + partisanship:
+    * early series: men and women each have Democratic advantage, offsetting influence on gender gap
+    * Men move first, gap in PID emerges far earlier than voting suggests
+  + mobilization
+    * mobilization *decreased* the gender gap, because Democratic women not turnout out outweighed Republican's turnout advantage among men
+  + Persuasion
+    * men and women tend to move together, no clear net impact on the gender gap
+  + Unaffiliated:
+    * Men swing vote toward GOP as they became more Republican, so there is some boost in the middle period
+    * more recently, no clear impact, similar dynamics to persuasion
+- Gap value(?): 
+  + there may be some difference in the amount of advantage that Dems get from women vs men, or Republicans get from men vs women
+  + A key question is whether Democrats' numerical advantage from women (over men) is greater than the Republicans' numerical advantage from men (over women)
+  + this is actually *equivalent* to the Net Democratic Vote. So *statistically*, the Net Democratic Vote that contains information 
+  + *dynamically*, which is maybe what we mean
+- Link gap to vote, formally
+  + there should be a regression in each panel
+  + and first differences!
+
+
+Write appendix
+
+# Publication
+
+- grayscale-friendly figures
+- acknowledgements
+- non-anonymous
+- contact info
+- replication information
+- check with Barry why the net vote would be so high?
+
+
+
+# Revisions
+
+Questions for Barry:
+
+- dynamics:
+  + we just use our eyeballs to judge how shifts in mechanisms are related to gap and vote
+  + but dynamics definitely could show this more explicitly?
+
+Code:
+
+- prop.ci use T distribution instead?
+- move user functions (prop CI) into another file?
+- Re-do CDF cleaning
+- double-check tex refs
+
+Directory
+
+- pitch old shit
+- why doesn't gitignore work with tex/
+
+
+writing
+
+- scholarly cites for conventional wisdom
+  + Ondercin?
+- delete earlier references to *net gender gap*
+
+tex:
+
+- adapt to new template style?
+
+
+# aesthetics
+
+cite color?
+
+floatstyle{ruled}?
+
+times new roman?
+
+
+
+# JOP reviews and to-do
+
+To do
+
+- put in 2016?
+- rework the front
+- rework the framing of the conventional wisdom
+  + dig up Norrander
+
+
+Conventional wisdom as media but not scholarly
+
+- Kaufmann Petrocik paragraph up front
+  + maybe they don't have the mechanism
+  + maybe it's just old
+- Find scholars that engage in this as well
+
+
+Email ANES (Barry does it)
+
+- check 2012 vs CDF
+
+
+Gender gap in UK politics?
+
+
+
+
+
+
+# Notes to Barry
+
+
+<!-- - will mayer (http://journals.sagepub.com/doi/pdf/10.1177/1532673X06297000) finds men more swingy -->
+
+
+
+
+# Future questions?
+
+landslides reduce the gender gap since everybody flows together?
+
+
+
