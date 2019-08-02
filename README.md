@@ -12,6 +12,8 @@ Groups in the electorate vote differently from one another. Racial minorities an
 
 # To do notes
 
+- [ ] fix Bitbucket link for website
+- [ ] when next major version is done, change website link to Github
 - [ ] Do something about raw ANES data (LFS? Download from remote if file not present?)
 
 

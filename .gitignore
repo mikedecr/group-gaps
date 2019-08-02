@@ -70,8 +70,8 @@ rmd-practice/test-r-markdown_files/
 
 data/cleaned-anes-cdf.dta
 data/cleaned-anes-cdf.RDS
-data/ANES/2016/docs/anes_timeseries_cdf_codebook_pdf
-data/ANES/2016/docs/anes_timeseries_cdf_codebook_ascii
-data/ANES/docs
 
+data/clean
+data/rmd-rdata
+data/ANES-2016/docs/anes_timeseries_cdf_codebook_pdf
 anes_timeseries_cdf.dta
