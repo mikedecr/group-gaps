@@ -1,0 +1,258 @@
+% ----------------------------------------------------
+%   Burden and DeCrescenzo: Does the gender gap help the Democrats?
+% ----------------------------------------------------
+
+
+\documentclass[12pt
+               ,final
+               ]{article}
+
+
+
+% --- Typeface, text, math, character encoding -----------------------
+\usepackage{microtype}
+
+% minion pro loads textcomp, McSymbol, amsmath
+% if you want to pass options, load them beforehand
+\usepackage[lf, mathtabular, minionint]{MinionPro} % serif familiy
+\usepackage{MyriadPro} % sans-serif family
+\usepackage[varqu, scaled = 0.95]{zi4} % mono w/ straight quotes
+
+
+% \usepackage{mathptmx} % times with math font
+% \usepackage{helvet} %sans fonts as helvetica clone
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+
+
+% ----------------------------------------------------
+%   REFERENCES
+% ----------------------------------------------------
+\usepackage{natbib}
+ \bibpunct[: ]{(}{)}{;}{a}{}{,}
+ \setlength{\bibsep}{0.0pt}
+%\usepackage[nottoc,numbib]{tocbibind} % numbers the bibliography in the table of contents
+
+
+% ----------------------------------------------------
+%   MARGINS AND SPACING
+% ----------------------------------------------------
+\usepackage[margin=1in]{geometry} %margins % ipad geometry is 4X3
+\usepackage{setspace}
+
+
+
+% ----------------------------------------------------
+%   TABLES AND FIGURES
+% ----------------------------------------------------
+\usepackage{graphicx} % input graphics
+% \usepackage{float} % H float parameter
+\usepackage{placeins} % \FloatBarrier function
+\usepackage{rotating}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% % Define block styles
+% \tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+%     text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+% \tikzstyle{block} = [rectangle, text centered, rounded corners, minimum height=4em]
+% % \tikzstyle{line} = [draw, -latex']
+% \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
+%     minimum height=2em]
+
+% \usepackage{qtree}
+
+% table packages removed! we don't have any tables!
+
+
+
+
+\usepackage{hyperref}
+\hypersetup{colorlinks = true, 
+            citecolor = black, 
+            linkcolor = violet, 
+            urlcolor = teal}
+
+% todo notes
+\usepackage[colorinlistoftodos, 
+            prependcaption, 
+            obeyFinal,
+            textsize = footnotesize]{todonotes}
+ \presetkeys{todonotes}{color = violet!30}{}
+\usepackage{comment}
+
+% spacing and other formatting
+\usepackage{enumitem} % allows nosep command for lists
+
+
+
+% \usepackage{sectsty} % section styles
+%   \allsectionsfont{\raggedright \rm}
+%   \sectionfont{\sc}
+
+\usepackage[rm, small, sc]{titlesec}
+\titleformat*{\subsection}{\itshape}
+\titleformat*{\paragraph}{\itshape}
+
+
+
+% abstract tweaks given sectsty formatting things?
+\usepackage{abstract}
+\renewcommand{\abstractname}{\sc Abstract}    % clear the title
+
+
+% ----------------------------------------------------
+%   Tikz
+% ----------------------------------------------------
+\usepackage{tikz}
+  \tikzstyle{entry} = [minimum width=0.5in, minimum height=0.25in, text centered]
+  \tikzstyle{arrow} = [thick,->,>=stealth]
+
+
+% ----------------------------------------------------
+%   USER COMMANDS
+% ----------------------------------------------------
+\newcommand{\notes}[1]{\\
+% \raggedright 
+\small
+\emph{Notes:} #1}
+
+
+
+
+
+% ----------------------------------------------------
+%   BEGIN
+% ----------------------------------------------------
+
+\begin{document}
+
+
+\title{Appendix: \\ Mobilization, Persuasion, and the Partisan Fallout of the Gender Gap in U.S.\ Voting}
+\author{}
+\date{Updated \today}
+\maketitle
+
+\onehalfspacing
+
+
+\section*{Notes on estimation}
+
+\subsection*{Categorical outcome variable}
+
+The model described in our paper begins by counting up the number of votes (measured using ANES vote choice) that Republicans and Democrats obtain through different pathways. To compare survey waves with different sample sizes, we normalize the terms in the model by dividing each term by the sample size in their respective survey waves. After normalization, the terms in our model represent mutually exclusive proportions of the ANES sample. Because we have multiple exclusive proportions to estimate, we use a Categorical outcome model to estimate all proportions simultaneously.
+
+We begin by constructing a categorical variable that indexes all combinations of party identification (Democrat, Republican, or unaffiliated), gender (man or woman), and vote choice (Democrat, Republican, or ``other,'' where ``other'' includes nonvotes as well as non-major-party votes). This totals 18 categories. We then use the sample data to estimate the probability of each category in the population of U.S.\ electorate. Operationally, we define the multichotomous outcome variable as $y_{i}$ which takes any one of 18 possible values. We assume that $y_{i}$ is categorically distributed according to the probability of each category in the population:
+  \begin{align}
+    y_{i} &\sim \mathrm{Categorical}\left( \theta \right),
+  \end{align}
+where $\theta$ is a vector containing the probabilities of all 18 categories, whose elements sum to $1$. We estimate the probability vector for each survey wave independently of other waves.%
+  \footnote{We have suppressed the subscript $t$ for the simplicity.}
+
+\begin{table}[hbt]
+  \begin{center}
+  \caption{Description of Categorical Outcome Variable}
+  \label{tab:y-table}
+  \begin{tabular}{l r}
+
+    \toprule
+
+    Outcome Category &   \\ 
+    (gender $\times$ party ID $\times$ vote choice) & Index in $\theta$ \\
+    \midrule
+    
+    Man, Democrat, Votes for Democrat & 1 \\ 
+    Man, Democrat, Votes for Republican & 2 \\ 
+    Man, Democrat, Votes ``Other'' & 3 \\ 
+    Man, Republican, Votes for Democrat & 4 \\ 
+    Man, Republican, Votes for Republican & 5 \\ 
+    Man, Republican, Votes ``Other'' & 6 \\ 
+    Man, Unaffiliated, Votes for Democrat & 7 \\ 
+    Man, Unaffiliated, Votes for Republican & 8 \\ 
+    Man, Unaffiliated, Votes ``Other'' & 9 \\ 
+    Woman, Democrat, Votes for Democrat & 10 \\ 
+    Woman, Democrat, Votes for Republican & 11 \\ 
+    Woman, Democrat, Votes ``Other'' & 12 \\ 
+    Woman, Republican, Votes for Democrat & 13 \\ 
+    Woman, Republican, Votes for Republican & 14 \\ 
+    Woman, Republican, Votes ``Other'' & 15 \\ 
+    Woman, Unaffiliated, Votes for Democrat & 16 \\ 
+    Woman, Unaffiliated, Votes for Republican & 17 \\ 
+    Woman, Unaffiliated, Votes ``Other'' & 18 \\ 
+
+    \bottomrule
+
+  \end{tabular}
+  \end{center}
+\end{table}
+
+Table~\ref{tab:y-table} contains a description and coding of all 18 outcome categories. We use this set of probabilities to calculate various quantities in the model. For instance, we estimate the proportion of the electorate that consists of Democrat-identifying men as $\theta_{1} + \theta_{2} + \theta_{3}$ (i.e.\ summing across possible vote choices). The proportion of Republican-identifying women who are not mobilized to cast a partisan vote would be $\theta_{13} + \theta_{15}$. These probabilities can also be used to calculate Democratic advantages or gender gaps in each term of the model. For example, the Democratic advantage in persuasion among women would be $\theta_{13} - \theta_{11}$, and the gender gap in unaffiliated voters would be $(\theta_{16} - \theta_{17}) - (\theta_{7} - \theta_{8})$.
+
+
+
+
+\subsection*{Parameter uncertainty using Markov chain Monte Carlo}
+
+Point estimates for the terms in the model can be constructed by simply adding and subtracting the elements in $\theta$, but we also care about the uncertainty associated with each term in the model. Rather than analytically derive the variance of each quantity in the analysis, we use a simulation approach to proliferate uncertainty in $\theta$ throughout the model. We use Markov chain Monte Carlo to generate a distribution of plausible $\theta$s, which we then use to produce a distribution for every quantities of interest in our results.
+
+Although Markov chain Monte Carlo is commonly used for Bayesian analysis, we use it for computational convenience rather than for including prior information. We therefore estimate $\theta$ using a flat prior, so the ``posterior'' distribution is proportional to the likelihood of the data. A flat prior for a set of probabilities is a Dirichlet distribution with a concentration parameter of 1.
+  \begin{align}
+    \theta &\sim \mathrm{Dirichlet}\left( \alpha = 1 \right)
+  \end{align}
+We estimate the model using \texttt{Stan} \citep{carpenter2016stan}. We run \input{refs/mcmc-chains} \unskip chains with \input{refs/mcmc-iterations} \unskip iterations per chain, setting aside the first \input{refs/mcmc-warmup} \unskip iterations that were used to tune the sampling algorithm. Following \citet{Link2011}, we do not thin the parameter chains. 
+
+Sample weights (variable \texttt{VCF0009z} from the ANES cumulative file) are incorporated by weighting the log-likelihood of each observation when calculating the probability of the data. This is akin to pseudo-likelihood approaches that apply weights in regression models. The log-likelihood of the data $\mathbf{y}$ given $\theta$ can be expressed as follows:
+  \begin{align}
+    \ell(\mathbf{y} \mid \theta) &= \sum\limits_{i = 1}^{N} \ell(y_{i} \mid \theta)  w_{i},
+  \end{align}
+where $\ell(y_{i} \mid \theta)$ is the log-likelihood of an individual $y_{i}$ given $\theta$ in the associated sample wave, and $w_{i}$ is respondent $i$'s sample weight. 
+
+Estimating the model by weighting each observation does slow the estimation process somewhat. To speed up this routine, researchers could calculate the weighted number of respondents in each category, modeling the grouped data as a multinomial outcome variable. Multinomial modeling requires integer data, so non-integer values induced by sample weights must be rounded off. Although this method would be faster than estimating the model on individual data, our analysis uses the more intensive estimation method for the sake of exposition.
+
+
+
+
+
+\section*{Leaning Independents}
+
+The main text of the paper presents only results with independent leaners coded as partisans. Figures~\ref{fig:appendix-RHS} through~\ref{fig:appendix-partials-on-vote} show results with leaners coded as unaffiliated (the top row in each figure) and as partisans (bottom row).
+
+
+\begin{sidewaysfigure}[p]
+  \centering
+  \caption{Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012}
+  \includegraphics[width=\textwidth]{appendix/mc-rhs-appendix.pdf}
+  \label{fig:appendix-RHS}
+  \notes{For presentational purposes, Column 2 displays the share of mobilized voters instead of the $\mathit{Mobilization}_{pgt}$ term from the model equation. The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans. Leaning independents are coded as partisans.}
+\end{sidewaysfigure}
+
+
+
+
+\begin{sidewaysfigure}[p]
+  \centering
+  \caption{How Each Mechanism Affects the Gender Gap}
+  \label{fig:appendix-partials-on-gap}
+  \includegraphics[width = \textwidth]{appendix/mc-gap-partials-appendix.pdf}
+  \notes{Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect. Women are shown with solid points, men with hollow points. The thick, solid line indicates the gender gap in each mechanism. The right-most panel is the sum of the net gender gap across all mechanisms.}
+\end{sidewaysfigure}
+
+
+
+\begin{sidewaysfigure}[p]
+   \centering
+   \caption{Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes}
+   \label{fig:appendix-partials-on-vote}
+   \includegraphics[width=\textwidth]{appendix/mc-vote-partials-appendix.pdf}
+   \notes{Women are shown with orange solid points, men with hollow green points.  The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms.}
+\end{sidewaysfigure}
+
+
+\FloatBarrier
+\bibliographystyle{bib/apsr2006.bst}
+\bibliography{bib/gender-bib.bib}
+
+
+
+\end{document}
