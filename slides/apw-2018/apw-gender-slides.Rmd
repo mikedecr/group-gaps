@@ -1,0 +1,1239 @@
+---
+title: "Mobilization, Persuasion, and the Partisan Fallout of the Gender Gap in U.S. Voting"
+# subtitle: "for the 2018 Midterms"
+author: 
+- Barry C. Burden and Michael G. DeCrescenzo
+date: "December 10, 2018"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    # mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_SVG"
+    css: xaringan-themer.css
+    nature:
+      ratio: "16:9"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "https://platform.twitter.com/widgets.js"
+---
+
+class: center, middle, inverse
+
+## Does the gender gap help the Democrats?
+
+
+```{r setup-rmd, include = FALSE}
+
+library("knitr")
+library("here")
+# rmarkdown::render(here::here("slides/apw-gender-slides.rmd"))
+library("magrittr")
+library("tidyverse")
+library("ggplot2")
+library("scales")
+library("labelled")
+library("broom")
+library("latex2exp")
+
+# graphics 
+source("~/Box Sync/workshops/math-camp/R/theme_mathcamp.R")
+
+# chunks:
+# hide code and messages
+# cache everything
+opts_chunk$set(include = FALSE, eval = TRUE, echo = FALSE, 
+               warning = FALSE, message = FALSE,
+               cache = TRUE, collapse = TRUE,
+               fig.retina = 2,
+               fig.align = "center", dpi = 100)
+
+# Xaringan settings
+library("xaringan")
+library("xaringanthemer")
+
+primary <- "#cb4b16"
+secondary <- "#268bd2"
+
+duo_accent(primary_color = primary, 
+            secondary_color = secondary,
+            header_font_family = "Minion Pro", 
+            # text_font_family = "Myriad Pro", 
+            text_font_google = google_font("PT Sans"), 
+            code_font_google = google_font("Inconsolata"), 
+            text_bold_color = secondary,
+            code_inline_background_color    = "#F5F5F5", 
+            table_row_even_background_color = "white", 
+            extra_css = 
+              list("h1, h2, h3" = list("font-style" = "italic",
+                                       "font-weight" = "bold"),
+                   ".title-slide, .title-slide h1, .title-slide h2, .title-slide h3" = list("font-family" = "PT Sans",
+                                             # "font-family" = "Myriad Pro",
+                                             "font-style" = "normal", 
+                                             "font-weight" = "normal"),
+                   ".remark-slide-content" = list("font-size" = "24px"), 
+                   ".remark-slide-number" = list("display" = "none"),
+                   ".remark-inline-code" = list("background" = "#F5F5F5", 
+                                                  #e7e8e2; /* darker */
+                                                "border-radius" = "3px", 
+                                                "padding" = "4px"),
+                   ".inverse h1, .inverse h2, .inverse h3" = 
+                     list("color" = "#FFFFFF")))
+```
+
+
+???
+
+What is the gender gap? 
+
+- two party vote among women, minus among men
+- Difference in the *rates* of Democratic voting
+- It's positive right now, women vote more D than men
+- But we don't know if this means Democrats get *more votes*
+- Gap grows from more D women, fewer R women, more R men, fewer D men
+- The gender gap as a measure doesn't show us any of this
+
+
+---
+
+class: center
+
+<br>
+<br>
+
+
+## Does the gender gap help the Democrats?
+
+
+Conventional Wisdom
+
+???
+
+Wisdom in the press:
+
+- comparison of rates, not total votes
+- Don't know if more women or fewer men?
+
+--
+
+Partisanship
+
+
+???
+
+KP: Men's movement (negative relationship? Conventional wisdom in the literature)
+
+
+--
+
+Mobilization
+
+???
+
+Mobilization:
+
+- Suppose a $\pm$ 1% margin world; Increasing women's turnout approaches 1% margin asymptotically
+- Women's turnout has been going up: positive relationship
+
+
+--
+
+Persuasion
+
+???
+
+Persuasion:
+
+- Does it work? What's the magnitude?
+- Nascar moms, Security moms, white college women, but c.f. working class men
+
+
+--
+
+Necessary vs. Contingent Relationship
+
+???
+
+In what circumstances do the dynamics of these forces create an advantage for one party? That's the question
+
+Just to persuade you...
+
+
+---
+
+class: center, middle
+
+<!-- ## Topline -->
+
+<!-- Include figs -->
+
+
+```{r get-descriptive-data, include = FALSE}
+load(here("slides", "apw-2018", "data", "03-descriptives.Rdata"))
+```
+
+```{r topline-anes, include = TRUE, fig.width = 6, fig.height = 5}
+plot_top <- 
+  ggplot(data = leip, aes(x = gender_gap, dem_vote_share)) +
+    geom_hline(yintercept = 0.5, color = lgray) +
+    geom_vline(xintercept = 0, color = lgray) +
+    geom_blank() +
+    coord_cartesian(ylim = c(.35, .65)) +
+    scale_y_continuous(labels = scales::percent) +
+    scale_x_continuous(labels = scales::percent) +
+    labs(caption = "ANES Cumulative Data",
+         x = "Gender Gap\n(Women minus Men)", 
+         y = "Democratic Share of Two-Party Vote") +
+    theme_mathcamp() +
+    theme(panel.grid = element_blank()) 
+
+plot_top
+```
+
+???
+
+
+Does the gender gap help the Democrats?
+
+- ANES data, X and Y
+- H: positive or negative
+
+
+---
+
+class: center, middle
+
+```{r top-add-pts, include = TRUE, fig.width = 6, fig.height = 5}
+plot_top +
+  geom_point(shape = 16) +
+  geom_text(aes(y = dem_vote_share + 0.009, label = cycle), 
+            family = "Consolas", size = 4)
+```
+
+???
+
+- No general relationship
+- Early years: gender gap grows, so does Dem vote
+- after 1980, no more relationship
+
+
+---
+
+class: center, middle
+
+```{r top-add-fit, include = TRUE, fig.width = 6, fig.height = 5}
+plot_top +
+  geom_smooth(method = "lm", 
+              color = "dodgerblue", fill = mgray,
+              alpha = 0.3)  +
+  geom_point(shape = 16) +
+  geom_text(aes(y = dem_vote_share + 0.009, label = cycle), 
+            family = "Consolas", size = 4)
+```
+
+???
+
+- iid normal regression, 
+- most susceptible to spurious correlation
+- first diffs, about as flat as it gets
+
+
+
+
+---
+
+class: middle
+
+```{r topline-exits, include = TRUE, fig.width = 9, fig.height = 4.5}
+plot_exit <- exits %>%
+  mutate(cycle = str_glue("Exit Polls: {cycle}")) %>%
+  ggplot(aes(x = gender_gap, y = dem_share)) +
+  facet_grid(. ~ cycle) +
+  geom_blank() +
+  geom_hline(yintercept = 0.5, color = mgray) +
+  geom_vline(xintercept = 0, color = mgray) +
+  scale_x_continuous(labels = scales::percent) +
+  scale_y_continuous(breaks = seq(0.10, 1, 0.2), labels = scales::percent) +
+  coord_cartesian(ylim = c(0.2, 0.95)) +
+  labs(caption = "Exit poll data from CNN",
+       x = "Gender Gap", y = "Democratic Share of\nTwo-Party Vote") +
+  theme_mathcamp() +
+  theme(panel.grid = element_blank()) 
+
+plot_exit
+```
+
+
+---
+
+class: middle
+
+
+```{r exit-add-pt, include = TRUE, fig.width = 9, fig.height = 4.5}
+plot_exit +
+  geom_text(aes(label = abb), size = 4, 
+            family = "Consolas")
+```
+
+<!-- # add pts -->
+
+
+
+---
+
+class: middle
+
+
+```{r exit-add-fit, include = TRUE, fig.width = 9, fig.height = 4.5}
+plot_exit +
+  geom_smooth(method = "lm",
+              color = "dodgerblue", 
+              size = 0.75, 
+              alpha = 0.35) +
+  geom_text(aes(label = abb), size = 4, 
+            family = "Consolas")
+```
+
+
+
+
+???
+
+Exits: 
+
+- Nothing in 2004 and 2008
+- If you zap DC the relationship is a little stronger but nothing clear
+  + what about EIV regression? (BRMS)
+- don't support KP either
+
+What then?
+
+- Aggregate isn't the best way
+- Parties look at the world and then strategize their way to a majority
+- We'll learn more by digging under the hood
+
+
+
+---
+
+class: inverse, center, middle
+
+## A Theory of Electoral Gaps
+
+???
+
+How do we relate the gap to the vote?
+
+- Parties get votes from men and women
+- How much of these votes are mobilized voters vs persuaded voters
+- How many are men and women
+- How do these things change over time to *create* a gap
+
+Theoretical focus on mobilization and persuasion is generalizable
+
+- race, white v nonwhite targeting
+- college v non-college
+- urban/rural
+
+Behavioral vs. compositional change
+
+
+
+
+---
+
+### Party votes are mobilization + persuasion
+
+```{r diagram-vote, include = TRUE}
+include_graphics(here("slides", "apw-2018", "imgs", "diag-1-votes.png"))
+```
+
+???
+
+- Democrats mobilized, Republicans persuaded, = Democratic votes
+- Net Democratic votes = Democratic votes, minus Republican votes
+- margin in raw votes
+
+--
+
+.center[A party wins when they **mobilize** and **persuade** more voters]
+
+
+
+---
+
+### *Net votes* are *net* mobilization and *net* persuasion
+
+```{r diagram-nets, include = TRUE}
+include_graphics(here("slides", "apw-2018", "imgs", "diag-2-nets.png"))
+```
+
+???
+
+- if votes are just mobilization and persuasion, we can see which party is doing better in each mechanism
+- Net Dem Mobilization: if Ds mobilize more voters than Rs, net advantage
+- same for persuasion
+
+--
+
+.center[Who has the **mobilization advantage**? The **persuasion advantage**?]
+
+
+
+
+---
+
+### Gender gaps in mobilization and persuasion
+
+
+```{r diagram-gap, include = TRUE}
+include_graphics(here("slides", "apw-2018", "imgs", "diag-3-gap.png"))
+```
+
+
+???
+
+- decompose the Democrats' advantage in mobilization into women and men
+
+- If net Dem mobilization of women > men, gender gap in M
+
+- net gender gap = add the gap in M and P
+
+
+--
+
+.center[Where does the gender gap **come from**?]
+
+???
+
+- is it mobilization? Persuasion?
+
+- Does a gap form because of movement among women? or among men?
+
+
+???
+
+.center[*"Maybe the real gender gap is the gender gaps we made along the way"*]
+
+
+---
+
+class: inverse, center, middle
+
+## Operationalizing the Model
+
+???
+
+- Not a statistical model per se
+- a decomposition of the vote
+
+
+---
+
+### Votes are partisanship, filtered by mobilization and persuasion
+
+--
+
+Votes earned by party $p$ from gender $g$ in election $t$ are...
+
+<br>
+
+--
+
+$$\displaystyle \mathrm{Votes}_{pgt}  =  \mathrm{Partisans}_{pgt} + f(\cdot)_{pgt}$$
+
+
+???
+
+party p, gender g, election year t
+
+Votes aren't partisanship
+
+- partisan baseline
+- transformed by mob and per
+
+
+--
+
+<br>
+
+$$\mathrm{Votes}_{pgt} = \mathrm{Partisans}_{pgt} + \mathrm{Mobilization}_{pgt} + \mathrm{Persuasion}_{pgt} + \mathrm{Unaffiliated}_{pgt}$$
+
+???
+
+What is the filtering function? 
+
+- Adjusting the number of partisans for mobilization, persuasion, unaffiliated
+- Number of partisans
+- Subtract away every partisans who doesn't cast a loyal vote
+- Add defections from the other party
+- Add independents, nonpartisans...
+
+
+Look ahead...
+
+
+
+---
+
+class: center
+
+<br>
+<br>
+<br>
+<br>
+
+
+### Raw material for other useful concepts
+
+$\begin{align} \mathrm{Net \, Democratic \, Votes} &= \big( \mathrm{Votes}_{\mathit{DW}} + \mathrm{Votes}_{\mathit{DM}} \big) - \big( \mathrm{Votes}_{\mathit{RW}} + \mathrm{Votes}_{\mathit{RM}} \big) \end{align}$
+
+???
+
+The benefit of the framework 
+
+- rearrange terms to highlight important things
+- How many votes do Democrats and Republicans get from men and women
+
+--
+
+or
+
+$\begin{align}   \mathrm{Net \, Democratic \, Votes} &= \mathrm{Net \, Democratic \, Votes}_{W} + \mathrm{Net \, Democratic \, Votes}_{M} \\[6pt] &= \big( \mathrm{Votes}_{\mathit{DW}} - \mathrm{Votes}_{\mathit{RW}} \big) + \big( \mathrm{Votes}_{\mathit{DM}} - \mathrm{Votes}_{\mathit{RM}} \big) \end{align}$
+
+<!-- $\begin{align} \mathrm{Net \, Democratic \, Votes} &= \big( \mathrm{Votes}_{\mathit{DW}} - \mathrm{Votes}_{\mathit{RW}} \big) + \big( \mathrm{Votes}_{\mathit{DM}} - \mathrm{Votes}_{\mathit{RM}} \big) \end{align}$ -->
+
+
+
+
+???
+
+
+- This is just substitution, addition, and subtraction
+- each *votes* is the sum of partisanship, mobilization...
+
+
+
+
+---
+
+class: center, middle
+
+### Net gender gap
+
+$\begin{align} \mathrm{Net \, Gender \, Gap} &=  \mathrm{Net \, Democratic \, Votes}_{W} - \mathrm{Net \, Democratic \, Votes}_{M} \\[6pt] &= \big( \mathrm{Votes}_{\mathit{DW}} - \mathrm{Votes}_{\mathit{RW}} \big) - \big( \mathrm{Votes}_{\mathit{DM}} - \mathrm{Votes}_{\mathit{RM}} \big)  \end{align}$
+
+
+???
+
+How much of the Democrats' advantage comes from women vs men?
+
+Bottom line: 
+
+- instead of differencing the whole equation
+- Difference every term, partisanship, mobilization, persuasion
+
+---
+
+class: center
+
+<br>
+<br>
+
+
+### Many gender gaps
+
+$\begin{align} \mathrm{Net \, Gender\, Gap} &= \mathrm{Partisan \, Gap} + \mathrm{Mobilization \, Gap} + \mathrm{Persuasion \, Gap} + \mathrm{Unaffiliated \, Gap} \end{align}$
+
+<br>
+
+--
+
+$\begin{align} \mathrm{Net \, Gender\, Gap} &= \left( \mathrm{Net \, Dem \, Partisans}_{W} - \mathrm{Net \, Dem \, Partisans}_{M} \right) + \\[3pt] &\ \quad \left( \mathrm{Net \, Dem \, Mobilization}_{W} -  \mathrm{Net \, Dem \, Mobilization}_{M} \right) \ldots \end{align}$
+
+
+???
+
+What happened?
+
+- we started by simply counting the votes that a party gets from partisanship, mobilization, and so on
+- We can difference these equations across party to measure partisan advantages in mobilization, and so on
+- We difference across gender to measure whether advantages are greater among men than women
+
+Put it all together...
+
+
+
+---
+
+class: center
+
+<br>
+<br>
+<br>
+<br>
+
+
+### We learn...
+
+--
+
+**Where** do parties gain advantage?
+
+???
+
+- partisanship? mobilization? persuasion?
+
+--
+
+**Which voters** create that advantage?
+
+???
+
+- is a party asymmetry coming from men or women?
+
+--
+
+Do gender gaps in each mechanism **help** or **hurt** Democrats?
+
+
+???
+
+- Dem advantage among women? Gap is good
+- Rep advantage among men? (neg. Dem advantage) Gap is bad
+
+
+---
+
+class: center, middle
+
+### Little things
+
+Normalization / common denominator
+
+Estimation with multinomial outcome model
+
+
+???
+
+- How do we compare unequal survey years? 
+- best common denominator: nonvoters, R vs D, men vs women, 
+- Proportion of total electorate
+- Mutually exclusive and exhaustive: multinomial outcome, what's the probability in each category
+
+
+---
+
+class: center, middle, inverse
+
+# Estimates
+
+```{r load-mcmc}
+load(here("slides", "apw-2018", "data", "05-viz.Rdata"))
+```
+
+
+```{r trim-rhs}
+rhs <- rhs %>%
+  filter(leaners == "Leaners as Partisans") 
+```
+
+
+```{r blank-rhs}
+plot_rhs <- 
+    ggplot(rhs, aes(x = cycle, y = estimate, color = PG, shape = PG)) +
+      facet_grid(. ~ term) +
+      geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+      geom_blank() +
+      # geom_line(size = 0.4, show.legend = FALSE) +
+      # geom_point(aes(shape = PG), fill = "white") +
+      scale_y_continuous(labels = scales::percent) +
+      scale_color_manual(values = c(dblue, dblue, rred, rred)) +
+      scale_shape_manual(values = c(22, 16, 22, 16)) +
+      # scale_shape_manual(values = c(15, 16, 21, 22)) +
+      labs(x = "Election Cycle", y = "Percent of Eligible Electorate",
+           shape = NULL, color = NULL) +
+      scale_x_continuous(breaks = seq(1952, 2016, 16)) +
+      theme_mathcamp() +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.75),
+            legend.position = "bottom", 
+            legend.text = element_text(size = rel(1)))
+```
+
+---
+
+class: middle
+
+```{r rhs-dmen, include = TRUE, fig.height = 4.5, fig.width = 9}
+plot_rhs +
+  geom_line(
+    data = filter(rhs, term == "Partisanship" & PG == "Democratic Men"),
+    size = 0.4, show.legend = FALSE) +
+  geom_point(
+    data = filter(rhs, term == "Partisanship" & PG == "Democratic Men"),
+    aes(shape = PG), fill = "white") +
+  NULL
+```
+
+???
+
+Plot the raw data for the model (Leaners)
+
+- Partisanship: sum of p(DMD), p(DMR), p(DMN)
+- Sampler: Uncertainty in estimates across iterations
+- Democratic Men: sudden drop and then stability
+
+---
+
+class: middle
+
+```{r rhs-dwomen, include = TRUE, fig.height = 4.5, fig.width = 9}
+plot_rhs +
+  geom_line(
+    data = filter(rhs, term == "Partisanship" & PG %in% c("Democratic Men", "Democratic Women")),
+    size = 0.4, show.legend = FALSE) +
+  geom_point(
+    data = filter(rhs, term == "Partisanship" & PG %in% c("Democratic Men", "Democratic Women")),
+    aes(shape = PG), fill = "white") +
+  NULL
+```
+
+???
+
+- Democratic women, local variation but long-run mean
+
+---
+
+class: middle
+
+```{r rhs-party, include = TRUE, fig.height = 4.5, fig.width = 9}
+plot_rhs +
+  geom_line(
+    data = filter(rhs, term == "Partisanship"),
+    size = 0.4, show.legend = FALSE) +
+  geom_point(
+    data = filter(rhs, term == "Partisanship"),
+    aes(shape = PG), fill = "white") +
+  NULL
+```
+
+???
+
+- Republicans are a mirror of Democrats (not exactly)
+- If voting were partisanship, Dems would clean up, but gap would be created by men, and it would be bad for Democrats
+
+---
+
+class: middle
+
+```{r rhs-party-mob, include = TRUE, fig.height = 4.5, fig.width = 9}
+plot_rhs +
+  geom_line(
+    data = filter(rhs, term %in% c("Partisanship", "Partisanship +\nMobilization")),
+    size = 0.4, show.legend = FALSE) +
+  geom_point(
+    data = filter(rhs, term %in% c("Partisanship", "Partisanship +\nMobilization")),
+    aes(shape = PG), fill = "white") +
+  NULL
+```
+
+
+???
+
+Partisanship minus non-mobilized = fraction of party-loyal voting
+
+- Everyone does worse than their partisanship, but especially Democrats
+- Democrats have steady increase in mobilizing, led by women
+- This isn't turnout rate, it's total votes after partisanship and (non)mobilization
+- could get the turnout rate by dividing panel 2 by panel 1 (MCMC)
+- If the gender gap in party literature is right: before 1980, Dems ahead, but after they're behind or tied.
+- Instead we see there's more going on w/ mobilization (Democrats)
+
+---
+
+class: middle
+
+```{r rhs-all, include = TRUE, fig.height = 4.5, fig.width = 9}
+plot_rhs +
+  geom_line(size = 0.4, show.legend = FALSE) +
+  geom_point(aes(shape = PG), fill = "white") +
+  NULL
+```
+
+???
+
+- Two majorities
+- When it comes to big change, swing voting looks like a small force (total and between genders)
+
+Takeaways:
+
+- Democrats lose men, which should grow the gender gap, but bad for Ds
+- Dems improve mobilization over time, so making up for partisan change
+- Dems also no longer hemorrhaging votes to Rs
+- Unaffiliated: not much
+
+---
+
+
+### Explaining the gap
+
+```{r gap-data}
+gender_labels_gap <- 
+  data_frame(x = c(1979, 1990, 1996, 1982) ,
+             y = c(.15, -.05, -0.075, 0.09), 
+             lab = c("Women", "Men", "Women", "Men"), 
+             mech = as.factor(rep(c("Partisanship", "Mobilization"), 
+                                  each = 2))) %>% 
+  mutate(mech = fct_relevel(mech, "Partisanship", "Mobilization", 
+                            "Persuasion", "Unaffiliated", 
+                            "Net Democratic Votes")) %>%
+  print()
+
+# gaps frame
+mc_gap <- tidy_bayes %>%
+  filter(str_detect(term, "gap")) %>%
+  mutate(mech = case_when(str_detect(term, "partisanship") ~ "Partisanship",
+                          str_detect(term, "mobilization") ~ "Mobilization",
+                          str_detect(term, "persuasion") ~ "Persuasion",
+                          str_detect(term, "unaffiliated") ~ "Unaffiliated",
+                          str_detect(term, "total") ~ "Net Gender Gap"),
+         mech = fct_relevel(mech, "Partisanship", "Mobilization", "Persuasion", "Unaffiliated", "Net Gender Gap")) %>%
+  select(-party, -gender, -std.error) %>% 
+  select(cycle, mech, estimate, contains("conf"), leaners, matches(".")) %>%   
+  print()
+
+gap_partials <- tidy_bayes %>%
+  filter(str_detect(term, "women") | str_detect(term, "men")) %>% 
+  filter(str_detect(term, "adv_")) %>% 
+  filter(!str_detect(term, "loyal")) %>% 
+  filter(!str_detect(term, "vote")) %>% 
+  mutate(PG = paste(party, gender),
+         mech = case_when(str_detect(term, "partisanship") ~ "Partisanship",
+                          str_detect(term, "mobilization") ~ "Mobilization",
+                          str_detect(term, "persuasion") ~ "Persuasion",
+                          str_detect(term, "unaffiliated") ~ "Unaffiliated"),
+         mech = fct_relevel(mech, "Partisanship", "Mobilization", "Persuasion", "Unaffiliated", "Net Gender Gap"),
+         estimate = ifelse(gender == "Men", -1 * estimate, estimate)) %>%
+  print()
+
+gap_data_leaners <- gap_partials %>%
+  filter(leaners == "Leaners as Partisans") 
+```
+
+
+```{r gap-partials-blank, include = TRUE, fig.height = 4, fig.width = 11}
+plot_gap <- 
+  ggplot(gap_data_leaners, aes(x = cycle, y = estimate)) +
+    facet_grid(. ~ mech) +
+    geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+    geom_blank() +
+    geom_blank(data = filter(mc_gap, leaners == "Leaners as Unaffiliated")) +
+    scale_shape_manual(values = c(22, 16)) +
+    scale_linetype_manual(values = c(1, 2)) +
+    scale_color_manual(values = c(mcolor, wcolor)) +
+    scale_fill_manual(values = c(mcolor, wcolor)) +
+    scale_y_continuous(labels = scales::percent) +
+    scale_x_continuous(breaks = seq(1952, 2016, 16)) +
+    theme_mathcamp() +
+    theme(axis.text.x = element_text(angle = 90, vjust=0.75),
+          panel.grid.minor.x = element_blank()) +
+    labs(x = "Election Cycle",
+         y = "Effect of Democratic Advantage \n on Net Gender Gap") +
+    NULL
+
+plot_gap
+```
+
+???
+
+Let's manipulate these data to look at the gender gap
+
+- y: How does the Democratic advantage in each mech affect gender gap
+- panels
+  - "partial effect" or "partial impact"
+- Women: (+ gap), positive data; Men (- gap), negative data
+
+
+---
+
+### Explaining the gap
+
+```{r gap-partials-party, include = TRUE, fig.height = 4, fig.width = 11}
+plot_gap +
+  geom_line(data = filter(gap_data_leaners, mech == "Partisanship"),
+            aes(color = gender), show.legend = FALSE, size = 0.5) +
+  geom_point(data = filter(gap_data_leaners, mech == "Partisanship"),
+            aes(shape = gender, color = gender),
+             fill = "white",
+             show.legend = FALSE) +
+  geom_text(data = filter(gender_labels_gap, mech == "Partisanship"), 
+            aes(x = x, y = y, label = lab),
+            size = 3.75) +
+  NULL
+```
+
+
+???
+
+Women: 
+
+- more D women than R women
+- Positive Democratic advantage
+- positive impact on gender gap
+
+Men:
+
+- past: more D men and R men
+- Positive Democratic advantage
+- negative impact on the gender gap
+- Men become Republican, advantage shrinks, effect on the gap disappears
+
+Put the two together, and you get...
+
+
+
+---
+
+### Explaining the gap
+
+```{r gap-partials-party-diff, include = TRUE, fig.height = 4, fig.width = 11}
+plot_gap +
+  geom_ribbon(data = filter(mc_gap, leaners == "Leaners as Unaffiliated",
+                            mech == "Partisanship"), 
+              aes(ymin = conf.low, ymax = conf.high),
+              color = NA, fill = mgray,
+              alpha = 0.3) +
+  geom_line(data = filter(gap_data_leaners, mech == "Partisanship"),
+            aes(color = gender), show.legend = FALSE, size = 0.5) +
+  geom_point(data = filter(gap_data_leaners, mech == "Partisanship"),
+            aes(shape = gender, color = gender),
+             fill = "white",
+             show.legend = FALSE) +
+  geom_line(data = filter(mc_gap, leaners == "Leaners as Unaffiliated",
+                          mech == "Partisanship"), 
+            aes(x = cycle, y = estimate)) +
+  geom_text(data = filter(gender_labels_gap, mech == "Partisanship"), 
+            aes(x = x, y = y, label = lab),
+            size = 3.75) +
+  NULL 
+```
+
+
+???
+
+gap in partisanship emerges in the late 60s
+
+- consistent through most of the remaining series
+- slight blip in 90s, 96 regarded to be kind of outlier
+- Gray bar is 95 percent "compatibility" interval
+
+Impact on Dem vote?
+
+- Probably bad: if driven by Men's partisanship
+- strike 1 against conventional wisdom
+- However, recent variation seems more from women
+
+
+
+
+---
+
+### Explaining the gap
+
+```{r gap-partials-mob, include = TRUE, fig.height = 4, fig.width = 11}
+plot_gap +
+  geom_ribbon(data = filter(mc_gap, leaners == "Leaners as Unaffiliated",
+                            mech %in% c("Partisanship", "Mobilization")), 
+              aes(ymin = conf.low, ymax = conf.high),
+              color = NA, fill = mgray,
+              alpha = 0.3) +
+  geom_line(data = filter(gap_data_leaners, mech %in% c("Partisanship", "Mobilization")),
+            aes(color = gender), show.legend = FALSE, size = 0.5) +
+  geom_point(data = filter(gap_data_leaners, mech %in% c("Partisanship", "Mobilization")),
+            aes(shape = gender, color = gender),
+             fill = "white",
+             show.legend = FALSE) +
+  geom_line(data = filter(mc_gap, leaners == "Leaners as Unaffiliated",
+                          mech %in% c("Partisanship", "Mobilization")), 
+            aes(x = cycle, y = estimate)) +
+  geom_text(data = filter(gender_labels_gap, mech %in% c("Partisanship", "Mobilization")), 
+            aes(x = x, y = y, label = lab),
+            size = 3.75) +
+  NULL 
+```
+
+???
+
+Mobilization:
+
+- Republicans historically better
+- Negative Dem advantage
+- Men exert a positive effect on gender gap (in a way that is bad for Ds)
+- Women exert a negative effect on gender gap (also bad for Ds)
+
+Together:
+
+- "Negative gender gap"
+- Dems do better at mobilization over time, so the effect on the gender gap approaches zero
+- but compares to the past, this means mobilization shrinks the gender gap but is good for Dems
+
+Strike 2 for conventional wisdom
+
+
+
+
+
+
+
+---
+
+### Explaining the gap
+
+```{r gap-partials-remainig, include = TRUE, fig.height = 4, fig.width = 11}
+plot_gap +
+  geom_ribbon(data = filter(mc_gap, leaners == "Leaners as Unaffiliated"), 
+              aes(ymin = conf.low, ymax = conf.high),
+              color = NA, fill = mgray,
+              alpha = 0.3) +
+  geom_line(data = filter(gap_data_leaners),
+            aes(color = gender), show.legend = FALSE, size = 0.5) +
+  geom_point(data = filter(gap_data_leaners), 
+            aes(shape = gender, color = gender),
+             fill = "white",
+             show.legend = FALSE) +
+  geom_line(data = filter(mc_gap, leaners == "Leaners as Unaffiliated"), 
+            aes(x = cycle, y = estimate)) +
+  geom_text(data = filter(gender_labels_gap), 
+            aes(x = x, y = y, label = lab),
+            size = 3.75) +
+  NULL 
+```
+
+
+???
+
+Persuasion
+
+- When Rs are good at persuading D men, line above 0, 
+- Bad for Democrats but it does grow the gap
+- Rs persuade D women: line below zero
+- Bad for Democrats, and shrinks the gap
+- Rs were better at this for a while, not leaning heavily on men or women
+- Drops to 0
+
+Unaffiliated:
+
+- limited evidence where independent men vote temporarily vote more R than D, 
+- growing the gap but bad for Democrats
+- inconsistent
+
+Net gap: sum of everything else 
+
+- Gap is mostly partisanship, bad for Democrats
+- Mobilization gains among Ds have been good for Dems
+- negligible or slight impact on gender gap
+- Persuasion is better for Ds as well but nearly zero effect on the gap (and independents)
+
+
+
+---
+
+### Explaining the vote
+
+```{r vote-data}
+gender_labels_vote <- 
+  data_frame(x = c(1985, 1990), 
+             y = c(.18, -.06), 
+             lab = c("Women", "Men"), 
+             # leaners = "Leaners as Unaffiliated", 
+             mech = as.factor("Partisanship")) %>% 
+  mutate(mech = fct_relevel(mech, 
+                            "Partisanship", 
+                            "Mobilization", 
+                            "Persuasion", 
+                            "Unaffiliated", 
+                            "Net Democratic Vote")) %>%
+  print()
+
+
+vote_partials <- tidy_bayes %>% 
+  filter(str_detect(term, "women") | str_detect(term, "men")) %>% 
+  filter(str_detect(term, "adv_")) %>% 
+  filter(!str_detect(term, "gap_")) %>% 
+  filter(!str_detect(term, "loyal")) %>% 
+  mutate(PG = paste(party, gender),
+         mech = case_when(str_detect(term, "partisanship") ~ "Partisanship",
+                          str_detect(term, "mobilization") ~ "Mobilization",
+                          str_detect(term, "persuasion") ~ "Persuasion",
+                          str_detect(term, "unaffiliated") ~ "Unaffiliated",
+                          str_detect(term, "vote") ~ "Net Democratic Vote"),
+         mech = fct_relevel(mech, "Partisanship", "Mobilization", "Persuasion", "Unaffiliated", "Net Democratic Vote")) %>%
+  print()
+
+
+vote_data_leaners <- vote_partials %>%
+  filter(leaners == "Leaners as Partisans")
+```
+
+
+
+```{r vote-partials-blank, include = TRUE, fig.height = 4, fig.width = 11}
+plot_vote <- ggplot(vote_data_leaners, aes(x = cycle, y = estimate)) +
+    facet_grid(. ~ mech) +
+    geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+    geom_blank() +
+    geom_ribbon(aes(ymin = conf.low, ymax = conf.high,
+                    fill = gender),
+                color = NA,
+                alpha = 0,
+                show.legend = FALSE) +
+    scale_shape_manual(values = c(22, 16)) +
+    scale_linetype_manual(values = c(1, 2)) +
+    scale_color_manual(values = c(mcolor, wcolor)) +
+    scale_fill_manual(values = c(mcolor, wcolor)) +
+    scale_y_continuous(labels = scales::percent) +
+    scale_x_continuous(breaks = seq(1952, 2016, 16)) +
+    theme_mathcamp() +
+    theme(axis.text.x = element_text(angle = 90, vjust=0.75),
+          panel.grid.minor.x = element_blank()) +
+    labs(x = "Election Cycle",
+         y = "Effect of Democratic Advantage \n on Net Democratic Votes") +
+    NULL
+
+plot_vote
+```
+
+
+
+
+
+---
+
+### Explaining the vote
+
+```{r vote-partials-party, include = TRUE, fig.height = 4, fig.width = 11}
+plot_vote +
+    geom_ribbon(data = filter(vote_data_leaners, mech == "Partisanship"),
+                aes(ymin = conf.low, ymax = conf.high,
+                    fill = gender),
+                color = NA,
+                alpha = 0.5,
+                show.legend = FALSE) +
+    geom_line(data = filter(vote_data_leaners, mech == "Partisanship"),
+              aes(color = gender), show.legend = FALSE, size = 0.5) +
+    geom_point(data = filter(vote_data_leaners, mech == "Partisanship"),
+               aes(shape = gender, color = gender),
+               fill = "white",
+               show.legend = FALSE) +
+    geom_text(data = gender_labels_vote, aes(x = x, y = y, label = lab),
+              size = 3.75)
+```
+
+
+
+---
+
+### Explaining the vote
+
+```{r vote-partials-mob, include = TRUE, fig.height = 4, fig.width = 11}
+plot_vote +
+    geom_ribbon(data = filter(vote_data_leaners, 
+                              mech %in% c("Partisanship", "Mobilization")),
+                aes(ymin = conf.low, ymax = conf.high,
+                    fill = gender),
+                color = NA,
+                alpha = 0.5,
+                show.legend = FALSE) +
+    geom_line(data = filter(vote_data_leaners, 
+                            mech %in% c("Partisanship", "Mobilization")),
+              aes(color = gender), show.legend = FALSE, size = 0.5) +
+    geom_point(data = filter(vote_data_leaners, 
+                             mech %in% c("Partisanship", "Mobilization")),
+               aes(shape = gender, color = gender),
+               fill = "white",
+               show.legend = FALSE) +
+    geom_text(data = gender_labels_vote, aes(x = x, y = y, label = lab),
+              size = 3.75)
+```
+
+
+
+
+
+---
+
+### Explaining the vote
+
+```{r vote-partials-all, include = TRUE, fig.height = 4, fig.width = 11}
+plot_vote +
+    geom_ribbon(aes(ymin = conf.low, ymax = conf.high,
+                    fill = gender),
+                color = NA,
+                alpha = 0.5,
+                show.legend = FALSE) +
+    geom_line(aes(color = gender), show.legend = FALSE, size = 0.5) +
+    geom_point(aes(shape = gender, color = gender),
+               fill = "white",
+               show.legend = FALSE) +
+    geom_text(data = gender_labels_vote, aes(x = x, y = y, label = lab),
+              size = 3.75)
+```
+
+
+
+
+
+
+---
+
+class: center, middle, inverse
+
+## Takeaways
+
+
+???
+
+- What grows the gap ≠ what grows the Democratic vote (opposite?)
+- What grows the Dem vote (mob and per) doesn't affect gap as much
+
+
+Partisanship
+
+- Men more right
+- initially bad
+- recently good?
+
+Mobilization and Persuasion
+
+- Dems do better, not especially among men or women
+
+
+
+---
+
+class: title-slide, middle, center
+
+## Mobilization, Persuasion, and the Partisan Fallout of the Gender Gap in U.S. Voting
+
+### Barry Burden and Michael DeCrescenzo
+
+### December 10, 2018
+
+
+
+
+---
+
+### Categorical Outcome Model
+
+Classify every voter along gender x party x vote (exclusive/exhaustive)
+
+18 categories total, each with associated probability (in each year) $\pi$
+
+What's the probability of every category in the electorate? $y_{i} \sim \mathrm{Categorical}\left( \Pi_{t[i]} \right)$
+
+Model terms are functions of various $\pi$ elements
+
+Calculate any quantity you want using MCMC samples
+
+
