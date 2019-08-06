@@ -13,7 +13,7 @@ library("tidyverse")
 library("broom")
 library("beepr")
 library("latex2exp")
-library("extrafont")
+# library("extrafont")
 
 
 
