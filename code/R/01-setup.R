@@ -10,7 +10,6 @@
 # library("colorout")
 library("magrittr")
 library("tidyverse")
-library("ggplot2") # redundant but improves auto-complete
 library("broom")
 library("beepr")
 library("latex2exp")
