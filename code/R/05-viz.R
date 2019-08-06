@@ -4,8 +4,8 @@
 # (bayes_init <- readRDS("data/posts/samples-init.RDS"))
 # (bayes_lean <- readRDS("data/posts/samples-lean.RDS"))
 
-(tidy_init <- readRDS(here("data/posts/tidy-init.RDS")))
-(tidy_lean <- readRDS(here("data/posts/tidy-lean.RDS")))
+(tidy_init <- readRDS(here("data", "mcmc", "tidy-init.RDS")))
+(tidy_lean <- readRDS(here("data", "mcmc", "tidy-lean.RDS")))
 
 # ggs_init <- ggs(bayes_init, description = "init")
 # ggs_lean <- ggs(bayes_lean, description = "lean")

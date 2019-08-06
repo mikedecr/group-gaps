@@ -97,13 +97,12 @@ mcmc_data_lean <- anes %>%
 #   setup MCMC
 # ----------------------------------------------------
 
-
-c_mod <- stanc(file = "R/gaps.stan")
-# c_mod <- stanc(file = "R/gaps-dynamics.stan")
-# c_mod <- stanc(file = "R/ugh.stan")
-
+# here("code", "stan", "gaps-dynamics.stan") %>%
+# here("code", "stan", "ugh.stan") %>%
+  
 compiled_mod <- 
-  stanc(file = "code", "stan", "gaps.stan") %>%
+  here("code", "stan", "gaps.stan") %>%
+  stanc(file = .) %>%
   stan_model(stanc_ret = ., verbose = TRUE)
 
 beepr::beep(2)
@@ -114,12 +113,12 @@ beepr::beep(2)
 (n_iterations <- 2000)
 (warmup_length <- 1000)
 (thin_interval <- 1)
-(n_chains <- parallel::detectCores())
+(n_chains <- 4)
 
-write(scales::comma(n_iterations), here("tex/refs/mcmc-iterations.tex"))
-write(scales::comma(warmup_length), here("tex/refs/mcmc-warmup.tex"))
-write(scales::comma(thin_interval), here("tex/refs/mcmc-thin.tex"))
-write(scales::comma(n_chains), here("tex/refs/mcmc-chains.tex"))
+write(scales::comma(n_iterations), here("data", "mcmc-params", "mcmc-iterations.tex"))
+write(scales::comma(warmup_length), here("data", "mcmc-params", "mcmc-warmup.tex"))
+write(scales::comma(thin_interval), here("data", "mcmc-params", "mcmc-thin.tex"))
+write(scales::comma(n_chains), here("data", "mcmc-params", "mcmc-chains.tex"))
 
 
 
@@ -163,33 +162,13 @@ bayes_lean <-
 beepr::beep(2)
 
 
-# # linstat
-# bayes_init <- 
-#   sampling(object = compiled_mod, 
-#            data = mcmc_data_init, 
-#            iter = 500,
-#            thin = 3, 
-#            chains = parallel::detectCores())
-
-# beepr::beep(2)
-
-# bayes_lean <- 
-#   sampling(object = compiled_mod, 
-#            data = mcmc_data_lean, 
-#            iter = 500,
-#            thin = 3, 
-#            chains = parallel::detectCores())
-
-
-
-
 # --- clean and save -----------------------
 
-dir.create(here("data/posts"))
+dir.create(here("data", "mcmc"))
 
 # stan version
-saveRDS(bayes_init, here("data/posts/samples-init.RDS"))
-saveRDS(bayes_lean, here("data/posts/samples-lean.RDS"))
+saveRDS(bayes_init, here("data", "mcmc", "samples-init.RDS"))
+saveRDS(bayes_lean, here("data", "mcmc", "samples-lean.RDS"))
 
 
 # tidy version
@@ -203,13 +182,13 @@ tidy_lean <- tidy(bayes_lean, estimate.method = "median", conf.int = TRUE) %>%
   as_data_frame() %>%  
   print()
 
-saveRDS(tidy_init, here("data/posts/tidy-init.RDS"))
-saveRDS(tidy_lean, here("data/posts/tidy-lean.RDS"))
+saveRDS(tidy_init, here("data", "mcmc", "tidy-init.RDS"))
+saveRDS(tidy_lean, here("data", "mcmc", "tidy-lean.RDS"))
 
 
 # ggs version
-ggs_init <- ggs(bayes_init, description = "init")
-ggs_lean <- ggs(bayes_lean, description = "lean") 
+# ggs_init <- ggs(bayes_init, description = "init")
+# ggs_lean <- ggs(bayes_lean, description = "lean") 
 
-saveRDS(ggs_init, here("data/posts/ggs-init.RDS"))
-saveRDS(ggs_lean, here("data/posts/ggs-lean.RDS"))
+# saveRDS(ggs_init, here("data", "mcmc", "ggs-init.RDS"))
+# saveRDS(ggs_lean, here("data", "mcmc", "ggs-lean.RDS"))
