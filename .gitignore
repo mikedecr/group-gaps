@@ -75,3 +75,8 @@ data/clean
 data/rmd-rdata
 data/ANES-2016/docs/anes_timeseries_cdf_codebook_pdf
 anes_timeseries_cdf.dta
+data/mcmc
+data/mcmc-params
+writing-rmd/assets/dot-img
+writing-rmd/paper-cache
+writing-rmd/paper-figs
