@@ -17,8 +17,8 @@ output:
     keep_tex: true
     includes: 
       in_header: 
-        - assets/rmd-preamble.text
-        - assets/mgd-fonts.tex
+        - ../../writing-rmd/assets/rmd-preamble.text
+        # - ../../writing-rmd/assets/mgd-fonts.tex
     number_sections: true
     highlight: kate
     fig_caption: true
