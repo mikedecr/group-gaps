@@ -1,12 +1,22 @@
 ---
 title: |
-  Partisanship, Mobilization, and Persuasion in Group Voting: A Study of the Gender Gap^[We thank Luis Fraga, Devin Judge-Lord, Ryan Moore, Byron Shafer, Marcy Shieh, Paul Testa, and participants at the American Politics Workshop at the University of Wisconsin-Madison, the 2016 Toronto Political Behavior Workshop, and the 2017 meeting of the Midwest Political Science Association for comments on earlier drafts of this paper. Authors are listed alphabetically.]
-author:
-- Barry C. Burden^[Professor of Political Science, University of Wisconsin--Madison.]
-- Michael G. DeCrescenzo^[Ph.D. Candidate, Political Science, University of Wisconsin--Madison]
+  | Partisanship, Mobilization, and Persuasion in Group Voting: A Study of the Gender Gap\thanks{
+      We thank Luis Fraga, Devin Judge-Lord, Ryan Moore, Byron Shafer, Marcy Shieh, Paul Testa, and participants at the American Politics Workshop at the University of Wisconsin-Madison, the 2016 Toronto Political Behavior Workshop, and the 2017 meeting of the Midwest Political Science Association for comments on earlier drafts of this paper. Authors are listed alphabetically.
+    }
+author: |
+  | Barry C. Burden\thanks{
+      Professor of Political Science, University of Wisconsin--Madison.
+      \href{mailto:bcburden@wisc.edu}{\texttt{bcburden@wisc.edu}}
+    } 
+  | Michael G. DeCrescenzo\thanks{
+      Ph.D. Candidate, Political Science, University of Wisconsin--Madison.
+      \href{mailto:decrescenzo@wisc.edu}{\texttt{decrescenzo@wisc.edu}}
+    }
 date: |
-  | `r format(Sys.time(), '%B %d, %Y')` (Commit \texttt{`r stringr::str_sub(stringr::str_replace(system("git log", intern = TRUE)[1], "commit ", ""), 1L, 7L)`})
-  | Most recent public version \href{https://github.com/mikedecr/group-gaps/blob/master/writing-rmd/gender-gap-new.pdf}{here}
+  | `r format(Sys.time(), '%B %d, %Y')`\thanks{
+       Commit \texttt{`r stringr::str_sub(stringr::str_replace(system("git log", intern = TRUE)[1], "commit ", ""), 1L, 7L)`} on branch \texttt{`r stringr::str_replace(system("git status", intern = TRUE)[1], "On branch ", "")`}. 
+       View the most recent public version \href{https://github.com/mikedecr/group-gaps/blob/master/writing-rmd/gender-gap-new.pdf}{here}.
+    }
 abstract: |
   Groups in the electorate vote differently from one another. Racial minorities and young voters prefer Democratic candidates on average, while evangelicals and rural voters prefer Republican candidates. How do these group differences affect party vote shares, given that the underlying groups are differently sized? We provide a theoretical framework to understand group differences in voting and party vote by expressing each as the result of partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters. We apply this method to the gender gap in U.S. presidential voting. We find that the size of the gender gap has no necessary bearing on the partisan vote outcome. Rather, the relationship is contingent on the changing numerical impact of partisanship, partisan mobilization, and persuasion over time. Although the gender gap and the Democratic vote in presidential elections have both increased over the years, this relationship is spurious. The primary cause of the gender gap (partisan change) was actually harmful to the Democrats. Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
 compact-title: false
