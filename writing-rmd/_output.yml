@@ -3,7 +3,7 @@
 
 # the in_header variable lets you insert tex code into the tex preamble
 # This is good because the default Rmd pdf style is ugly
-bookdown::pdf_document2: 
+bookdown::pdf_document2:
   latex_engine: pdflatex
   toc: false
   keep_tex: true
@@ -11,7 +11,7 @@ bookdown::pdf_document2:
     in_header: 
       - assets/rmd-preamble.tex
       # - assets/mgd-fonts.tex
-  number_sections: false # true?
+  number_sections: false
   highlight: kate
   fig_caption: true
   citation_package: natbib

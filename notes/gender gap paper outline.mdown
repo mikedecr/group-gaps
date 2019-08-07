@@ -1,14 +1,10 @@
-
-# Gender gap plan
-
+---
+title: Paper outline
+---
 
 # Does the Gender Gap Help the Democrats?
 
-
-
 Observers of all stripes (? Journalists and pundits?)
-
-
 
 But little evidence
 
@@ -16,10 +12,7 @@ But little evidence
 - party ID: pro-Republican?
 - Turnout
 
-
-
 *Be clear that we only look at this for presidential voting*
-
 
 Introduction of the problem
 
