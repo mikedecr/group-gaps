@@ -33,6 +33,10 @@ rmarkdown::render(here::here("writing-rmd", "gender-gap-new.Rmd"))
 source(here::here("writing-rmd", "assets", "setup-Rmarkdown.R"))
 ```
 
+```{r get-descriptive-data, include = FALSE}
+load(here("data", "rmd-rdata", "03-descriptives.Rdata"))
+```
+
 <!-- control first page numbering -->
 \thispagestyle{empty}
 \newpage
@@ -58,7 +62,8 @@ We apply our method to understand the role of the gender gap in presidential ele
 
 We ask two questions about the gender gap in U.S.\ voting. First, does a larger gender gap advantage the Democratic Party? Although journalists and pundits often presume that a larger gender gap implies that Democratic candidates have earned more votes from women, we are unaware of any evidence that a larger gender gap creates a numerical advantage for either party. The gender gap, conventionally defined as the percent of women voting Democratic minus the percent of men voting Democratic, can fluctuate for several reasons. Women may vote more highly Democratic, but men may also vote more highly Republican. Moreover, these gender differences may be driven by long-term partisan change or short-term variation in voter turnout and swing voting. As a result, the effect of the gender gap on the Democratic vote is unclear without a model to describe the processes that create the gap. This is the focus of our second question. To the extent that the gender gap and the Democratic vote are linked, what balance of long and short-term mechanisms shape electoral outcomes?
 
-We apply our method to survey data from 17 presidential elections (1952--2016) to decompose the sources of the two parties' votes: how much of the vote is attributable to partisanship, mobilization, persuasion, and independents, and where do gender differences in these mechanisms emerge? Our study delivers a key insight about the relationship between the gender gap and the Democratic vote share: the forces driving over-time variation in the gender gap are not the same forces that drive over-time variation in the Democratic vote. The gender gap initially emerged from a long-term increase in Republican partisanship among men from the 1960s through the 1980s, which negatively affected the Democratic vote. 
+
+We apply our method to survey data from `r anes %$% n_distinct(cycle)` presidential elections (`r min(anes$cycle)`--`r max(anes$cycle)`) to decompose the sources of the two parties' votes: how much of the vote is attributable to partisanship, mobilization, persuasion, and independents, and where do gender differences in these mechanisms emerge? Our study delivers a key insight about the relationship between the gender gap and the Democratic vote share: the forces driving over-time variation in the gender gap are not the same forces that drive over-time variation in the Democratic vote. The gender gap initially emerged from a long-term increase in Republican partisanship among men from the 1960s through the 1980s, which negatively affected the Democratic vote. 
 <!-- % caveat about recent partisanship among women?: -->
 <!-- % In the years since the initial onset of the gender gap, fluctuation in women's partisanship has affected the gender gap in the short-term, but the impact and permanence is dwarfed by the partisan drift among men. -->
 During roughly the same time period, the Democratic Party's historical disadvantages in partisan mobilization and partisan defections narrowed, boosting the Democratic vote share but in a relatively gender-neutral way. 
@@ -271,10 +276,6 @@ First, we analyze the relationship using national data from 1952 through 2016. T
 We again compute the Democratic share of the two-party vote as the outcome of interest, this time using official state-level results. The state-level data appear in the second and third panels. The cross-sectional data tell the same story as the longitudinal analysis. There is little sign of a meaningful relationship, as evidenced by the weak and insignificant correlations and regression slopes.
 
 <!-- get topline data and plot descriptives -->
-
-```{r get-descriptive-data, include = FALSE}
-load(here("data", "rmd-rdata", "03-descriptives.Rdata"))
-```
 
 ```{r plot-toplines, include = TRUE, cache = TRUE, fig.cap = 'The Gender Gap and the Presidential Vote', fig.width = 7, fig.height = 3, fig.show = 'hide'}
 ggplot(toplines, aes(x = gender_gap, y = dem_vote_share)) +
