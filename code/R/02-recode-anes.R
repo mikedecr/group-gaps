@@ -10,19 +10,25 @@
 
 # --- ANES raw data -----------------------
 
-# if RDS file is absent, create it:
-if ("anes-cdf-2016.RDS" %in% list.files(here("data", "ANES-2016")) == FALSE) {
-  here("data", "ANES-2016", "ANES-2016/anes_timeseries_cdf.dta") %>% 
-    haven::read_dta() %>%
-    saveRDS(here("data", "ANES-2016", "anes-cdf-2016.RDS"))
+# if RDS file present, read the RDS file
+# if no RDS, read it from Box
+# (for Barry: dir contains .dta)
+
+# if RDS file is absent, read from box and pull into R:
+if ("anes-cdf-2016.RDS" %in% list.files(here("data", "ANES-2016"))) {
+  anes <- 
+    readRDS(here("data", "ANES-2016", "anes-cdf-2016.RDS")) %>%
+    print()
+  message("ANES data read locally")
 } else {
-  print("RDS file already found")
+  boxr::box_auth()
+  anes <- 
+    boxr::box_read(504157238177) %>%
+    print() %>%
+    saveRDS(here("data", "ANES-2016", "anes-cdf-2016.RDS"))
+  message("ANES data read from Box (& local copy saved)")
 }
 
-# 2016 RDS file, remove labels
-anes <- readRDS(here("data", "ANES-2016", "anes-cdf-2016.RDS")) %>%
-  mutate_all(labelled::remove_labels) %>%
-  print()
 
 
 
