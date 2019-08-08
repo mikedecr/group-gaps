@@ -80,3 +80,5 @@ data/mcmc-params
 writing-rmd/assets/dot-img
 writing-rmd/paper-cache
 writing-rmd/paper-figs
+anes-cdf-2016.RDS
+gender-gap-new.log
