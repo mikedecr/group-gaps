@@ -32,6 +32,8 @@ Argument
   - persuasion means partisan, voted, and disloyal
   - mobilized means partisan, voted, and loyal
 - (delete earlier references to *net gender gap*? Still applicable?)
+- advantage doesn't *always* imply disadvantage
+  - a cleavage may appear "disadvantageous," but that doesn't mean that *not* courting those voters makes a party better off.
 
 Gender as a case
 
