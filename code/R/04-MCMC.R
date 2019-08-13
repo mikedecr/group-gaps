@@ -49,7 +49,27 @@ anes <- anes %>%
 anes %>%
   count(outcome_code_init, gender_code, pid_init_code, vote_code) %>%
   na.omit() %>% 
-  as.data.frame()
+  print(n = nrow(.))
+
+# save crosswalk file
+crosswalk <- anes %>%
+  count(
+    outcome_code = outcome_code_lean, 
+    gender, pid = pid_lean, vote_code
+  ) %>%
+  na.omit() %>%
+  mutate(
+    vote_choice = case_when(
+      vote_code == 1 ~ "Dem",
+      vote_code == 2 ~ "Rep",
+      vote_code == 3 ~ "Other"
+    )
+  ) %>%
+  select(-vote_code, -n) %>%
+  mutate_if(is.factor, as.character) %>%
+  print(n = nrow(.)) %T>% 
+  saveRDS(here("data", "mcmc-params", "y-data.RDS"))
+
 
 
 

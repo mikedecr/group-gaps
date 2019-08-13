@@ -21,6 +21,8 @@ library("rstan")
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
 library("ggmcmc")
+library("tidybayes")
+
 # --- working directory -----------------------
 
 # set to project root
