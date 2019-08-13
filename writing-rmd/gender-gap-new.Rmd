@@ -5,6 +5,7 @@ title: |
     }
 author: |
   | Barry C. Burden\thanks{
+      Corresponding author. 
       Professor of Political Science, University of Wisconsin--Madison.
       \href{mailto:bcburden@wisc.edu}{\texttt{bcburden@wisc.edu}}
     } 
@@ -255,7 +256,7 @@ We choose this denominator because it is the only common denominator that includ
 # Does the Gender Gap Help the Democrats?
 
 
-Having established a way to understand how groups contribute to election outcomes, we now apply our framework to address important questions about the gender gap. Much research on the gender gap already examines where men and women's vote preferences come from in the first place: policy attitudes, economic circumstances, social position, partisan sorting, and other gender-specific experiences that may bear on one's personal political orientation [@box2004dynamics;@chaney1998explaining;@conover1988;@edlund2002;@gillionetal;@kaufmann1999changing;@manza1998gender]. ^[
+Having established a way to understand how groups contribute to election outcomes, we now apply our framework to address important questions about the gender gap. Much research on the gender gap already examines where men and women's vote preferences come from in the first place: policy attitudes, economic circumstances, social position, partisan sorting, and other gender-specific experiences that may bear on one's personal political orientation [@box2004dynamics;@chaney1998explaining;@conover1988;@edlund2002;@gillionetal;@kaufmann1999changing;@manza1998gender].^[
   We acknowledge that gender is in fact more complex and contested than the binary classification of "male" and "female" suggests. However, these are the terms in which the gender gap has been defined and studied. In addition, those two categories are the only valid gender codes in the ANES cumulative file.
 ]
 Our purpose is not to revisit any of these insightful explanations for why men and women are attracted to different parties. Instead, we hope to unpack an important but blurred distinction between party identification and voting behavior. 
