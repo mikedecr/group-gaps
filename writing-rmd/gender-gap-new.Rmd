@@ -126,21 +126,21 @@ In the U.S.\ two-party system, every citizen must make one of three potential ch
 Assuming that voters have some baseline affiliation for one party, the raw number of votes for a party is the sum of (1) party supporters who have been mobilized to vote and (2) supporters of the other party who have been persuaded to switch sides in the current election. We refer to the number of votes one party earns over the other as *net Democratic votes*. The flowchart below visualizes how the number of net Democratic votes in an election is the result of partisan mobilization and persuasion.
 
 ```{r dot-net-votes, include = TRUE}
-  include_graphics(here("writing-rmd", "assets", "dot-img", "net-votes.pdf"))
+  include_graphics(here("writing-rmd", "paper-figs", "dot-net-votes.pdf"))
 ```
 
 The number of net Democratic votes differs from the conventional measure of two-party vote share, but it is advantageous because its components can be rearranged in several valuable ways. One such rearrangement incorporates the notion of *net vote advantage* in mobilization and persuasion. The Democratic Party has a net advantage in mobilization if it earns a greater number of votes from loyal Democrats than the Republican Party earns from loyal Republicans. We can express the number of net Democratic votes as the sum of the Democrats' net advantages in mobilization and in persuasion. The core benefit of this approach is the ability to compare the effects of mobilization and persuasion on the same scale, which is impossible with typical measures that use different denominators. In cases where turnout and swing voting rates are similar between the parties, one party still has an advantage if it has a larger partisan base. Our approach handles these cases by accounting for the size of the partisan bases.
 
 
 ```{r dot-net-mechanisms, include = TRUE}
-  include_graphics(here("writing-rmd", "assets", "dot-img", "net-vote-mechanisms.pdf"))
+  include_graphics(here("writing-rmd", "paper-figs", "dot-net-vote-mechanisms.pdf"))
 ```
 
 Our method allows us to measure the group gap in terms of mobilization and persuasion as well. We call this new measure the *net group gap*: the number of net Democratic votes among one group minus the net Democratic votes among the other group. As with the net Democratic vote, we can decompose the net group gap into the separate mechanisms of mobilization and persuasion and measure the gap in each mechanism. This is done by calculating net Democratic advantages in mobilization and persuasion separately for the two groups. The net group gap is thus the sum of the gaps in each of these mechanisms. 
 
 <!-- Mike: this figure needs to be redone to remove references to the genders -->
 ```{r dot-net-gap, include = TRUE}
-  include_graphics(here("writing-rmd", "assets", "dot-img", "net-gap-mechanisms.pdf"))
+  include_graphics(here("writing-rmd", "paper-figs", "dot-net-gap-mechanisms.pdf"))
 ```
 
 
