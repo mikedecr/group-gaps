@@ -12,7 +12,8 @@ Groups in the electorate vote differently from one another. Racial minorities an
 
 # Repo to-do notes
 
-- [ ] Do something about raw ANES data (LFS? Download from remote if file not present?)
+- don't forget to merge feature -> dev
+- check w/ Barry dev -> master
 
 
 
