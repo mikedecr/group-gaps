@@ -53,7 +53,7 @@ tidy_bayes <- bind_rows(tidy_init, tidy_lean) %>%
                              str_extract(term, "(?<=\\[)(.*)(?=,)"),
                            TRUE ~ as.character(parse_number(term))),
          cycle = (4 * as.numeric(cycle)) + 1948) %>%  
-  as_data_frame() %>% 
+  as_tibble() %>% 
   print()
 
 
@@ -82,7 +82,7 @@ rhs <- tidy_bayes %>%
 
 ggplot(rhs, aes(x = cycle, y = estimate, color = PG)) +
   facet_grid(leaners ~ term) +
-  geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+  geom_hline(yintercept = 0, color = "gray", size = 0.25) +
   geom_line(size = 0.4, show.legend = FALSE) +
   geom_point(aes(shape = PG), fill = "white") +
   scale_y_continuous(labels = scales::percent) +
@@ -106,7 +106,7 @@ rhs %>%
   filter(leaners == "Leaners as Partisans") %>% 
   ggplot(aes(x = cycle, y = estimate, color = PG)) +
     facet_grid(. ~ term) +
-    geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+    geom_hline(yintercept = 0, color = "gray", size = 0.25) +
     geom_line(size = 0.4, show.legend = FALSE) +
     geom_point(aes(shape = PG), fill = "white") +
     scale_y_continuous(labels = scales::percent) +
@@ -131,11 +131,12 @@ ggsave(here::here("tex/graphics/mc-rhs.pdf"),
 
 
 gender_labels_gap <- 
-  data_frame(x = c(1979, 1990, 1996, 1982) ,
-             y = c(.14, -.05, -0.075, 0.075), 
-             lab = c("Women", "Men", "Women", "Men"), 
-             mech = as.factor(rep(c("Partisanship", "Mobilization"), 
-                                  each = 2))) %>% 
+  tibble(
+    x = c(1979, 1990, 1996, 1982) , 
+    y = c(.14, -.05, -0.075, 0.075), 
+    lab = c("Women", "Men", "Women", "Men"), 
+    mech = as.factor(rep(c("Partisanship", "Mobilization"), each = 2))
+  ) %>%
   mutate(mech = fct_relevel(mech, "Partisanship", "Mobilization", 
                             "Persuasion", "Unaffiliated", 
                             "Net Democratic Votes")) %>%
@@ -180,11 +181,11 @@ gap_partials <- tidy_bayes %>%
 
 ggplot(gap_partials, aes(x = cycle, y = estimate)) +
     facet_grid(leaners ~ mech) +
-    geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+    geom_hline(yintercept = 0, color = "gray", size = 0.25) +
     geom_ribbon(data = mc_gap, 
                 aes(x = cycle, y = estimate, 
                     ymin = conf.low, ymax = conf.high),
-                color = NA, fill = mgray,
+                color = NA, fill = "gray",
                 alpha = 0.5) +
     geom_line(aes(color = gender), show.legend = FALSE, size = 0.5) +
     geom_point(aes(shape = gender, color = gender),
@@ -215,10 +216,10 @@ gap_partials %>%
   filter(leaners == "Leaners as Partisans") %>% 
   ggplot(aes(x = cycle, y = estimate)) +
     facet_grid(. ~ mech) +
-    geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+    geom_hline(yintercept = 0, color = "gray", size = 0.25) +
     geom_ribbon(data = filter(mc_gap, leaners == "Leaners as Unaffiliated"), 
                 aes(ymin = conf.low, ymax = conf.high),
-                color = NA, fill = mgray,
+                color = NA, fill = "gray",
                 alpha = 0.5) +
     geom_line(aes(color = gender), show.legend = FALSE, size = 0.5) +
     geom_point(aes(shape = gender, color = gender),
@@ -252,11 +253,13 @@ ggsave(here("tex/graphics/mc-gap-partials.pdf"),
 
 
 gender_labels_vote <- 
-  data_frame(x = c(1985, 1990), 
-             y = c(.16, -.06), 
-             lab = c("Women", "Men"), 
-             # leaners = "Leaners as Unaffiliated", 
-             mech = as.factor("Partisanship")) %>% 
+  tibble(
+    x = c(1985, 1990), 
+    y = c(.16, -.06), 
+    lab = c("Women", "Men"), 
+    # leaners = "Leaners as Unaffiliated", 
+    mech = as.factor("Partisanship")
+  ) %>%
   mutate(mech = fct_relevel(mech, 
                             "Partisanship", 
                             "Mobilization", 
@@ -286,7 +289,7 @@ vote_partials <- tidy_bayes %>%
 
 ggplot(vote_partials, aes(x = cycle, y = estimate)) +
   facet_grid(leaners ~ mech) +
-  geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+  geom_hline(yintercept = 0, color = "gray", size = 0.25) +
   geom_ribbon(aes(ymin = conf.low, ymax = conf.high,
                   fill = gender),
               color = NA,
@@ -319,7 +322,7 @@ vote_partials %>%
   filter(leaners == "Leaners as Partisans") %>% 
   ggplot(aes(x = cycle, y = estimate)) +
     facet_grid(. ~ mech) +
-    geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+    geom_hline(yintercept = 0, color = "gray", size = 0.25) +
     geom_ribbon(aes(ymin = conf.low, ymax = conf.high,
                     fill = gender),
                 color = NA,
@@ -401,23 +404,23 @@ vote_partials %>%
 #   geom_ribbon(aes(ymin = lower, ymax = upper, color = NULL, ),
 #               alpha = 0.3, show.legend = FALSE) +
 #   facet_grid(. ~ trend) +
-#   geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+#   geom_hline(yintercept = 0, color = "gray", size = 0.25) +
 #   labs(y = "Percentage Vote Margin") +
 # ggplot(compare_netdem, aes(x = cycle, y = dem_vote, color = gender, fill = gender)) +
 #   geom_ribbon(aes(ymin = lower, ymax = upper, color = NULL), 
 #               alpha = 0.3, show.legend = FALSE) +
 #   facet_grid(. ~ trend) +
-#   geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+#   geom_hline(yintercept = 0, color = "gray", size = 0.25) +
 #   labs(y = "Percentage of Eligible Electorate") +
 # # gap plots 
 # ggplot(compare_gap, aes(x = cycle, y = gap)) +
 #   facet_grid(. ~ trend) +
-#   geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+#   geom_hline(yintercept = 0, color = "gray", size = 0.25) +
 #   coord_cartesian(ylim = c(-0.1, 0.15)) +
 #   labs(y = "Gender Difference in Vote Share") +
 # ggplot(compare_netgap, aes(x = cycle, y = gap)) +
 #     facet_grid(. ~ trend) +
-#     geom_hline(yintercept = 0, color = mgray, size = 0.25) +
+#     geom_hline(yintercept = 0, color = "gray", size = 0.25) +
 #   coord_cartesian(ylim = c(-0.1, 0.15)) +
 #     labs(y = "Gender Difference in Net Votes") +
 # # layout
