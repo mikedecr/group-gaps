@@ -161,7 +161,7 @@ ggsave("tex/graphics/turnout-gender-time.pdf",
 
 
 vote.label.frame <- 
-  data_frame(lab = c("Men", "Women"), 
+  tibble(lab = c("Men", "Women"), 
              cycle = c(1991, 1984), 
              dem.share = c(0.37, 0.63)) %>% 
   print()
@@ -189,7 +189,7 @@ fig_vote_gender <-
          aes(x = cycle, y = dem.share, 
              ymin = dem.share.lower, ymax = dem.share.upper, 
              color = gender, fill = gender))  +
-  geom_hline(yintercept = 0.5, color = mgray) +
+  geom_hline(yintercept = 0.5, color = "gray") +
   geom_ribbon(aes(color = NULL), 
               alpha = 0.3,
               show.legend = FALSE) +
@@ -249,7 +249,7 @@ gap_frame <- anes %>%
 
 fig_vote_diff <- 
   ggplot(gap_frame, aes(x = cycle, y = gender_gap)) + 
-    geom_hline(yintercept = 0, color = mgray) +
+    geom_hline(yintercept = 0, color = "gray") +
     geom_ribbon(aes(ymin = gap_lower, ymax = gap_upper),
                 alpha = 0.3) + 
     geom_line() +
@@ -384,7 +384,7 @@ diff_reg <- lm(diff(dem_vote_share) ~ diff(gender_gap), data = leip) %>%
 # ----------------------------------------------------
 #   cross-sectional relationships
 # ----------------------------------------------------
-states <- data_frame(state.name, state.abb) %>% 
+states <- tibble(state.name, state.abb) %>% 
   rename(state = state.name) %>% 
   print()
 
@@ -533,7 +533,7 @@ toplines <- exits %>%
 
 
 exit_stat_labels <- 
-  data_frame(panel = factor(c("ANES, 1952-2016", "State Exit Polls, 2004", "State Exit Polls, 2008")), 
+  tibble(panel = factor(c("ANES, 1952-2016", "State Exit Polls, 2004", "State Exit Polls, 2008")), 
              r = c(long_corr, exit_corr_04, exit_corr_08),
              beta = c(long_beta, exit_beta_04, exit_beta_08),
              se = c(long_se, exit_se_04, exit_se_08),
@@ -548,8 +548,8 @@ ggplot(toplines, aes(x = gender_gap, y = dem_vote_share)) +
   facet_wrap( ~ panel) +
   coord_cartesian(ylim = c(0.2, 0.95),
                   xlim = c(-.07, .18)) +
-  geom_hline(yintercept = 0.5, color = lgray) +
-  geom_vline(xintercept = 0, color = lgray) +
+  geom_hline(yintercept = 0.5, color = "gray") +
+  geom_vline(xintercept = 0, color = "gray") +
   # geom_label(data = exit_stat_labels, 
   # aes(x = 0.11, y = 0.225,
                 # label = sprintf(TeX("$\\hat{\\beta} = %s$ $(se = %s)$", output = "character"), beta, se)), 
