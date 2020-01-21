@@ -14,10 +14,9 @@ author: |
       \href{mailto:decrescenzo@wisc.edu}{\texttt{decrescenzo@wisc.edu}}
     }
 date: |
-  | `r format(Sys.time(), '%B %d, %Y')`\thanks{
-       Commit \texttt{`r stringr::str_sub(stringr::str_replace(system("git log", intern = TRUE)[1], "commit ", ""), 1L, 7L)`} on branch \texttt{`r stringr::str_replace(system("git status", intern = TRUE)[1], "On branch ", "")`}. 
-       View the most recent public version \href{https://github.com/mikedecr/group-gaps/blob/master/writing-rmd/gender-gap-new.pdf}{here}.
-    }
+  | Commit \texttt{`r system("git log --pretty=%t", intern = TRUE)[1]`} on branch \texttt{`r system("git symbolic-ref --short HEAD", intern = TRUE)`}
+  | Compiled `r format(Sys.time(), '%B %d, %Y')`
+  | Most recent public version \href{https://github.com/mikedecr/group-gaps/blob/master/writing-rmd/gender-gap-new.pdf}{here}.
 abstract: |
   Groups in the electorate vote differently from one another. Racial minorities and young voters prefer Democratic candidates on average, while evangelicals and rural voters prefer Republican candidates. How do these group differences affect party vote shares, given that the underlying groups are differently sized? We provide a theoretical framework to understand group differences in voting and party vote by expressing each as the result of partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters. We apply this method to the gender gap in U.S. presidential voting. We find that the size of the gender gap has no necessary bearing on the partisan vote outcome. Rather, the relationship is contingent on the changing numerical impact of partisanship, partisan mobilization, and persuasion over time. Although the gender gap and the Democratic vote in presidential elections have both increased over the years, this relationship is spurious. The primary cause of the gender gap (partisan change) was actually harmful to the Democrats. Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
 compact-title: false
@@ -31,7 +30,6 @@ urlcolor: violet
 bibliography: assets/bib/gender-bib.bib
 biblio-style: assets/bib/apsr2006.bst
 ---
-
 
 ```{r eval = FALSE, include = FALSE}
 # This code chunk is not evaluated while rendering or displayed.
@@ -94,6 +92,7 @@ This is the focus of our second question. To the extent that the gender gap and 
 
 Our approach synthesizes classic findings from the academic literature with new insights about the relationship between the gender gap and election outcomes. With survey data from `r anes %$% n_distinct(cycle)` presidential elections (`r min(anes$cycle)`--`r max(anes$cycle)`), we show that the forces driving over-time variation in the gender gap are not the same forces that drive over-time variation in the Democratic vote. Our method recovers the finding from the gender and voting literature that the gender gap initially emerged from a long-term increase in Republican partisanship among men from the 1960s through the 1980s, which negatively affected the Democratic vote. During roughly the same time period, the Democratic Party's historical disadvantages in partisan mobilization and partisan defections narrowed, boosting the Democratic vote share but in a relatively gender-neutral way. Our method shows that short-term fluctuations in these mechanisms largely cancel each other out in the aggregate, which explains why the relationship between the gender gap and election outcomes has been difficult to characterize.
   \todo{dynamics?} 
+
 <!-- Variance decomposition of the year-over-year change? -->
 
 <!-- % caveat about recent partisanship among women?: -->
@@ -104,15 +103,65 @@ Our approach synthesizes classic findings from the academic literature with new 
 
 
 
+
 # A Theory of Group Voting Gaps
 
+\todo{rework}
+
+<!-- 
+
+- We begin by showing, with actual examples, two things
+  - an advantage within one group of is only an "absolute advantage" if the group advantage is not offset elsewhere
+  - for a given size of the gender gap, there are a number of vote outcomes that can be rationalized
+- The standard measurement approaches for these concepts do not help us out
+
+Into should be reworked to get more motivation maybe?
+
+- What's wrong w/
+  - current standard measures?
+  - election outcomes are sums of things, but we are interested in the components of the sums
+  - Petrocik: "realignment" is social group coalitions. Coalitions change even if one party stays dominant
+  - Axelrod (Zingher) for "contributions" of groups, but the contribution of a group 
+
+
+ -->
 
 The study of social groups in voting coalitions is as old as the study of democracy itself. Our theory thus relies on well-established ideas about how parties assemble coalitions by starting with a base of supporters who can be mobilized, attracting supporters from the opposing party, and gaining the support of unaffiliated voters. Party ID is a relatively stable and slow-moving attitude, whereas vote choice is a discrete action that also reflects short-term electoral context and campaign-specific dynamics. This insight is the basis of the Michigan school's classification of presidential elections as "maintaining,", "deviating," or "realigning" [@campbell1966classification] and the development of the concept of the "normal vote" based on party ID [@converse1966normalvote;@levendusky2008measuring].
 Indeed, two major reasons why election results do not perfectly reflect the distribution of party identification in the electorate are that rates of turnout vary between the parties and because partisans engage in swing voting at different rates.
 
-This framework is reminiscent of Axelrod's -@axelrod1972votes analysis of coalition composition [see also @stanley1986partisanship], but goes further in important ways. Whereas Axelrod defines the groups within a party's coalition *a priori* and examines the parties one a time, we examine group dynamics in both parties simultaneously and explicitly distinguish between votes from party supporters as well as party non-supporters. We believe that this framework resembles how campaign strategists actually think about building winning coalitions by turning out supporters who have long-term attachments to the party ("getting out the vote" or GOTV), persuading supporters of the opposing party to cross over, and attracting independent voters.^[
+This framework is reminiscent of Axelrod's -@axelrod1972votes analysis of coalition composition [see also @stanley1986partisanship], but goes further in important ways. Whereas Axelrod defines the groups within a party's coalition *a priori* and examines the parties one a time, we examine group dynamics in both parties simultaneously and explicitly distinguish between votes from party supporters as well as party non-supporters. 
+<!-- this is a problem because the contribution dynamics are actually not clear...as WD increases, it isn't clear that WD decreases -->
+We believe that this framework resembles how campaign strategists actually think about building winning coalitions by turning out supporters who have long-term attachments to the party ("getting out the vote" or GOTV), persuading supporters of the opposing party to cross over, and attracting independent voters.^[
   We acknowledge that in both real campaigns and political analysis it can be challenging and perhaps even artificial to separate partisanship, mobilization, and persuasion, although authors have tried [@huber2007identifying]. The mechanisms are likely to be related, as when a campaign seeks to strengthen the partisans bonds of its supporters as a means to mobilize them and prevent defection to their opponents. But lines need to be drawn somewhere, and we believe that the explicit model we outline is transparent, defensible, and flexible enough to permit refinements along these lines in future studies.
 ]
+
+\begin{comment}
+
+  \todo[inline]{MOVE!}
+
+  Consider an electorate with two parties, $A$ and $B$, who compete for the support of voters who belong to social group $G$ and voters who are not members of $G$ (indicated by $\neg G$). Let $p$ be the vote share for party $A$ among social group $G$. In a scenario where $G$ is a key voting bloc for party $A$, $A$ will win a majority of voters from $G$ ($p > .5$). The question party $A$ faces going into an is, given that they can expect $p$ of the vote from $G$, how many more votes do they need to win a majority over party $B$?
+
+```{r demo}
+fake <- 
+  tibble(G = c(.1, .3, .5)) %>%
+  crossing(P = seq(0.5, 1, .01)) %>%
+  mutate(
+    min_q = 
+      ( (-2 * G * P) + (2 * G) - 1) / 
+      ( 2 * (G - 1) )
+  ) %>%
+  print()
+
+ggplot(data = fake) +
+  aes(x = P,  y = min_q) +
+  geom_line(aes(color = as.factor(G))) +
+  ylim(c(0, 1)) +
+  xlim(c(0, 1))
+  ```
+
+  \todo[inline]{MOVE!}
+
+\end{comment}
 
 We now present a series of stylized illustrations to outline our approach, building upward from microfoundations to aggregate results. We formalize these illustrations into equations in the following section. To present the logic in a clear fashion, we temporarily ignore voters who are unaffiliated with either party; they will be incorporated in the empirical analysis. These illustrations should make clear that our methodological approach relies on simple math such as addition and percentages rather than regression modeling.
 
