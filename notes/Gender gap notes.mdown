@@ -3,7 +3,13 @@ title: Gender gap notes
 ---
 
 
+
+
 # Revisions
+
+Mike code things:
+
+- renv?
 
 apw
 
@@ -84,6 +90,7 @@ Aesthetics:
 
 Recommendations for future analysis:
 
+- comparison to group contributions (Axelrod)?
 - polytomous groups
 - dynamic parameters for over-time smoothing
 - differencing over time
