@@ -1,13 +1,13 @@
 format:
   pdf:
-    toc: true
+    toc: false
     number-sections: true
     colorlinks: true
     include-in-header: 
+      - preamble/text-style.tex # strictly req'd, for dbl spacing?
+      - preamble/cmds.tex       # req'd for now (\Notes)
       - preamble/fonts.tex
       - preamble/floats.tex
-      - preamble/cmds.tex
       - preamble/bib.tex
-      - preamble/text-style.tex
         # - assets/comments.tex
 

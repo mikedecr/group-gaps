@@ -28,7 +28,7 @@ abstract: |
 # The primary cause of the gender gap (partisan change) was actually harmful to the Democrats.
 # Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
 
-fontsize: 12pt
+fontsize: 11pt
 geometry: margin = 1in
 indent: yes
 subparagraph: yes
