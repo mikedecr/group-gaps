@@ -2,6 +2,15 @@
 title: Gender gap notes
 ---
 
+# 2023/04/12 plan for refactoring:
+
+Do this little by little:
+
+- renv w/ Rmarkdown
+- qmd w/ no code changes
+- refactor the code
+- redo some match + writing (ambiguous)
+
 
 # Revisions
 
