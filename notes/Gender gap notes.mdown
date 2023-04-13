@@ -13,12 +13,15 @@ Do this little by little:
 
 deps:
 
+- quarto
+- tinytex?
 - xquartz (mac) for Cairo img (remove?)
 - graphviz / dot (remove?)
 
 # Agenda
 
-- [ ] dot compilation: shell, do its own mkdir, part of some "build" routine?
+- [ ] dot compilation: shell, do its own `mkdir`, part of some "build" routine?
+- [ ] cleanup tex preamble still
 
 
 # Revisions
