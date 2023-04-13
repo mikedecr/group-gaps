@@ -15,3 +15,8 @@ bookdown::pdf_document2:
   highlight: kate
   fig_caption: true
   citation_package: natbib
+redoc::redoc:
+  line_numbers: true
+  keep_md: true
+  diagnostics: true
+
