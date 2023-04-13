@@ -1,5 +1,6 @@
 format:
   pdf:
+    pdf-engine: pdflatex
     toc: false
     number-sections: true
     colorlinks: true
