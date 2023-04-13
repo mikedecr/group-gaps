@@ -14,11 +14,20 @@ author: |
       \href{mailto:decrescenzo@wisc.edu}{\texttt{decrescenzo@wisc.edu}}
     }
 date: |
+  | This version: `r format(Sys.time(), '%B %d, %Y')`
   | Commit \texttt{`r system("git log --pretty=%t", intern = TRUE)[1]`} on branch \texttt{`r system("git symbolic-ref --short HEAD", intern = TRUE)`}
-  | Compiled `r format(Sys.time(), '%B %d, %Y')`
   | Most recent public version \href{https://github.com/mikedecr/group-gaps/blob/master/writing-rmd/gender-gap-new.pdf}{here}.
 abstract: |
-  Groups in the electorate vote differently from one another. Racial minorities and young voters prefer Democratic candidates on average, while evangelicals and rural voters prefer Republican candidates. How do these group differences affect party vote shares, given that the underlying groups are differently sized? We provide a theoretical framework to understand group differences in voting and party vote by expressing each as the result of partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters. We apply this method to the gender gap in U.S. presidential voting. We find that the size of the gender gap has no necessary bearing on the partisan vote outcome. Rather, the relationship is contingent on the changing numerical impact of partisanship, partisan mobilization, and persuasion over time. Although the gender gap and the Democratic vote in presidential elections have both increased over the years, this relationship is spurious. The primary cause of the gender gap (partisan change) was actually harmful to the Democrats. Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
+  Groups in the electorate vote differently from one another. 
+  Racial minorities and young voters prefer Democratic candidates on average, while evangelicals and rural voters prefer Republican candidates. 
+  Pundits and researchers often interpret election outcomes in light of these group differences in voting, but many analyses base their conclusions on the behavior of voters only. 
+  Conditioning all analysis on voters who turn out will neglect important factors such as group size and group turnout rates.
+  We present a theoretical framework to understand group differences in voting by expressing party vote shares as the result of partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters.
+  We apply this method to the gender gap in U.S. presidential voting.
+  Many analysts imply that a larger gender gap favors Democratic candidates, but we show that the size of the gender gap has no necessary bearing on the partisan vote outcome.
+  Both the gender gap and the Democratic vote in presidential elections have both increased in the past several decades, but this relationship is spurious.
+  Our method clarifies how the primary cause of the gender gap (partisan change) was actually harmful to the Democrats.
+  Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were only minor influences on the gender gap.
 compact-title: false
 fontsize: 12pt
 geometry: margin = 1in
