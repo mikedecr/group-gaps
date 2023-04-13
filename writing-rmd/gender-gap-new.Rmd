@@ -1,9 +1,13 @@
 ---
 title: |
-  Partisanship, Mobilization, and Persuasion in Group Voting: A Study of the Gender Gap^[We thank Luis Fraga, Devin Judge-Lord, Ryan Moore, Byron Shafer, Marcy Shieh, Paul Testa, and participants at the American Politics Workshop at the University of Wisconsin-Madison, the 2016 Toronto Political Behavior Workshop, and the 2017 meeting of the Midwest Political Science Association for comments on earlier drafts of this paper. Authors are listed alphabetically.]
+  Partisanship, Mobilization, and Persuasion in Group Voting: A Study of the Gender Gap
+# ^[We thank Luis Fraga, Devin Judge-Lord, Ryan Moore, Byron Shafer, Marcy Shieh, Paul Testa, and participants at the American Politics Workshop at the University of Wisconsin-Madison, the 2016 Toronto Political Behavior Workshop, and the 2017 meeting of the Midwest Political Science Association for comments on earlier drafts of this paper. Authors are listed alphabetically.]
 author:
-- Barry C. Burden^[Professor of Political Science, University of Wisconsin--Madison.]
-- Michael G. DeCrescenzo^[Ph.D. Candidate, Political Science, University of Wisconsin--Madison]
+    - Barry C. Burden
+    - Michael G. DeCrescenzo
+institute:
+- Professor of Political Science, University of Wisconsin--Madison.
+- Quantitative Researcher, DRW Holdings, Chicago IL
 date: |
   | This version: `r format(Sys.time(), '%B %d, %Y')` (Commit \texttt{`r stringr::str_sub(stringr::str_replace(system("git log", intern = TRUE)[1], "commit ", ""), 1L, 7L)`})
   | Most recent public version \href{https://github.com/mikedecr/group-gaps/blob/master/writing-rmd/gender-gap-new.pdf}{here}
@@ -274,6 +278,11 @@ We again compute the Democratic share of the two-party vote as the outcome of in
 
 ```{r get-descriptive-data, include = FALSE}
 load(here("data", "rmd-rdata", "03-descriptives.Rdata"))
+```
+
+```{r define-colors, include = FALSE}
+lgray <- "gray50"
+mgray <- "gray80"
 ```
 
 ```{r plot-toplines, include = TRUE, cache = TRUE, fig.cap = 'The Gender Gap and the Presidential Vote', fig.width = 7, fig.height = 3, fig.show = 'hide'}

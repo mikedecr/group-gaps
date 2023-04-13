@@ -11,6 +11,15 @@ Do this little by little:
 - refactor the code
 - redo some match + writing (ambiguous)
 
+deps:
+
+- xquartz (mac) for Cairo img (remove?)
+- graphviz / dot (remove?)
+
+# Agenda
+
+- [ ] dot compilation: shell, do its own mkdir, part of some "build" routine?
+
 
 # Revisions
 
