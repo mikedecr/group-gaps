@@ -1,0 +1,13 @@
+format:
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+    include-in-header: 
+      - preamble/fonts.tex
+      - preamble/floats.tex
+      - preamble/cmds.tex
+      - preamble/bib.tex
+      - preamble/text-style.tex
+        # - assets/comments.tex
+

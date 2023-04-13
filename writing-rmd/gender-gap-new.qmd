@@ -1,18 +1,33 @@
 ---
 title: |
-  Partisanship, Mobilization, and Persuasion in Group Voting: A Study of the Gender Gap
-# ^[We thank Luis Fraga, Devin Judge-Lord, Ryan Moore, Byron Shafer, Marcy Shieh, Paul Testa, and participants at the American Politics Workshop at the University of Wisconsin-Madison, the 2016 Toronto Political Behavior Workshop, and the 2017 meeting of the Midwest Political Science Association for comments on earlier drafts of this paper. Authors are listed alphabetically.]
+  Partisanship, Mobilization, and Persuasion in Group Voting: A Study of the Gender Gap^[We thank Luis Fraga, Devin Judge-Lord, Ryan Moore, Byron Shafer, Marcy Shieh, Paul Testa, and participants at the American Politics Workshop at the University of Wisconsin-Madison, the 2016 Toronto Political Behavior Workshop, and the 2017 meeting of the Midwest Political Science Association for comments on earlier drafts of this paper. Authors are listed alphabetically.]
 author:
-    - Barry C. Burden
-    - Michael G. DeCrescenzo
-institute:
-- Professor of Political Science, University of Wisconsin--Madison.
-- Quantitative Researcher, DRW Holdings, Chicago IL
-date: |
-  | This version: `r format(Sys.time(), '%B %d, %Y')` (Commit \texttt{`r stringr::str_sub(stringr::str_replace(system("git log", intern = TRUE)[1], "commit ", ""), 1L, 7L)`})
-  | Most recent public version \href{https://github.com/mikedecr/group-gaps/blob/master/writing-rmd/gender-gap-new.pdf}{here}
+  - name: Barry C. Burden^[Professor of Political Science, University of Wisconsin--Madison]
+  - name: Michael G. DeCrescenzo^[Quantitative Researcher, DRW Holdings, Chicago IL]
+date: last-modified
+date-format: medium
+# date: |
+#   | This version: `r format(Sys.time(), '%B %d, %Y')` (Commit \texttt{`r stringr::str_sub(stringr::str_replace(system("git log", intern = TRUE)[1], "commit ", ""), 1L, 7L)`})
+#   | Most recent public version \href{https://github.com/mikedecr/group-gaps/blob/master/writing-rmd/gender-gap-new.pdf}{here}
 abstract: |
-  Groups in the electorate vote differently from one another. Racial minorities and young voters prefer Democratic candidates on average, while evangelicals and rural voters prefer Republican candidates. How do these group differences affect party vote shares, given that the underlying groups are differently sized? We provide a theoretical framework to understand group differences in voting and party vote by expressing each as the result of partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters. We apply this method to the gender gap in U.S. presidential voting. We find that the size of the gender gap has no necessary bearing on the partisan vote outcome. Rather, the relationship is contingent on the changing numerical impact of partisanship, partisan mobilization, and persuasion over time. Although the gender gap and the Democratic vote in presidential elections have both increased over the years, this relationship is spurious. The primary cause of the gender gap (partisan change) was actually harmful to the Democrats. Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
+  Groups in the electorate vote differently from one another.
+  Racial minorities and young voters prefer Democratic candidates on average, while evangelicals and rural voters prefer Republican candidates.
+  How do these group differences affect party vote shares, given that the underlying groups are differently sized? We provide a theoretical framework to understand group differences in voting and party vote by expressing each as the result of partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters.
+  We apply this method to the gender gap in U.S. presidential voting.
+  We find that the size of the gender gap has no necessary bearing on the partisan vote outcome.
+  Rather, the relationship is contingent on the changing numerical impact of partisanship, partisan mobilization, and persuasion over time.
+  Although the gender gap and the Democratic vote in presidential elections have both increased over the years, this relationship is spurious.
+  The primary cause of the gender gap (partisan change) was actually harmful to the Democrats.
+  Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
+# We provide a theoretical framework to understand how group differences in voting affect party vote shares.
+# We apply this method to the gender gap in U.S. voting.
+# Our approach views both the voting gaps between groups and the election outcome as reflecting underlying partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters.
+# In light of this framework, we argue that the size of the gender gap has no necessary bearing on the partisan vote outcome.
+# Rather, the relationship is contingent on the changing numerical impact of partisanship, partisan mobilization, and persuasion over time.
+# Although the gender gap and the Democratic vote in presidential elections have both increased over the years, this relationship is spurious.
+# The primary cause of the gender gap (partisan change) was actually harmful to the Democrats.
+# Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
+
 fontsize: 12pt
 geometry: margin = 1in
 indent: yes
@@ -22,7 +37,7 @@ citecolor: black
 urlcolor: cyan
 bibliography: assets/bib/gender-bib.bib
 biblio-style: assets/bib/apsr2006.bst
-# We provide a theoretical framework to understand how group differences in voting affect party vote shares. We apply this method to the gender gap in U.S. voting. Our approach views both the voting gaps between groups and the election outcome as reflecting underlying partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters. In light of this framework, we argue that the size of the gender gap has no necessary bearing on the partisan vote outcome. Rather, the relationship is contingent on the changing numerical impact of partisanship, partisan mobilization, and persuasion over time. Although the gender gap and the Democratic vote in presidential elections have both increased over the years, this relationship is spurious. The primary cause of the gender gap (partisan change) was actually harmful to the Democrats. Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
+
 ---
 
 
