@@ -29,7 +29,7 @@ abstract: |
 # Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
 
 fontsize: 11pt
-geometry: margin = 1in
+geometry: margin = 1.25in
 indent: yes
 subparagraph: yes
 linkcolor: violet
@@ -61,7 +61,7 @@ source(here::here("writing-rmd", "assets", "setup-Rmarkdown.R"))
 \pagenumbering{arabic}
 
 <!-- body spacing -->
-\doublespacing
+\onehalfspacing
 <!-- \setlength{\abovedisplayskip}{-15pt}
 \setlength{\belowdisplayskip}{0pt}
 \setlength{\abovedisplayshortskip}{0pt}
