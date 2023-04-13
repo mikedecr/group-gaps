@@ -7,6 +7,11 @@
 (tidy_init <- readRDS(here("data", "mcmc", "tidy-init.RDS")))
 (tidy_lean <- readRDS(here("data", "mcmc", "tidy-lean.RDS")))
 
+# with the priors
+# contains alpha, sigma, pi terms in addition to GQs
+# (tidy_init <- readRDS(here("data", "mcmc", "tidy-init-priors.RDS")))
+# (tidy_lean <- readRDS(here("data", "mcmc", "tidy-lean-priors.RDS")))
+
 # ggs_init <- ggs(bayes_init, description = "init")
 # ggs_lean <- ggs(bayes_lean, description = "lean")
 
@@ -56,9 +61,9 @@ tidy_bayes <- bind_rows(tidy_init, tidy_lean) %>%
   as_tibble() %>% 
   print()
 
-
-
-
+tidy_bayes %>%
+  filter(cycle == 2012) %>%
+  count(leaners, party, gender)
 
 
 
@@ -358,6 +363,110 @@ vote_partials %>%
   filter(gender == "Women") %>%
   filter(mech == "Unaffiliated") %>% 
   filter(estimate == max(estimate))
+
+
+
+
+break()
+
+# ----------------------------------------------------
+#   Comparison to group contributions
+# ----------------------------------------------------
+
+bayes_lean <- readRDS(here("data", "mcmc", "samples-lean.RDS"))
+crosswalk <- readRDS(here("data", "mcmc-params", "y-data.RDS"))
+
+lean_samples <- bayes_lean %>%
+  spread_draws(theta[cycle, outcome_code]) %>%
+  left_join(crosswalk) %>%
+  ungroup() %>%
+  print()
+
+lean_samples %>%
+  group_by(.draw, cycle) %>%
+  summarize(total = sum(theta))
+
+contribs <- lean_samples %>%
+  unite(col = outcome, gender, pid, vote_choice) %>%
+  select(-outcome_code) %>%
+  spread(key = outcome, value = theta) %>%
+  transmute(
+    Dem_votes = 
+      M_Dem_Dem + M_Rep_Dem + M_Ind_Dem +
+      W_Dem_Dem + W_Rep_Dem + W_Ind_Dem,
+    Rep_votes = 
+      M_Dem_Rep + M_Rep_Rep + M_Ind_Rep +
+      W_Dem_Rep + W_Rep_Rep + W_Ind_Rep,
+    MD_contrib = (M_Dem_Dem + M_Rep_Dem + M_Ind_Dem) / Dem_votes,
+    WD_contrib = (W_Dem_Dem + W_Rep_Dem + W_Ind_Dem) / Dem_votes,
+    MR_contrib = (M_Dem_Rep + M_Rep_Rep+ M_Ind_Rep) / Rep_votes,
+    WR_contrib = (W_Dem_Rep + W_Rep_Rep + W_Ind_Rep) / Rep_votes,
+    .chain, .iteration, .draw, cycle
+  ) %>%
+  group_by(cycle) %>%
+  summarize_at(
+    .vars = vars(ends_with("contrib")),
+    .funs = list(
+      mean = mean,
+      lower = ~ quantile(., .05),
+      upper = ~ quantile(., .95)
+    )
+  ) %>%
+  gather(key = var, value = value, contains("contrib")) %>%
+  transmute(
+    cycle = 1948 + (cycle * 4), 
+    value,
+    group = str_split(var, pattern = "_", simplify = TRUE)[,1],
+    concept = case_when(
+      str_detect(var, "_mean") ~ "mean",
+      str_detect(var, "_lower") ~ "lower",
+      str_detect(var, "_upper") ~ "upper"
+    )
+  ) %>%
+  spread(key = concept, value = value) %>% 
+  print()
+
+
+# Is there something we can do with contributions to show 
+#   how Axelrod is insufficient?
+# Pt: The Axelrod approach is only "partially identified?"
+#   because we can increase women's contribs to D
+#   without really decreasing their contribs to R
+contribs %>%
+  filter(group %in% c("WD", "WR")) %>%
+  select(-upper, -lower) %>%
+  spread(key = group, value = mean) %>%
+  ggplot(aes(x = WD, y = WR)) +
+    geom_smooth(method = "lm") +
+    geom_path(
+      arrow = arrow(angle = 15, type = "closed"),
+      linetype = "dotted"
+    ) +
+    geom_label(aes(label = cycle)) +
+    NULL
+
+
+# Is it even the case that women's contributions are related?
+# What would this show us anyway...?
+contribs %>%
+  filter(group %in% c("WD", "WR")) %>%
+  ggplot(aes(x = cycle, y = mean)) +
+    geom_line(aes(color = group)) +
+    facet_wrap(~ str_detect(group, "M"))
+
+
+# is bigger WD contrib related to greater democratic vote?
+# this isn't a tight relationship, which means there's trade-offs
+contribs %>%
+  filter(group == "WD") %>%
+  left_join(toplines %>% filter(panel == "ANES, 1952-2016")) %>%
+  ggplot(aes(mean, dem_vote_share)) +
+    geom_point()
+
+
+gap_partials %>% count(mech)
+vote_partials %>% count(mech)
+
 
 
 

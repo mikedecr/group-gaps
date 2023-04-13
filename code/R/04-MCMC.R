@@ -125,6 +125,7 @@ compiled_mod <-
   stanc(file = .) %>%
   stan_model(stanc_ret = ., verbose = TRUE)
 
+
 beepr::beep(2)
 
 
@@ -159,25 +160,32 @@ write(scales::comma(n_chains), here("data", "mcmc-params", "mcmc-chains.tex"))
 
 # --- run -----------------------
 
+seednum <- 999
+set.seed(seednum)
 
-set.seed(999)
 bayes_init <- 
-  sampling(object = compiled_mod, 
-           data = mcmc_data_init, 
-           iter = n_iterations,
-           warmup = warmup_length, 
-           thin = thin_interval, 
-           chains = n_chains)
-
+  sampling(
+    object = compiled_mod, 
+    data = mcmc_data_init, 
+    iter = n_iterations, 
+    warmup = warmup_length, 
+    thin = thin_interval, 
+    chains = n_chains,
+    seed = seednum
+  )
 
 
 bayes_lean <- 
-  sampling(object = compiled_mod, 
-           data = mcmc_data_lean, 
-           iter = n_iterations,
-           warmup = warmup_length, 
-           thin = thin_interval, 
-           chains = n_chains)
+  sampling(
+    object = compiled_mod, 
+    data = mcmc_data_lean, 
+    iter = n_iterations, 
+    warmup = warmup_length, 
+    thin = thin_interval, 
+    chains = n_chains,
+    seed = seednum
+  )
+
 
 beepr::beep(2)
 
@@ -205,10 +213,68 @@ tidy_lean <- tidy(bayes_lean, estimate.method = "median", conf.int = TRUE) %>%
 saveRDS(tidy_init, here("data", "mcmc", "tidy-init.RDS"))
 saveRDS(tidy_lean, here("data", "mcmc", "tidy-lean.RDS"))
 
-
 # ggs version
 # ggs_init <- ggs(bayes_init, description = "init")
 # ggs_lean <- ggs(bayes_lean, description = "lean") 
 
 # saveRDS(ggs_init, here("data", "mcmc", "ggs-init.RDS"))
 # saveRDS(ggs_lean, here("data", "mcmc", "ggs-lean.RDS"))
+
+
+stop("stop before informed dynamic model")
+
+# ----------------------------------------------------
+#   Doing it with random walk priors on a link scale
+# ----------------------------------------------------
+
+# compile the model
+compiled_mod_priors <- 
+  here("code", "stan", "gaps-priors.stan") %>%
+  stanc(file = .) %>%
+  stan_model(stanc_ret = ., verbose = TRUE)
+
+# estimate init and lean
+bayes_init_priors <- 
+  sampling(
+    object = compiled_mod_priors, 
+    data = mcmc_data_init, 
+    iter = n_iterations, 
+    warmup = warmup_length, 
+    thin = thin_interval, 
+    chains = n_chains,
+    seed = seednum
+  )
+
+bayes_lean_priors <- 
+  sampling(
+    object = compiled_mod_priors, 
+    data = mcmc_data_lean, 
+    iter = n_iterations, 
+    warmup = warmup_length, 
+    thin = thin_interval, 
+    chains = n_chains,
+    seed = seednum
+  )
+
+
+# save stanfit
+saveRDS(bayes_init_priors, here("data", "mcmc", "samples-init-priors.RDS"))
+saveRDS(bayes_lean_priors, here("data", "mcmc", "samples-lean-priors.RDS"))
+
+
+# save tidy
+tidy_init_priors <- 
+  tidy(bayes_init_priors, estimate.method = "median", conf.int = TRUE) %>%
+  mutate(leaners = "Leaners as Unaffiliated") %>%
+  as_data_frame() %>%
+  print()
+
+tidy_lean_priors <- 
+  tidy(bayes_lean_priors, estimate.method = "median", conf.int = TRUE) %>%
+  mutate(leaners = "Leaners as Partisans") %>%
+  as_data_frame() %>%  
+  print()
+
+
+saveRDS(tidy_init_priors, here("data", "mcmc", "tidy-init-priors.RDS"))
+saveRDS(tidy_lean_priors, here("data", "mcmc", "tidy-lean-priors.RDS"))
