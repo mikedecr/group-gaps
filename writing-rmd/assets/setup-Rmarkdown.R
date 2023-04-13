@@ -15,7 +15,7 @@ library("latex2exp")
 # - hide code and messages
 # - cache everything
 knitr::opts_chunk$set(
-  eval = TRUE, echo = FALSE, include = FALSE, 
+  eval = TRUE, echo = FALSE, include = FALSE,
   warning = FALSE, message = FALSE,
   cache = TRUE, collapse = TRUE,
   fig.path = here("writing-rmd", "paper-figs/"),
@@ -27,9 +27,9 @@ knitr::opts_chunk$set(
 # graphics theme
 update_geom_defaults("text", list(family = "Fira Sans"))
 theme_set(
-  ggthemes::theme_base(base_family = "Fira Sans", base_size = 14) + 
-  theme(plot.background = element_blank(), 
-        axis.ticks = element_line(lineend = "square"), 
+  ggthemes::theme_base(base_family = "Fira Sans", base_size = 14) +
+  theme(plot.background = element_blank(),
+        axis.ticks = element_line(lineend = "square"),
         axis.ticks.length = unit(0.25, "lines"))
 )
 
