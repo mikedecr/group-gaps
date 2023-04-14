@@ -781,7 +781,7 @@ We hope that future research will draw on the methods proposed here to gain furt
 Having built a foundation for this kind of analysis, future research may proceed in several interesting directions.
 An immediate extension of our analysis would decompose men and women rather than treating them as cohesive voting blocs.
 Dividing each gender by race, marital status, or age could illuminate how these subgroups have uniquely contributed to the gender gap and election outcomes.
-Because the data analysis covers six decades of elections, it would also be possible to examine debates over how much partisan realignment in the South affected the gender gap in voting (\citealt{kaufmann2006ps,norrander1999evolution,ondercin2018}).
+Because the data analysis covers six decades of elections, it would also be possible to examine debates over how much partisan realignment in the South affected the gender gap in voting [@kaufmann2006ps; @norrander1999evolution; @ondercin2018].
 Moving outside the application to gender, researchers are also able to analyze entirely different groups in the electorate.
 In light of the 2016 presidential election, researchers could focus on key groups such as urban and rural voters that unlike men and women are of vastly different sizes.
 We believe the gender application is important because the two groups are equally matched, but the utility of our approach could be more apparent when focused on groups of much different sizes.
