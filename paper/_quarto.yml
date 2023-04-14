@@ -2,6 +2,7 @@ format:
   pdf:
     pdf-engine: pdflatex
     toc: false
+    keep-tex: true
     number-sections: true
     colorlinks: true
     include-in-header: 
