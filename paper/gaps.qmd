@@ -6,9 +6,9 @@ author:
   - name: Michael G. DeCrescenzo^[Quantitative Researcher, DRW Holdings, Chicago IL]
 date: last-modified
 date-format: medium
-# date: |
+# date: |writing-rm
 #   | This version: `r format(Sys.time(), '%B %d, %Y')` (Commit \texttt{`r stringr::str_sub(stringr::str_replace(system("git log", intern = TRUE)[1], "commit ", ""), 1L, 7L)`})
-#   | Most recent public version \href{https://github.com/mikedecr/group-gaps/blob/master/writing-rmd/gender-gap-new.pdf}{here}
+#   | Most recent public version \href{https://github.com/mikedecr/group-gaps/blob/master/paper/gender-gap-new.pdf}{here}
 abstract: |
   Groups in the electorate vote differently from one another.
   Racial minorities and young voters prefer Democratic candidates on average, while evangelicals and rural voters prefer Republican candidates.
@@ -40,16 +40,15 @@ biblio-style: assets/bib/apsr2006.bst
 
 ---
 
-
 ```{r eval = FALSE, include = FALSE}
 # This code chunk is not evaluated while rendering or displayed.
 # It only exists to make it easy to render the doc in an R session
 #   (which makes R objects available in interactive session)
-rmarkdown::render(here::here("writing-rmd", "gender-gap-new.Rmd"))
+rmarkdown::render(here::here("paper", "gender-gap-new.Rmd"))
 ```
 
 ```{r setup-rmd, include = FALSE, cache = FALSE}
-source(here::here("writing-rmd", "assets", "setup-Rmarkdown.R"))
+source(here::here("paper", "assets", "setup-Rmarkdown.R"))
 ```
 
 <!-- control first page numbering -->
@@ -110,21 +109,21 @@ In the U.S.\ two-party system, every citizen must make one of three potential ch
 Assuming that voters have some baseline affiliation for one party, the raw number of votes for a party is the sum of (1) party supporters who have been mobilized to vote and (2) supporters of the other party who have been persuaded to switch sides in the current election. We refer to the number of votes one party earns over the other as *net Democratic votes*. The flowchart below visualizes how the number of net Democratic votes in an election is the result of partisan mobilization and persuasion.
 
 ```{r dot-net-votes, include = TRUE}
-  include_graphics(here("writing-rmd", "assets", "dot-img", "net-votes.pdf"))
+  include_graphics(here("paper", "assets", "dot-img", "net-votes.pdf"))
 ```
 
 The number of net Democratic votes differs from the conventional measure of two-party vote share, but it is advantageous because its components can be rearranged in several valuable ways. One such rearrangement incorporates the notion of *net vote advantage* in mobilization and persuasion. The Democratic Party has a net advantage in mobilization if it earns a greater number of votes from loyal Democrats than the Republican Party earns from loyal Republicans. We can express the number of net Democratic votes as the sum of the Democrats' net advantages in mobilization and in persuasion. The core benefit of this approach is the ability to compare the effects of mobilization and persuasion on the same scale, which is impossible with typical measures that use different denominators. In cases where turnout and swing voting rates are similar between the parties, one party still has an advantage if it has a larger partisan base. Our approach handles these cases by accounting for the size of the partisan bases.
 
 
 ```{r dot-net-mechanisms, include = TRUE}
-  include_graphics(here("writing-rmd", "assets", "dot-img", "net-vote-mechanisms.pdf"))
+  include_graphics(here("paper", "assets", "dot-img", "net-vote-mechanisms.pdf"))
 ```
 
 Our method allows us to measure the group gap in terms of mobilization and persuasion as well. We call this new measure the *net group gap*: the number of net Democratic votes among one group minus the net Democratic votes among the other group. As with the net Democratic vote, we can decompose the net group gap into the separate mechanisms of mobilization and persuasion and measure the gap in each mechanism. This is done by calculating net Democratic advantages in mobilization and persuasion separately for the two groups. The net group gap is thus the sum of the gaps in each of these mechanisms. 
 
 <!-- Mike: this figure needs to be redone to remove references to the genders -->
 ```{r dot-net-gap, include = TRUE}
-  include_graphics(here("writing-rmd", "assets", "dot-img", "net-gap-mechanisms.pdf"))
+  include_graphics(here("paper", "assets", "dot-img", "net-gap-mechanisms.pdf"))
 ```
 
 
@@ -330,7 +329,7 @@ ggplot(toplines, aes(x = gender_gap, y = dem_vote_share)) +
 \begin{figure}[hbt]
   \centering
   \caption{The Gender Gap and the Presidential Vote}
-  \includegraphics[width = \textwidth]{paper-figs/plot-toplines-1.pdf}
+  \includegraphics[width = \textwidth]{figs/plot-toplines-1.pdf}
   \label{fig:toplines}
   \notes{Plots contain correlation coefficients (labeled ``r''), regression coefficients (``b''), coefficient standard errors (``se''), and $p$-values (``p''). Exit poll data were obtained from CNN and include Washington D.C.\ as a state. Election results from U.S.\ Election Atlas.}
 \end{figure}
@@ -379,7 +378,7 @@ Applying our framework to the ANES data, we are now prepared to describe how the
 \begin{figure}[hbt]
   \centering
   \caption{Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012}
-  \includegraphics[width=\textwidth]{paper-figs/plot-rhs-1.pdf}
+  \includegraphics[width=\textwidth]{figs/plot-rhs-1.pdf}
   \label{fig:plot-rhs-1}
   \notes{For presentational purposes, Column 2 displays the share of mobilized voters instead of the $\mathit{Mobilization}_{pgt}$ term from the model equation. The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans. Leaning independents are coded as partisans.}
 \end{figure}
@@ -440,7 +439,7 @@ The gender gap in each mechanism is positive if the Democratic advantage among w
   \centering
   \caption{How Each Mechanism Affects the Gender Gap}
   \label{fig:partials-on-gap}
-  \includegraphics[width = \textwidth]{paper-figs/plot-gap-partials-1.pdf}
+  \includegraphics[width = \textwidth]{figs/plot-gap-partials-1.pdf}
   \notes{Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect. Women are shown with solid points, men with hollow points. The thick line indicates the gender gap in each mechanism. The right-most panel is the sum of the net gender gap across all mechanisms.}
 \end{sidewaysfigure}
 
@@ -505,7 +504,7 @@ Figure&nbsp;\ref{fig:partials-on-vote} shows how the Democratic advantage in eac
   \centering
   \caption{Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes}
   \label{fig:partials-on-vote}
-  \includegraphics[width=\textwidth]{paper-figs/plot-vote-partials-1.pdf}
+  \includegraphics[width=\textwidth]{figs/plot-vote-partials-1.pdf}
   \notes{Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms.}
 \end{sidewaysfigure}
 
