@@ -18,15 +18,6 @@ abstract: |
   The primary cause of the gender gap (partisan change) was actually harmful to the Democrats.
   Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
 
-# We provide a theoretical framework to understand how group differences in voting affect party vote shares.
-# We apply this method to the gender gap in U.S. voting.
-# Our approach views both the voting gaps between groups and the election outcome as reflecting underlying partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters.
-# In light of this framework, we argue that the size of the gender gap has no necessary bearing on the partisan vote outcome.
-# Rather, the relationship is contingent on the changing numerical impact of partisanship, partisan mobilization, and persuasion over time.
-# Although the gender gap and the Democratic vote in presidential elections have both increased over the years, this relationship is spurious.
-# The primary cause of the gender gap (partisan change) was actually harmful to the Democrats.
-# Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
-
 # are these pandoc options? are they unnecessary?
 fontsize: 11pt
 geometry: margin = 1.25in
