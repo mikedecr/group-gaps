@@ -27,7 +27,38 @@ linkcolor: violet
 citecolor: black
 urlcolor: cyan
 bibliography: assets/bib/gender-bib.bib
+# csl: ...
 # biblio-style: assets/bib/apsr2006.bst
+
+format:
+  pdf:
+    pdf-engine: pdflatex
+    toc: false
+    keep-tex: true
+    number-sections: true
+    colorlinks: true
+    cite-method: biblatex
+    include-in-header: 
+      - preamble/text-style.tex # strictly req'd, for dbl spacing?
+      - preamble/cmds.tex       # req'd for now (\Notes)
+      - preamble/fonts.tex
+      - preamble/floats.tex
+      - preamble/bib.tex
+        # - assets/comments.tex
+
+execute:
+    eval: true
+    echo: false
+    output: false
+    warning: false
+    error: true
+    cache: true
+    freeze: auto
+    fig-align: center
+
+knitr:
+    opts_chunk:
+        dev: cairo_pdf
 ---
 
 ```{r}
@@ -49,13 +80,6 @@ library("latex2exp")
 #| cache: false
 #| include: false
 source(here::here("R", "_graphics_theme.R"))
-```
-
-
-```{r setup-rmd}
-#| cache: false
-#| include: false
-source(here::here("paper", "assets", "setup-Rmarkdown.R"))
 ```
 
 
@@ -133,7 +157,7 @@ To present the logic in a clear fashion, we temporarily ignore voters who are un
 These illustrations should make clear that our methodological approach relies on simple math such as addition and percentages rather than regression modeling.
 
 <!-- This script compiles the diagrams (written in .dot) -->
-```{r compile-dots, cache = TRUE}
+```{r compile-dots}
 source(here("code", "dot", "compile-dots.R"))
 ```
 
@@ -144,8 +168,9 @@ Assuming that voters have some baseline affiliation for one party, the raw numbe
 We refer to the number of votes one party earns over the other as *net Democratic votes*.
 The flowchart below visualizes how the number of net Democratic votes in an election is the result of partisan mobilization and persuasion.
 
-```{r dot-net-votes, include = TRUE}
-  include_graphics(here("paper", "assets", "dot-img", "net-votes.pdf"))
+```{r dot-net-votes}
+#| output: true
+include_graphics(here("paper", "assets", "dot-img", "net-votes.pdf"))
 ```
 
 The number of net Democratic votes differs from the conventional measure of two-party vote share, but it is advantageous because its components can be rearranged in several valuable ways.
@@ -157,8 +182,9 @@ In cases where turnout and swing voting rates are similar between the parties, o
 Our approach handles these cases by accounting for the size of the partisan bases.
 
 
-```{r dot-net-mechanisms, include = TRUE}
-  include_graphics(here("paper", "assets", "dot-img", "net-vote-mechanisms.pdf"))
+```{r dot-net-mechanisms}
+#| output: true
+include_graphics(here("paper", "assets", "dot-img", "net-vote-mechanisms.pdf"))
 ```
 
 Our method allows us to measure the group gap in terms of mobilization and persuasion as well.
@@ -168,8 +194,9 @@ This is done by calculating net Democratic advantages in mobilization and persua
 The net group gap is thus the sum of the gaps in each of these mechanisms. 
 
 <!-- Mike: this figure needs to be redone to remove references to the genders -->
-```{r dot-net-gap, include = TRUE}
-  include_graphics(here("paper", "assets", "dot-img", "net-gap-mechanisms.pdf"))
+```{r dot-net-gap}
+#| output: true
+include_graphics(here("paper", "assets", "dot-img", "net-gap-mechanisms.pdf"))
 ```
 
 
@@ -428,11 +455,11 @@ There is little sign of a meaningful relationship, as evidenced by the weak and 
 
 <!-- get topline data and plot descriptives -->
 
-```{r get-descriptive-data, include = FALSE}
+```{r get-descriptive-data}
 load(here("data", "rmd-rdata", "03-descriptives.Rdata"))
 ```
 
-```{r define-colors, include = FALSE}
+```{r define-colors}
 lgray <- "gray50"
 mgray <- "gray80"
 ```
@@ -467,7 +494,7 @@ ggplot(toplines, aes(x = gender_gap, y = dem_vote_share)) +
 \begin{figure}[hbt]
   \centering
   \caption{The Gender Gap and the Presidential Vote}
-  \includegraphics[width = \textwidth]{chunk-figs/plot-toplines-1.pdf}
+  \includegraphics[width = \textwidth]{gaps_files/figure-pdf/plot-toplines-1.pdf}
   \label{fig:toplines}
   \notes{Plots contain correlation coefficients (labeled ``r''), regression coefficients (``b''), coefficient standard errors (``se''), and $p$-values (``p''). Exit poll data were obtained from CNN and include Washington D.C.\ as a state. Election results from U.S.\ Election Atlas.}
 \end{figure}
@@ -525,7 +552,7 @@ As noted above, we present results where leaners are coded as partisans voters, 
 \begin{figure}[hbt]
   \centering
   \caption{Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012}
-  \includegraphics[width=\textwidth]{chunk-figs/plot-rhs-1.pdf}
+  \includegraphics[width=\textwidth]{gaps_files/figure-pdf/plot-rhs-1.pdf}
   \label{fig:plot-rhs-1}
   \notes{For presentational purposes, Column 2 displays the share of mobilized voters instead of the $\mathit{Mobilization}_{pgt}$ term from the model equation.
   The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans.
@@ -613,7 +640,7 @@ We again point out that all of the values in this figure are simply differences 
   \centering
   \caption{How Each Mechanism Affects the Gender Gap}
   \label{fig:partials-on-gap}
-  \includegraphics[width = \textwidth]{chunk-figs/plot-gap-partials-1.pdf}
+  \includegraphics[width = \textwidth]{gaps_files/figure-pdf/plot-gap-partials-1.pdf}
   \notes{Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect.
   Women are shown with solid points, men with hollow points.
   The thick line indicates the gender gap in each mechanism.
@@ -714,7 +741,7 @@ All values reflect normalization and are expressed as a percentage of the eligib
   \centering
   \caption{Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes}
   \label{fig:partials-on-vote}
-  \includegraphics[width=\textwidth]{chunk-figs/plot-vote-partials-1.pdf}
+  \includegraphics[width=\textwidth]{gaps_files/figure-pdf/plot-vote-partials-1.pdf}
   \notes{Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms.}
 \end{sidewaysfigure}
 
