@@ -11,13 +11,3 @@ knitr::opts_chunk$set(
   # fig.retina = 2, dpi = 100,
   dev = "cairo_pdf", fig.align = "center"
 )
-
-# graphics theme
-update_geom_defaults("text", list(family = "Fira Sans"))
-theme_set(
-  ggthemes::theme_base(base_family = "Fira Sans", base_size = 14) +
-  theme(plot.background = element_blank(),
-        axis.ticks = element_line(lineend = "square"),
-        axis.ticks.length = unit(0.25, "lines"))
-)
-

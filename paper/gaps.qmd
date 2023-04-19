@@ -53,7 +53,17 @@ library("broom")
 library("latex2exp")
 ```
 
-```{r setup-rmd, include = FALSE, cache = FALSE}
+
+```{r}
+#| cache: false
+#| include: false
+source(here::here("R", "_graphics_theme.R"))
+```
+
+
+```{r setup-rmd}
+#| cache: false
+#| include: false
 source(here::here("paper", "assets", "setup-Rmarkdown.R"))
 ```
 
