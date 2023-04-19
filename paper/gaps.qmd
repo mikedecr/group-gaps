@@ -478,7 +478,7 @@ ggplot(toplines, aes(x = gender_gap, y = dem_vote_share)) +
 \begin{figure}[hbt]
   \centering
   \caption{The Gender Gap and the Presidential Vote}
-  \includegraphics[width = \textwidth]{figs/plot-toplines-1.pdf}
+  \includegraphics[width = \textwidth]{chunk-figs/plot-toplines-1.pdf}
   \label{fig:toplines}
   \notes{Plots contain correlation coefficients (labeled ``r''), regression coefficients (``b''), coefficient standard errors (``se''), and $p$-values (``p''). Exit poll data were obtained from CNN and include Washington D.C.\ as a state. Election results from U.S.\ Election Atlas.}
 \end{figure}
@@ -536,7 +536,7 @@ As noted above, we present results where leaners are coded as partisans voters, 
 \begin{figure}[hbt]
   \centering
   \caption{Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012}
-  \includegraphics[width=\textwidth]{figs/plot-rhs-1.pdf}
+  \includegraphics[width=\textwidth]{chunk-figs/plot-rhs-1.pdf}
   \label{fig:plot-rhs-1}
   \notes{For presentational purposes, Column 2 displays the share of mobilized voters instead of the $\mathit{Mobilization}_{pgt}$ term from the model equation.
   The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans.
@@ -624,7 +624,7 @@ We again point out that all of the values in this figure are simply differences 
   \centering
   \caption{How Each Mechanism Affects the Gender Gap}
   \label{fig:partials-on-gap}
-  \includegraphics[width = \textwidth]{figs/plot-gap-partials-1.pdf}
+  \includegraphics[width = \textwidth]{chunk-figs/plot-gap-partials-1.pdf}
   \notes{Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect.
   Women are shown with solid points, men with hollow points.
   The thick line indicates the gender gap in each mechanism.
@@ -725,7 +725,7 @@ All values reflect normalization and are expressed as a percentage of the eligib
   \centering
   \caption{Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes}
   \label{fig:partials-on-vote}
-  \includegraphics[width=\textwidth]{figs/plot-vote-partials-1.pdf}
+  \includegraphics[width=\textwidth]{chunk-figs/plot-vote-partials-1.pdf}
   \notes{Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms.}
 \end{sidewaysfigure}
 
