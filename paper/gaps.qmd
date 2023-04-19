@@ -36,8 +36,7 @@ linkcolor: violet
 citecolor: black
 urlcolor: cyan
 bibliography: assets/bib/gender-bib.bib
-biblio-style: assets/bib/apsr2006.bst
-
+# biblio-style: assets/bib/apsr2006.bst
 ---
 
 ```{r eval = FALSE, include = FALSE}
