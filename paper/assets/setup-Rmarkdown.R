@@ -1,15 +1,3 @@
-# packages
-library("knitr")
-library("here")
-library("magrittr")
-library("tidyverse")
-library("ggplot2")
-library("scales")
-library("labelled")
-library("broom")
-library("latex2exp")
-
-
 # Knitr chunks:
 # - eval but don't show
 # - hide code and messages

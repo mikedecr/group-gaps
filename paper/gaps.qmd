@@ -39,11 +39,18 @@ bibliography: assets/bib/gender-bib.bib
 # biblio-style: assets/bib/apsr2006.bst
 ---
 
-```{r eval = FALSE, include = FALSE}
-# This code chunk is not evaluated while rendering or displayed.
-# It only exists to make it easy to render the doc in an R session
-#   (which makes R objects available in interactive session)
-rmarkdown::render(here::here("paper", "gender-gap-new.Rmd"))
+```{r}
+#| include: false
+#| cache: false
+library("knitr")
+library("here")
+library("magrittr")
+library("tidyverse")
+library("ggplot2")
+library("scales")
+library("labelled")
+library("broom")
+library("latex2exp")
 ```
 
 ```{r setup-rmd, include = FALSE, cache = FALSE}
