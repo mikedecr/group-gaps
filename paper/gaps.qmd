@@ -67,20 +67,18 @@ source(here::here("R", "_graphics_theme.R"))
 source(here::here("paper", "assets", "setup-Rmarkdown.R"))
 ```
 
-<!-- control first page numbering -->
+
+```{=latex}
+%% clear 1st pg number + reset on next pg
 \thispagestyle{empty}
 \newpage
-
-<!-- reset page numbering -->
 \hypersetup{pageanchor = true}
 \pagenumbering{arabic}
 
-<!-- body spacing -->
-\onehalfspacing
-<!-- \setlength{\abovedisplayskip}{-15pt}
-\setlength{\belowdisplayskip}{0pt}
-\setlength{\abovedisplayshortskip}{0pt}
-\setlength{\belowdisplayshortskip}{0pt} -->
+%% body spacing
+\doublespacing
+```
+
 
 In an electoral democracy such as the United States, parties and candidates win control of government by assembling coalitions of social groups to form a majority of those voting.
 Looking back on particular election outcomes, it is common to hear casual observations that the result was due to such things as "strong backing from the Hispanic community" or "lower-than-expected turnout among rural voters."
