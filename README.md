@@ -12,7 +12,26 @@ Groups in the electorate vote differently from one another. Racial minorities an
 
 # Repo to-do notes
 
-- [ ] Do something about raw ANES data (LFS? Download from remote if file not present?)
+- [ ] normalization
+    - [ ] exits
+    - [ ] ANES
+- [ ] Cursory analysis
+    - [ ] ANES
+    - [ ] exits
+- [ ] Model
+    - [ ] `.stan`
+    - [ ] library of supporting fns?
+    - [ ] data prep and implementation 
+    - [ ] post-estimation: stats
+    - [ ] post-estimation: figs
+- [ ] flowcharts
+    - [ ] are we keeping .dot?
+    - [ ] how to integrate stylistically / parameterize?
+- [ ] data needs
+    - [ ] ANES 2020 cumulative
+- Admin
+    - [ ] data storage solution
+        - [ ] Do something about raw ANES data (LFS? Download from remote if file not present?)
 
 
 
