@@ -72,7 +72,7 @@ prop_ci <- function(successes, n, level=0.05) {
   q1 <- 1 - p1
 
   # compute standard error
-  SE <- sqrt((p1*q1)/n)
+  SE <- sqrt((p1 * q1) / n)
 
   # find upper and lower bound
   lower <- p1 - qnorm(1-(level/2))*SE
