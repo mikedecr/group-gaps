@@ -2,6 +2,10 @@
 *.DS_Store
 *.Rapp.history
 
+# ignore stan binaries but track source
+stan/*
+!stan/*.stan
+
 # got lost in a git shuffle =[
 forum/
 ignored
