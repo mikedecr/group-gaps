@@ -1,7 +1,3 @@
-// check reordering of categories
-// check bounds for simplex
-// add flat prior!
-
 data {
 
   // bounds
@@ -10,17 +6,17 @@ data {
   int<lower = 1> J;            // number of outcome categories
 
   // unit-level data
-  int<lower = 1, upper = J> y[N]    // outcome code
-  real<lower = 0> wt[N]             // wt on each observation
-  int<lower = 1, upper = T> t[N]    // cycle[i] (cycle code)
+  array[N] int<lower = 1, upper = J> y;    // outcome code
+  array[N] real<lower = 0> wt;             // wt on each observation
+  array[N] int<lower = 1, upper = T> t;    // cycle[i] (cycle code)
 
   // priors
-  vector[J] alpha;  // flat dirichlet parameter
-                    // technically this could be J x T?
+  vector[J] alpha;  // prior concentration
+                    // this could be J x T
 }
 
 parameters {
-  simplex[J] theta[T];  // theta contains T many simplexes,
+  array[T] simplex[J] theta;  // theta contains T many simplexes,
                         // each with J elements
 }
 
@@ -31,7 +27,7 @@ model {
     target += wt[i] * categorical_lpmf(y[i] | theta[t[i]]);
   }
 
-  // priors are independent per year
+  // draw unique theta per time period
   for(cycle in 1:T) {
     theta[cycle] ~ dirichlet(alpha);
   }
