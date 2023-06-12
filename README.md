@@ -12,6 +12,18 @@ Groups in the electorate vote differently from one another. Racial minorities an
 
 # Repo to-do notes
 
+Immediate:
+
+- fix DK/R responses to vote choice
+- re-check stats after fixing vote choice
+- abstract away two-group example?
+- create a multi-group example
+    - age?
+    - white non-college
+    - maybe check the grimmer paper
+- abstract the multi-group problem
+    - if everything is comparison to a "random" null then that encapsulates the binary group?
+
 - [ ] normalization
     - [ ] exits
     - [ ] ANES
