@@ -1,3 +1,9 @@
+# --------------------------------------------------
+#  shape data for model
+#  fit model
+#  save estimates
+# --------------------------------------------------
+
 library("here")
 library("dplyr")
 library("tidyr")
@@ -5,8 +11,16 @@ library("ggplot2")
 library("forcats")
 library("purrr")
 library("stringr")
+
+# TODO: this doesn't support rscript?
+# might need to do other module tagging/naming/fn exporting
 box::use(tb = tidybayes)
 box::use(stan = cmdstanr)
+box::use(pfx = ./R/lib/prefix)
+
+# --------------------------------------------------
+#  IO
+# --------------------------------------------------
 
 "
 This is actually pretty straightforward.
@@ -21,17 +35,40 @@ anes <- here("data", "clean", "cleaned-anes-cdf.RDS") |>
     print()
 
 
+# --------------------------------------------------
+#  outcome code
+# --------------------------------------------------
+
 # redo this more programmatically.
 # vote in party in group
 # every term is a factor
 # the eventual code is given by a formula
-count(anes, vote_choice)
+count(anes, cycle, vote_choice, wt = wt) |>
+    pivot_wider(names_from = "vote_choice", values_from = "n")
 
-factor(anes$vote_choice, levels = c("Dem Cand", "Rep Cand", "Other Cand")) |>
-    (function(x) table(x, as.numeric(x)))()
+# desire: x -> list(f(x), g(x), ...)
 
+# this evaluates, but we could create a fn
+split_apply = function(x, fns) {
+    lapply(fns, function(f) f(x))
+}
 
+mapify = function(f) {
+    function(x) lapply(x, f)
+}
 
+# lift = function(f) {
+#     function(...) {
+#         args = list(...)
+#         do.call(f, args)
+#     }
+# }
+
+anes$vote_choice |>
+    factor(levels = c("Dem Cand", "Rep Cand", "Other Cand")) |>
+    (\(x) table(x, as.numeric(x)))()
+
+# TODO:
 # should handle voted == 1 but vote_choice == ? during anes normalization
 anes <- anes |>
     mutate(
@@ -40,176 +77,204 @@ anes <- anes |>
         f_pid_lean = as_factor(pid_lean),
         f_vote = as_factor(vote_choice),
         f_cycle = as_factor(cycle),
-        f_outcome = fct_cross(f_gender, f_pid_lean, f_vote)
+        f_outcome_init = fct_cross(f_gender, f_pid_init, f_vote, sep = ":"),
+        f_outcome_lean = fct_cross(f_gender, f_pid_lean, f_vote, sep = ":")
     )
 
-
-
-item = `[[`
-index = function(x, ...) x[...]
-
-# undo fct_cross...
-# fct_factorize = function(f, split=":", ...) {
-# }
-
-crosswalk_outcome_init = anes |>
-    count(f_outcome, num_outcome = as.numeric(f_outcome)) |>
+# TODO: this should be somewhere else
+# totally modular to the model per se...
+crosswalk_outcome_init <- anes |>
+    count(f_outcome_init, num_outcome = as.numeric(f_outcome_init)) |>
     select(-n) |>
     group_by_all() |>
     mutate(
-        split = map(f_outcome, str_split, ":", simplify = TRUE)
+        splits = map(f_outcome_init, str_split, ":", simplify = TRUE),
+        gender = map_chr(splits, pfx$index, 1),
+        party = map_chr(splits, pfx$index, 2),
+        vote = map_chr(splits, pfx$index, 3),
     ) |>
-    mutate(
-        gender = map_chr(split, index, 1),
-        party = map_chr(split, index, 2),
-        vote = map_chr(split, index, 3),
-    ) |>
-    select(-split) |>
+    ungroup() |>
+    select(-splits) |>
     print()
 
-
-
-
-anes <- anes |>
-  mutate(vote_code = case_when(vote_choice == "Dem Cand" ~ 1,
-                               vote_choice == "Rep Cand" ~ 2,
-                               vote_choice == "Other Cand" ~ 3,
-                               voted == 0 ~ 3),
-         pid_init_code = case_when(pid_init == "Dem" ~ 1,
-                                   pid_init == "Rep" ~ 2,
-                                   pid_init == "Ind" ~ 3),
-         pid_lean_code = case_when(pid_lean == "Dem" ~ 1,
-                                   pid_lean == "Rep" ~ 2,
-                                   pid_lean == "Ind" ~ 3),
-         gender_code = case_when(gender == "M" ~ 1,
-                                 gender == "W" ~ 2),
-         offset_pid_init = case_when(pid_init_code == 1 ~ 0, 
-                                     pid_init_code == 2 ~ 3, 
-                                     pid_init_code == 3 ~ 6),
-         offset_pid_lean = case_when(pid_lean_code == 1 ~ 0, 
-                                     pid_lean_code == 2 ~ 3, 
-                                     pid_lean_code == 3 ~ 6),
-         offset_gender = case_when(gender_code == 1 ~ 0,
-                                   gender_code == 2 ~ 9),
-         outcome_code_init = vote_code + offset_pid_init + offset_gender,
-         outcome_code_lean = vote_code + offset_pid_lean + offset_gender,
-         cycle_code = 1 + ((cycle - 1952) / 4)) |>
-  print()
-
-anes |>
-    count(outcome_code_init, gender_code, pid_init_code, vote_code) |>
-    (\(x) print(x, n = nrow(x)))()
-
+readr::write_rds(anes, here("data", "clean", "anes_mcmc_codes.RDS"))
 
 # --------------------------------------------------
 #  setup MCMC data
 # --------------------------------------------------
 
+# function: cycle, party, group, outcome
+# must be factor or numeric
+# it's YOUR job to ensure the data have the appropriate levels
 
-mcmc_data_init <- anes |>
-    select(f_outcome, f_cycle, wt) |>
-    na.omit() |>
-    group_by(f_cycle) |>
-    mutate(nt = sum(wt)) |>
-    (function(d) {
-         with(d, list(
-              N = nrow(d),
-              T = max(as.numeric(f_cycle)),
-              J = max(as.numeric(f_outcome)),
-              y = f_outcome,
-              wt = wt,
-              t = f_cycle,
-              alpha = rep(1, max(as.numeric(f_outcome)))
-         ))
-     }
-    )()
+# we have parallel paths depending on party ID coding
+# this function is a bit bespoke but takes a tuple
+meets_array_assumptions <- function(x) {
+    # type assertion
+    good_type <- inherits(x, "numeric") || inherits(x, "factor")
+    stopifnot(good_type)
+    # no missing data
+    nna <- sum(is.na(x))
+    stopifnot(nna == 0)
+}
 
-Map(head, mcmc_data_init)
-
-
-agg_wide = anes |>
-    select(f_outcome, f_cycle, wt) |>
-    na.omit() |>
-    group_by(f_cycle, f_outcome) |>
-    summarize(wt = sum(wt), .groups = "drop") |>
-    pivot_wider(names_from = f_cycle, values_from = wt) |>
-    mutate(
-        across(-f_outcome, replace_na, 0)
-    ) |>
-    print()
-
-wt_matrix = agg_wide |>
-    select(-f_outcome) |>
-    as.matrix() |>
-    t()
-
-mcmc_data_grp = list(
-    T = nrow(wt_matrix),
-    J = ncol(wt_matrix),
-    W = wt_matrix,
-    alpha = rep(1, ncol(wt_matrix))
-)
-
-samples_grp = model_grp$sample(mcmc_data_grp, parallel_chains = 4)
-
-sumd = tb$gather_draws(samples_grp, theta[cycle, outcome]) |>
-    group_by(cycle, outcome) |>
-    summarize(estimate = mean(.value), .groups = "drop")
+model_data <- function(group, time, weight) {
+    for (x in c(group, time, weight)) {
+        meets_array_assumptions(x)
+    }
+    n_grps <- length(levels(group))
+    list(
+        N = length(group),
+        y = group,
+        J = n_grps,
+        t = time,
+        T = length(levels(time)),
+        wt = weight,
+        alpha = rep(1, n_grps)
+    )
+}
 
 
-ggplot(sumd) +
-    aes(x = cycle, y= estimate) +
-    facet_wrap(~ outcome) +
-    geom_line()
+anes_init <- anes |>
+    select(f_outcome_init, f_cycle, wt) |>
+    na.omit()
+anes_lean <- anes |>
+    select(f_outcome_lean, f_cycle, wt) |>
+    na.omit()
+
+mcmc_data_init <- with(anes_init, model_data(f_outcome_init, f_cycle, wt))
+mcmc_data_lean <- with(anes_lean, model_data(f_outcome_lean, f_cycle, wt))
+
+lapply(mcmc_data_init, head)
+lapply(mcmc_data_init, tail)
+lengths(mcmc_data_init)
+
+lapply(mcmc_data_lean, head)
+lapply(mcmc_data_lean, tail)
+lengths(mcmc_data_lean)
 
 # --------------------------------------------------
-#  stan model
+#  estimate model
 # --------------------------------------------------
 
-model = cmdstanr::cmdstan_model(here("stan", "gaps_slim.stan"))
-model_grp = cmdstanr::cmdstan_model(here("stan", "gaps_agg.stan"))
-model_fold = cmdstanr::cmdstan_model(here("stan", "gaps_fold.stan"))
+model_group <- cmdstanr::cmdstan_model(here("stan", "gaps_group.stan"))
 
-mcmc_init = model$sample(data = mcmc_data_init, parallel_chains = 4, refresh = 10)
+mcmc_init <- model_group$sample(data = mcmc_data_init,
+                               parallel_chains = 4,
+                               refresh = 10)
+mcmc_lean <- model_group$sample(data = mcmc_data_lean,
+                               parallel_chains = 4,
+                               refresh = 10)
 
-mcmc_fold = model_fold$sample(data = mcmc_data_init, parallel_chains = 4, refresh = 10)
+# need to save like this bc some metadata reasons
+mcmc_init$save_object(here("data", "mcmc", "group", "init.RDS"))
+mcmc_lean$save_object(here("data", "mcmc", "group", "lean.RDS"))
+
+model_long <- cmdstanr::cmdstan_model(here("stan", "gaps_slim.stan"))
+mcmc_long_init <- model_long$sample(data = mcmc_data_init,
+                                    parallel_chains = 4,
+                                    refresh = 10)
+mcmc_long_init$save_object(here("data", "mcmc", "long", "init.RDS"))
+
+# --------------------------------------------------
+#  post-process estimates
+# --------------------------------------------------
+
+stop("End of file, delete or relocate everything below me.")
+
+if (FALSE) {
+
+# use the factor levels to unmake the codes into names?
+
+    captured_gather = function(d) {
+        gather_draws(d, theta[t, y])
+    }
+
+    mem_gather = memoize(captured_gather)
+
+    mem_gather(mcmc_init)
+
+    mem_gather2 = memoize(gather_draws)
+
+    long_init = mem_gather(mcmc_init) |>
+        mutate(t = as.factor(t), y = as.factor(y)) |>
+        left_join(anes_init, by = c('t' = 'f_cycle', 'y' = 'f_outcome_init')) |>
+        mutate(y = as.numeric(y)) |>
+        left_join(crosswalk_outcome_init, by = c("y" = "num_outcome"))
+
+# NOTE: this takes a while
+# ggplot(long_init) +
+#     aes(x = .value, y = t, fill = party) +
+#     facet_wrap(~ f_outcome) +
+#     ggridges::geom_density_ridges(stat = "binline", bins = 100)
+
+    long_init |>
+        group_by(party, t, gender) |>
+        mutate(partisanship = mean(.value), .groups = "drop") |>
+        select(t, partisanship, gender, party) |>
+        distinct() |>
+        filter(party != "Ind") %>%
+        ggplot() +
+        aes(x = as.numeric(t), y = partisanship, color = party, shape = gender) +
+        geom_point() +
+        geom_line()
+
+    mem_tidy_draws = memoize(tidy_draws)
+
+    tidy_draws = memoize(tidy_draws)
+
+    tidy_draws(mcmc_init)
+
+    gather_draws(mcmc_init, theta[t, y])
+
+    mem_tidy_draws(mcmc_lean)
+
+
+    memo_mean = memoise::memoise(mean)
+
+    memo_mean(mtcars |> pull(mpg))
+
+    mcmc_samples = mcmc_init
+
+    gather_draws = tidybayes::gather_draws
+    gather_draws(mcmc_init, theta[t, y])
+
+    memoize(gather_draws, omit_args = ...)(mcmc_init, theta[t, y])
+
+    gather_draws(mcmc_init, `theta_.*`, regex = TRUE)
+
+    library("tidybayes")
+    library("memoise")
+
+
+    dplyr::filter(anes, cycle == 2012)
+    mem_filter = memoize(dplyr::filter)
+    mem_filter(anes, cycle == 2012)
 
 
 
-tidybayes::gather_draws(mcmc_init, theta[t, y]) |>
-    group_by(t, y) |>
-    summarize(estimate = sum(.value)) %>%
-    ggplot() +
-    aes(x = t, y = estimate) +
-    facet_wrap(~ y) +
-    geom_line()
+# works fine
+    gather_draws(mcmc_samples, theta[t, y])
+
+    mem_gather_draws <- memoise(gather_draws)
+    mem_gather_draws(mcmc_init, theta[t, y])
+# Error in FUN(X[[i]], ...) : object 'theta' not found
 
 
-long_init = tidybayes::gather_draws(mcmc_init, theta[num_cycle, num_outcome]) |>
-    group_by(num_cycle, num_outcome, .variable) |>
-    summarize(
-        estimate = median(.value),
-        std_dev = sd(.value)
-    ) |>
-    left_join(crosswalk_outcome_init)
 
-ggplot(long_init) +
-    aes(x = num_cycle, y = estimate, color = party) +
-    geom_line() +
-    facet_wrap(gender ~ vote)
+    sumd <- tidybayes::gather_draws(mcmc_init, theta[t, y]) |>
+        group_by(t, y) |>
+        summarize(estimate = median(.value), .groups = 'drop')
 
-long_init |>
-    group_by(num_cycle, gender, party) |>
-    mutate(partisanship = sum(estimate)) |>
-    group_by(num_cycle, gender, vote) |>
-    mutate(votes = sum(estimate)) |>
-    ungroup() |>
-    mutate(
-        nonmobilization = partisanship - estimate,
-        mobilization = estimate,
-    ) %>%
-    filter(vote != "Other Cand", party != "Ind") |>
-    ggplot() +
-    aes(x = num_cycle, y = mobilization, color = party, linetype = gender, shape = gender) +
-    geom_line() +
-    geom_point()
+    ggplot(sumd) +
+        aes(x = t, y = estimate) +
+        facet_wrap(~ y) +
+        geom_line()
+
+
+    ggplot(sumd) +
+        aes(x = t, y = estimate, fill = as.factor(y)) +
+        geom_col()
+
+}
+
