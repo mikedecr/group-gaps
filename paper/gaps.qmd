@@ -18,45 +18,57 @@ abstract: |
   The primary cause of the gender gap (partisan change) was actually harmful to the Democrats.
   Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
 
-fontsize: 11pt
-geometry: margin = 1.25in
-indent: yes
-linkcolor: violet
-citecolor: teal
-urlcolor: cyan
+# bib config
 bibliography: assets/bib/gender-bib.bib
 # csl: ...
 # biblio-style: assets/bib/apsr2006.bst
 
+# ----- output formatting ----------
+# these are mostly passed to pdf. this is the domain of pandoc
+documentclass: article
+fontsize: 11pt
+geometry: margin = 1.25in   # outer margins
+indent: yes                 # indented paragraphs, no extra lines
+linkcolor: violet           # in-doc links (figures etc.)
+citecolor: teal             # in-doc citation links
+urlcolor: cyan              # external links (web...)
+
+# quarto-specific settings
 format:
+  html:
+    html-math-method: katex
   pdf:
     pdf-engine: pdflatex
     toc: false
     keep-tex: true
     number-sections: true
     colorlinks: true
-    cite-method: biblatex
+    # cite-method: biblatex
     include-in-header: 
       - preamble/text-style.tex # strictly req'd, for dbl spacing?
       - preamble/cmds.tex       # req'd for now (\Notes)
       - preamble/fonts.tex
       - preamble/floats.tex
       - preamble/bib.tex
-        # - assets/comments.tex
+    # - assets/comments.tex
 
+# ----- code chunk execution options ----------
+# can be locally overriden at chunk site
 execute:
-    eval: true
-    echo: false
-    output: false
-    warning: false
-    error: true
-    cache: true
-    freeze: auto
-    fig-align: center
-
+    eval: true          # evaluate code
+    echo: false         # show code
+    output: false       # display output
+    warning: true       # display warning msgs
+    error: true         # display err. msgs
+    fig-align: center   # vertical figure alignment
+    cache: true         # cache chunk results if chunk code is unchanged
+    # freeze: auto      # don't re-render documenet during "global" quarto build if src has not changed
+                        # turning this on seems dangerous, 
+                        # as the paper depends on stateful data not detectable in code per se.
+# knits-specific options
 knitr:
     opts_chunk:
-        dev: cairo_pdf
+        dev: cairo_pdf  # render imgs as .pdf with "cairo"
 ---
 
 ```{r}
