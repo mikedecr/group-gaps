@@ -2,7 +2,7 @@ prop_ci <- function(successes, n, level = 0.05) {
 
     # estimates
     estimate <- successes / n
-    std_err <- sqrt(estimate * (1 - estimate) / n)
+    std_err <- base::sqrt(estimate * (1 - estimate) / n)
 
     # MOE
     z <- stats::qnorm(1 - (level / 2))
@@ -24,7 +24,7 @@ diff_prop_ci <- function(success1, n1, success2, n2, level = 0.05) {
   # compute standard error
   var1 = (p1 * (1 - p1) / n1)
   var2 = (p2 * (1 - p2) / n2)
-  se_diff <- sqrt(var1 + var2)
+  se_diff <- base::sqrt(var1 + var2)
 
   # compute CI
   estimate <- p1 - p2
