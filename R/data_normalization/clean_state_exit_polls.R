@@ -34,4 +34,4 @@ ex <- ex_raw |>
     ) |>
     print()
 
-write_csv(ex, here("data", "clean", "exits.csv"))
+arrow::write_parquet(ex, here("data", "clean", "exits.pq"))

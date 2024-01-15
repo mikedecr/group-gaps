@@ -1,5 +1,6 @@
 # --------------------------------------------------
 #  normalization of ANES data
+#  raw ANES respondent level -> cleaned ANES respondent level
 # --------------------------------------------------
 
 library("conflicted")
@@ -164,11 +165,11 @@ anes <- anes |>
 # NUKE consider adding more filters based on other code
 
 
-# --- save it -----------------------
-anes |>
-print() |>
-haven::write_dta(here("data", "clean", "cleaned-anes-cdf.dta"))
+library(arrow)
 
-anes |>
-saveRDS(here("data", "clean", "cleaned-anes-cdf.RDS"))
+
+# --- save it -----------------------
+
+print(head(anes))
+arrow::write_parquet(anes, here("data", "clean", "anes_cdf.pq"))
 
