@@ -9,7 +9,8 @@ prop_ci <- function(successes, n, level = 0.05) {
     moe <- z * std_err
 
     # value: vector
-    return(c(estiamte = estimate,
+    return(c(estimate = estimate,
+             std_error = std_error,
              lower = estimate - moe,
              upper = estimate + moe))
 
@@ -32,6 +33,7 @@ diff_prop_ci <- function(success1, n1, success2, n2, level = 0.05) {
   moe = se_diff * z
 
   return(c(estimate = estimate,
+           std_err = se_diff,
            lower = estimate - moe,
            upper = estimate + moe))
 }
