@@ -21,7 +21,7 @@ abstract: |
 # bib config
 bibliography: assets/bib/gender-bib.bib
 # csl: ...
-# biblio-style: assets/bib/apsr2006.bst
+# biblio-style: ... (assets/bib/apsr2006.bst?)
 
 # ----- output formatting ----------
 # these are mostly passed to pdf. this is the domain of pandoc
@@ -43,7 +43,6 @@ format:
     keep-tex: true
     number-sections: true
     colorlinks: true
-    # cite-method: biblatex
     include-in-header: 
       - preamble/text-style.tex # strictly req'd, for dbl spacing?
       - preamble/cmds.tex       # req'd for now (\Notes)
