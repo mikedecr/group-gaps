@@ -72,8 +72,9 @@ knitr:
 ---
 
 ```{r}
-#| include: false
 #| cache: false
+# we set cache to false because
+# we _need_ this to eval if later chunks are being eval'd.
 library("knitr")
 library("here")
 library("magrittr")
@@ -85,25 +86,26 @@ library("broom")
 library("latex2exp")
 ```
 
-
 ```{r}
 #| cache: false
-#| include: false
-source(here::here("R", "_graphics_theme.R"))
+source(here::here("R", "lib", "graphics_theme.R"))
 ```
 
-
 ```{=latex}
-%% clear 1st pg number + reset on next pg
+%% clear pg number from title page 
 \thispagestyle{empty}
+
+%% create new page for body content
+%% and reset pg counter to 1 on next pg
 \newpage
 \hypersetup{pageanchor = true}
 \pagenumbering{arabic}
+```
 
+```{=latex}
 %% body spacing
 \doublespacing
 ```
-
 
 In an electoral democracy such as the United States, parties and candidates win control of government by assembling coalitions of social groups to form a majority of those voting.
 Looking back on particular election outcomes, it is common to hear casual observations that the result was due to such things as "strong backing from the Hispanic community" or "lower-than-expected turnout among rural voters."
