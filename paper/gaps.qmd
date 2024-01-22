@@ -64,16 +64,20 @@ execute:
     # freeze: auto      # don't re-render documenet during "global" quarto build if src has not changed
                         # turning this on seems dangerous, 
                         # as the paper depends on stateful data not detectable in code per se.
-# knits-specific options
+
+# knitr-specific options
 knitr:
     opts_chunk:
-        dev: cairo_pdf  # render imgs as .pdf with "cairo"
+        dev: cairo_pdf  # pdf images with "Cairo" device
 ---
 
 ```{r}
+#| label: packages
 #| cache: false
+
 # we set cache to false because
-# we _need_ this to eval if later chunks are being eval'd.
+# we _need_ this to eval if later chunks want to use these packages
+# i.e. pkg code is state, not values
 library("knitr")
 library("here")
 library("magrittr")
@@ -86,6 +90,7 @@ library("latex2exp")
 ```
 
 ```{r}
+#| label: graphics-theme
 #| cache: false
 source(here::here("R", "lib", "graphics_theme.R"))
 ```
@@ -168,7 +173,8 @@ To present the logic in a clear fashion, we temporarily ignore voters who are un
 These illustrations should make clear that our methodological approach relies on simple math such as addition and percentages rather than regression modeling.
 
 <!-- This script compiles the diagrams (written in .dot) -->
-```{r compile-dots}
+```{r}
+#| label: compile-dots
 source(here("code", "dot", "compile-dots.R"))
 ```
 
@@ -179,7 +185,8 @@ Assuming that voters have some baseline affiliation for one party, the raw numbe
 We refer to the number of votes one party earns over the other as *net Democratic votes*.
 The flowchart below visualizes how the number of net Democratic votes in an election is the result of partisan mobilization and persuasion.
 
-```{r dot-net-votes}
+```{r}
+#| label: dot-net-votes
 #| output: true
 include_graphics(here("paper", "assets", "dot-img", "net-votes.pdf"))
 ```
@@ -193,7 +200,8 @@ In cases where turnout and swing voting rates are similar between the parties, o
 Our approach handles these cases by accounting for the size of the partisan bases.
 
 
-```{r dot-net-mechanisms}
+```{r}
+#| label: dot-net-mechanisms
 #| output: true
 include_graphics(here("paper", "assets", "dot-img", "net-vote-mechanisms.pdf"))
 ```
@@ -205,7 +213,8 @@ This is done by calculating net Democratic advantages in mobilization and persua
 The net group gap is thus the sum of the gaps in each of these mechanisms. 
 
 <!-- Mike: this figure needs to be redone to remove references to the genders -->
-```{r dot-net-gap}
+```{r}
+#| label: dot-net-gap
 #| output: true
 include_graphics(here("paper", "assets", "dot-img", "net-gap-mechanisms.pdf"))
 ```
@@ -467,15 +476,25 @@ There is little sign of a meaningful relationship, as evidenced by the weak and 
 <!-- get topline data and plot descriptives -->
 
 ```{r get-descriptive-data}
+```{r}
+#| label: get-descriptive-data
 load(here("data", "rmd-rdata", "03-descriptives.Rdata"))
 ```
 
-```{r define-colors}
+```{r}
+#| label: define-colors
+
 lgray <- "gray50"
 mgray <- "gray80"
 ```
 
-```{r plot-toplines, include = TRUE, cache = TRUE, fig.cap = 'The Gender Gap and the Presidential Vote', fig.width = 7, fig.height = 3, fig.show = 'hide'}
+```{r}
+#| label: plot-toplines-old
+#| output: false
+#| fig-cap: The Gender Gap and the Presidential Vote. Plots contain correlation coefficients (labeled "r"), regression coefficients ("b"), coefficient standard errors ("se"), and $p$-values ("p"). Exit poll data were obtained from CNN and include Washington D.C.\ as a state. Election results from U.S.\ Election Atlas.
+#| fig-width: 7
+#| fig-height: 3
+
 ggplot(toplines, aes(x = gender_gap, y = dem_vote_share)) +
   facet_wrap( ~ panel) +
   coord_cartesian(ylim = c(0.2, 0.95), xlim = c(-.07, .18)) +
@@ -519,13 +538,19 @@ Uncovering the partisan impact of the gender gap requires more theoretical and e
 
 # How Mobilization and Persuasion Shape Elections
 
-```{r load-mcmc}
+```{r}
+#| label: load-mcmc
 load(here("data", "rmd-rdata", "05-viz.Rdata"))
 ```
 
 
 
-```{r plot-rhs, cache = TRUE, fig.height = 3.5, fig.width = 7}
+```{r}
+#| label: plot-rhs
+#| cache: TRUE
+#| fig-height: 3.5
+#| fig-width: 7
+
 rhs %>%
   filter(leaners == "Leaners as Partisans") %>%
   mutate(PG = str_replace(PG, "Democratic", "Dem."),
@@ -593,7 +618,11 @@ Lastly, the number of votes obtained through unaffiliated voters is generally sm
 
 ## Sources of the Gender Gap
 
-```{r plot-gap-partials, fig.height = 3, fig.width = 9, cache = TRUE}
+```{r}
+#| fig-label: plot-gap-partials
+#| fig-height: 3
+#| fig-width: 9
+
 gap_partials %>%
   filter(leaners == "Leaners as Partisans") %>% 
   ggplot(aes(x = cycle, y = estimate)) +
@@ -707,7 +736,11 @@ If we applied our analytical method to differently sized groups (such as racial 
 Our theoretical framework is designed to show how the gender gap and the Democratic vote are composed from the same building blocks.
 Now that we have decomposed the gender gap into partisanship, mobilization, persuasion, and unaffiliated voters, we show these forces aggregate into the final election outcome.
 
-```{r plot-vote-partials, fig.height = 3, fig.width = 9}
+```{r}
+#| label: plot-vote-partials
+#| fig-height: 3
+#| fig-width: 9
+
 vote_partials %>%
   filter(leaners == "Leaners as Partisans") %>% 
   ggplot(aes(x = cycle, y = estimate)) +
