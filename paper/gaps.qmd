@@ -561,7 +561,7 @@ rhs %>%
       geom_line(size = 0.4, show.legend = FALSE) +
       geom_point(aes(shape = PG), fill = "white") +
       scale_y_continuous(labels = scales::percent) +
-      scale_color_manual(values = c(dblue, dblue, rred, rred)) +
+      scale_color_manual(values = c(DCOLOR, DCOLOR, RCOLOR, RCOLOR)) +
       scale_shape_manual(values = c(22, 16, 22, 16)) +
       # scale_shape_manual(values = c(15, 16, 21, 22)) +
       labs(x = "Election Cycle", y = "Percent of Eligible Electorate",
