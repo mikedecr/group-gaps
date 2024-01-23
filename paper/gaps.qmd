@@ -467,30 +467,60 @@ regs = readr::read_rds(here("data", "models", "models.rds"))
 topline_plot_data = regs |>
     select(dataset, prediction) |>
     unnest(prediction) |>
-    mutate(label = ifelse(dataset == "ANESxLeip", as.character(cycle), state_abb)) |>
-    filter(str_detect(dataset, "NoDC") == FALSE)
+    mutate(
+        obs_label = ifelse(dataset == "ANESxLeip", as.character(cycle), state_abb),
+        dataset_label = case_when(
+            str_detect(dataset, "ANES") ~ "ANES & National Vote",
+            str_detect(dataset, "2004") ~ "State Exit Poll, 2004",
+            str_detect(dataset, "2008") ~ "State Exit Poll, 2008"
+        )
+    )
+    
+# we want to plot some data with and without DC
+topline_plot_data_nodc  = topline_plot_data |>
+    filter(str_detect(dataset, "ANES") | str_detect(dataset, "NoDC")) |>
+    mutate(dataset = str_replace(dataset, "NoDC", ""))
+topline_plot_data_dc = topline_plot_data |>
+    filter((str_detect(dataset, "NoDC") == FALSE))
 ```
 
 ```{r}
 #| label: fig-toplines
 #| output: true
-#| fig-cap: The Gender Gap and the Presidential Vote. Plots contain correlation coefficients (labeled "r"), regression coefficients ("b"), coefficient standard errors ("se"), and $p$-values ("p"). Exit poll data were obtained from CNN and include Washington D.C.\ as a state. Election results from U.S.\ Election Atlas.
+#| fig-cap: The Gender Gap and the Presidential Vote. For plots of exit poll data, the solid regression lines exclude Washington DC (a non-state and an outlier), and the dashed lines includes DC. Exit poll data were obtained from CNN. National election results from Dave Leip's U.S.\ Election Atlas.
 #| fig-width: 7
 #| fig-height: 3
 
 # this should be in graphics theme
-lgray <- "gray50"
+mgray <- "gray50"
+lgray <- "gray80"
 
-ggplot(topline_plot_data) +
+with_dc_line = geom_line(data = topline_plot_data_dc, aes(y = .fitted), linetype = "dashed")
+
+no_dc_line = list(
+    geom_ribbon(data = topline_plot_data_nodc, 
+                aes(ymin = .lower, ymax = .upper),
+                alpha = 0.5, color = NA, fill = lgray),
+    geom_line(data = topline_plot_data_nodc, aes(y = .fitted))
+)
+
+ggplot(topline_plot_data_dc) +
     aes(x = gender_gap, y = dem_share) +
-    geom_hline(yintercept = 0.5, color = lgray) +
-    geom_vline(xintercept = 0, color = lgray) +
-    geom_ribbon(aes(ymin = .lower, ymax = .upper), alpha = 0.3) +
-    geom_text(aes(label = label)) +
-    geom_line(aes(y = .fitted)) +
-    labs(x = "Gender Gap", y = "Democratic Share of\nTwo-Party Vote") +
-    facet_wrap(~ dataset)
+    geom_hline(yintercept = 0.5, color = mgray) +
+    geom_vline(xintercept = 0, color = mgray) +
+    no_dc_line + 
+    with_dc_line + 
+    geom_text(aes(label = obs_label), size = rel(2)) +
+    facet_wrap(~ dataset_label) +
+    labs(x = "Gender gap", y = "Democratic share of\ntwo-party vote") +
+    scale_x_continuous(breaks = seq(-1, 1, .05)) +
+    scale_y_continuous(breaks = seq(0, 1, .10))
 ```
+<!--
+The coefs are actually pretty notable.
+Given that women and men and equal sizes and fairly close in partisanship, the coefs are pretty big!
+Compare against the std. deviation of each...
+-->
 
 We suggest the relationship between the gender gap and the Democratic vote is not a simple one.
 First, we analyze the relationship using national data from 1952 through 2016.
