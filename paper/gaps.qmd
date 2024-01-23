@@ -457,12 +457,47 @@ Long-term shifts in party ID certainly coincide with the rise of the gender gap,
 As men have become more Republican, women voters have grown as a share of the voting electorate, and party-loyal voting has reached monumental levels [@zingher2014analysis; @bartels2000partisanship; @bafumi2009new].
 To make sense of these simultaneous trends, we require a theory to understand how group voting patterns and election outcomes are related, and we require a measurement method that compares each mechanism's contribution to the vote on a common scale. 
 
+```{r}
+#| label: read-regression-data
+regs = readr::read_rds(here("data", "models", "models.rds"))
+```
+
+```{r}
+#| label: prep-topline-data
+topline_plot_data = regs |>
+    select(dataset, prediction) |>
+    unnest(prediction) |>
+    mutate(label = ifelse(dataset == "ANESxLeip", as.character(cycle), state_abb)) |>
+    filter(str_detect(dataset, "NoDC") == FALSE)
+```
+
+```{r}
+#| label: fig-toplines
+#| output: true
+#| fig-cap: The Gender Gap and the Presidential Vote. Plots contain correlation coefficients (labeled "r"), regression coefficients ("b"), coefficient standard errors ("se"), and $p$-values ("p"). Exit poll data were obtained from CNN and include Washington D.C.\ as a state. Election results from U.S.\ Election Atlas.
+#| fig-width: 7
+#| fig-height: 3
+
+# this should be in graphics theme
+lgray <- "gray50"
+
+ggplot(topline_plot_data) +
+    aes(x = gender_gap, y = dem_share) +
+    geom_hline(yintercept = 0.5, color = lgray) +
+    geom_vline(xintercept = 0, color = lgray) +
+    geom_ribbon(aes(ymin = .lower, ymax = .upper), alpha = 0.3) +
+    geom_text(aes(label = label)) +
+    geom_line(aes(y = .fitted)) +
+    labs(x = "Gender Gap", y = "Democratic Share of\nTwo-Party Vote") +
+    facet_wrap(~ dataset)
+```
+
 We suggest the relationship between the gender gap and the Democratic vote is not a simple one.
 First, we analyze the relationship using national data from 1952 through 2016.
 This approach covers a wide range of elections from landslides such as 1972 to nail-biters such as 2000.
 The dependent variable is the official percentage of the two-party popular vote won by the Democratic ticket.
 We calculate the gender gap as the Democratic share of the two-party vote among women minus the Democratic share among men using the American National Election Studies cumulative data file.
-The first panel of Figure&nbsp;\ref{fig:toplines} displays the data with an OLS regression line, the 95 percent confidence interval, and statistics to characterize the estimated relationship.
+The first panel of @fig-toplines displays the data with an OLS regression line, the 95 percent confidence interval, and statistics to characterize the estimated relationship.
 There is little sign of a meaningful relationship, as the correlation is low and the $p$-value is high.
 A second way to evaluate the relationship is cross-sectionally, using state level data from individual elections.
 For this cross-sectional test, we calculate the gender gap from exit poll data for the 50 states and Washington D.C.\ from the 2004 and 2008 presidential elections.^[
@@ -475,7 +510,8 @@ There is little sign of a meaningful relationship, as evidenced by the weak and 
 
 <!-- get topline data and plot descriptives -->
 
-```{r get-descriptive-data}
+
+
 ```{r}
 #| label: get-descriptive-data
 load(here("data", "rmd-rdata", "03-descriptives.Rdata"))
@@ -521,14 +557,13 @@ ggplot(toplines, aes(x = gender_gap, y = dem_vote_share)) +
   we hide the original plot (fig.show = "hide") and then call the image using TeX code
 -->
 
-\begin{figure}[hbt]
-  \centering
-  \caption{The Gender Gap and the Presidential Vote}
-  \includegraphics[width = \textwidth]{gaps\_files/figure-pdf/plot-toplines-1.pdf}
-  \label{fig:toplines}
-  \notes{Plots contain correlation coefficients (labeled ``r''), regression coefficients (``b''), coefficient standard errors (``se''), and $p$-values (``p''). Exit poll data were obtained from CNN and include Washington D.C.\ as a state. Election results from U.S.\ Election Atlas.}
-\end{figure}
-
+<!-- \begin{figure}[hbt] -->
+<!--   \centering -->
+<!--   \caption{The Gender Gap and the Presidential Vote} -->
+<!--   \includegraphics[width = \textwidth]{gaps\_files/figure-pdf/plot-toplines-1.pdf} -->
+<!--   \label{fig:toplines} -->
+<!--   \notes{Plots contain correlation coefficients (labeled ``r''), regression coefficients (``b''), coefficient standard errors (``se''), and $p$-values (``p''). Exit poll data were obtained from CNN and include Washington D.C.\ as a state. Election results from U.S.\ Election Atlas.} -->
+<!-- \end{figure} -->
 
 Taking these two tests together, we find little evidence of a positive relationship between the gender gap and the Democratic vote.
 However, there are theoretical grounds for questioning this superficial evidence.
@@ -545,11 +580,15 @@ load(here("data", "rmd-rdata", "05-viz.Rdata"))
 
 
 
+<!-- Mike: can we add some descriptive labels for axes such as "Helps Democrats more" or "Better for Dems"? -->
+<!-- also please change orange to a real red -->
 ```{r}
-#| label: plot-rhs
-#| cache: TRUE
+#| label: fig-rhs
+#| cache: false
+#| output: true
 #| fig-height: 3.5
 #| fig-width: 7
+#| fig-cap: Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012. For presentational purposes, Column 2 displays the share of mobilized voters instead of the Mobilization term from the model equation. The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans. Leaning independents are coded as partisans.
 
 rhs %>%
   filter(leaners == "Leaners as Partisans") %>%
@@ -575,26 +614,13 @@ rhs %>%
 ```
 
 Applying our framework to the ANES data, we are now prepared to describe how these mechanisms connect the gender gap to the vote.
-Figure&nbsp;\ref{fig:plot-rhs-1} displays our measures of partisanship, mobilization, persuasion, and unaffiliated voters for presidential elections from 1952 to 2016.
+@fig-rhs displays our measures of partisanship, mobilization, persuasion, and unaffiliated voters for presidential elections from 1952 to 2016.
 Because these trends are plotted after normalization, the vertical axis represents each quantity as a percentage of all voting-eligible citizens.
 Each column displays the various right-hand side terms of Equation&nbsp;\ref{eq:the-model-pgt}.
 The one exception is column&nbsp;2, which shows the share of mobilized voters $\big(\mathit{Partisanship}_{pgt} + \mathit{Mobilization}_{pgt}\big)$ rather than the stand-alone $\mathit{Mobilization}_{pgt}$ term, which would be a negative number as described above.
 Solid points represent women, and hollow points represent men.
 Colors indicate the party that benefits from each source of votes; for example, the red lines in the "Persuasion" panel represent Republican votes obtained from Democratic partisans.
 As noted above, we present results where leaners are coded as partisans voters, but the appendix contains results with the opposite assumption.
-
-<!-- Mike: can we add some descriptive labels for axes such as "Helps Democrats more" or "Better for Dems"? -->
-<!-- also please change orange to a real red -->
-\begin{figure}[hbt]
-  \centering
-  \caption{Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012}
-  \includegraphics[width=\textwidth]{gaps\_files/figure-pdf/plot-rhs-1.pdf}
-  \label{fig:plot-rhs-1}
-  \notes{For presentational purposes, Column 2 displays the share of mobilized voters instead of the $\mathit{Mobilization}_{pgt}$ term from the model equation.
-  The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans.
-  Leaning independents are coded as partisans.}
-\end{figure}
-
 
 This figure captures important findings from the study of U.S.\ elections, thus offering some validation for our measurement strategy.
 Looking at the first panel, we recover similar trends in partisanship as @kaufmann1999changing and @norrander1997independence; a long-standing partisan advantage for the Democratic Party in the aggregate, with a dramatic decline in Democratic identification and increase in Republican identification among men from the 1960s through the 1980s.
@@ -618,10 +644,22 @@ Lastly, the number of votes obtained through unaffiliated voters is generally sm
 
 ## Sources of the Gender Gap
 
+
+Using these new measures of partisanship, mobilization, persuasion, and party-unaffiliated voting, we compute gender differences in the partisan impact of each trend to trace how each mechanism contributes to the net gender gap.
+To do this, we first calculate the Democratic advantage in each mechanism separately for women and men (Equations&nbsp;\ref{eq:vote-net-mechanisms-women} and&nbsp;\ref{eq:vote-net-mechanisms-men}).
+For example, there is a Democratic advantage in partisanship among women if a greater number of women identify as Democrats than as Republicans.
+We then get the gender gap in each mechanism by differencing the Democratic advantage among women minus the net advantage among men.
+A gender gap in a given mechanism arises if the Democratic advantage among women is greater than the Democratic advantage among men.
+If the numerical impact of women's and men's behavior is equivalent (men and women are equally pro-Democratic or pro-Republican), the gender gap in a given mechanism is zero.
+Democratic advantages and gender gaps are calculated after normalization and thus are expressed as proportions of the overall electorate. 
+
 ```{r}
-#| fig-label: plot-gap-partials
+#| label: fig-gap-partials
 #| fig-height: 3
 #| fig-width: 9
+#| fig-cap: How Each Mechanism Affects the Gender Gap. Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect. Women are shown with solid points, men with hollow points. The thick line indicates the gender gap in each mechanism. The right-most panel is the sum of the net gender gap across all mechanisms.
+#| output: true
+#| cache: false
 
 gap_partials %>%
   filter(leaners == "Leaners as Partisans") %>% 
@@ -653,15 +691,7 @@ gap_partials %>%
               size = 2.75)
 ```
 
-Using these new measures of partisanship, mobilization, persuasion, and party-unaffiliated voting, we compute gender differences in the partisan impact of each trend to trace how each mechanism contributes to the net gender gap.
-To do this, we first calculate the Democratic advantage in each mechanism separately for women and men (Equations&nbsp;\ref{eq:vote-net-mechanisms-women} and&nbsp;\ref{eq:vote-net-mechanisms-men}).
-For example, there is a Democratic advantage in partisanship among women if a greater number of women identify as Democrats than as Republicans.
-We then get the gender gap in each mechanism by differencing the Democratic advantage among women minus the net advantage among men.
-A gender gap in a given mechanism arises if the Democratic advantage among women is greater than the Democratic advantage among men.
-If the numerical impact of women's and men's behavior is equivalent (men and women are equally pro-Democratic or pro-Republican), the gender gap in a given mechanism is zero.
-Democratic advantages and gender gaps are calculated after normalization and thus are expressed as proportions of the overall electorate. 
-
-In Figure&nbsp;\ref{fig:partials-on-gap}, we decompose the net gender gap into the separate mechanisms of partisanship, mobilization, persuasion, and votes from unaffiliated individuals.
+In @fig-gap-partials, we decompose the net gender gap into the separate mechanisms of partisanship, mobilization, persuasion, and votes from unaffiliated individuals.
 The first four panels of the figure present the data for these separate mechanisms over time.
 On the vertical axis we plot the partial effect of women's and men's behavior on the gender gap.
 For example, if the Democratic advantage among women in a given mechanism is positive, this exerts a positive partial impact on the gender gap, and will be shown as positive values on the graph.
@@ -676,17 +706,6 @@ If men and women exert the same numerical impact on the election in their partis
 The *net* gender gap, plotted in the final panel, is the sum of the gender gap in each mechanism.
 We again point out that all of the values in this figure are simply differences in proportions calculated from raw ANES data.
 
-\begin{sidewaysfigure}[p]
-  \centering
-  \caption{How Each Mechanism Affects the Gender Gap}
-  \label{fig:partials-on-gap}
-  \includegraphics[width = \textwidth]{gaps_files/figure-pdf/plot-gap-partials-1.pdf}
-  \notes{Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect.
-  Women are shown with solid points, men with hollow points.
-  The thick line indicates the gender gap in each mechanism.
-  The right-most panel is the sum of the net gender gap across all mechanisms.}
-\end{sidewaysfigure}
-
 Beginning with the left-most panel, we find that the Democratic advantage in partisanship among men and women had an offsetting influence on the gender gap in the earliest elections covered by the ANES data (i.e., the gender gap in partisanship is near zero).
 Consistent with previous research, the Democrats' advantage in men's partisanship decreased in the 1970s and 1980s, creating a gap in partisanship that persists through the remainder of the time series.
 Although we use the same data as classic studies of the development and evolution of the gender gap [@kaufmann1999changing; @norrander1997independence; @norrander1999evolution], our approach affords us three important findings about the nature of the gender gap in voting.
@@ -699,7 +718,7 @@ Second, our approach underscores how recent variation in the partisan gender gap
 While we acknowledge other scholars for observing that women's partisanship grew more influential in the 1990s [@box2004dynamics; @kaufmann2002culture], our measurement approach emphasizes that the gender gap in partisanship since the 1990s is a near-perfect reflection of the variation in women's partisan attachments.
 And third, as a quick visual comparison between the first panel and the remaining panels show, partisanship is a much larger influence on the gender gap than mobilization and persuasion are.
 
-The second panel of Figure&nbsp;\ref{fig:partials-on-gap} plots the data on the gender gap in mobilization.
+The second panel of @fig-gap-partials plots the data on the gender gap in mobilization.
 In our mathematical approach, mobilization is operationalized as the *loss* of partisan identifiers in the turnout process.
 A Democratic advantage in mobilization forms, therefore, when Democrats lose fewer votes from their supporters than Republicans lose from theirs.
 As it happens, Republicans are advantaged in mobilization throughout the entire series---Democrats have a long-running advantage over Republicans in partisanship, but they have a long-running disadvantage in turning those partisans into voters.
@@ -708,7 +727,7 @@ Not only is the Democratic advantage in mobilization negative in the aggregate, 
 This indicates that Democrats' losses among women are greater than their losses among men.
 In recent years of partisan polarization, the Republican advantage in mobilization has shrunk dramatically, but mobilization nonetheless produces a slight negative gender gap even in the most recent 2016 data. 
 
-The third panel of Figure&nbsp;\ref{fig:partials-on-gap} shows the gender gap in persuasion.
+The third panel of @fig-gap-partials shows the gender gap in persuasion.
 As with mobilization, Republicans tend to be the numerical beneficiaries of swing voting.
 This is shown by the negative values for women and positive values for men---pro-Republican behavior among women decreases the gender gap, while pro-Republican behavior among men increases it.
 Also like mobilization, the long-term advantage for Republicans shrank over time, nearly disappearing in election years since 2000.
@@ -719,13 +738,13 @@ Taking our data from partisanship and mobilization together, we can see how the 
 Although the gender gap in party ID emerged as early as 1964, the majority of the gap was offset by a pronounced, negative gender gap in mobilization that was statistically significant for the majority of elections throughout the time series.
 Researchers have long understood that Republicans have higher turnout and party loyalty than Democrats on average; our analysis shows how this pattern falls unequally among women and men, suppressing a gender gap in party ID from appearing in the final vote for more than a decade.
 
-The final mechanism in our model is the votes of unaffiliated citizens, which we plot in the fourth panel of Figure&nbsp;\ref{fig:partials-on-gap}.
+The final mechanism in our model is the votes of unaffiliated citizens, which we plot in the fourth panel of @fig-gap-partials.
 Because unaffiliated voters usually reflect the patterns in swing voting among partisan identifiers, the overall impact of unaffiliated voters on the gender gap is similar to the impact of persuasion.
 Although a few elections stand out as having suggestive impacts on the gender gap, these moments in the time series are idiosyncratic.
-Pro-Republican landslides in 1972 and 1980 elicited more votes from unaffiliated men than unaffiliated women, and the 1996 election---the largest gender gap in the ANES data---was widened in part by pro-Democratic voting among unaffiliated women.
+Pro-Republican landslides in 1972 and 1980 elicited more votes from unaffiliated men than unaffiliated women, and the 1996 election---where we observe the largest gender gap in the ANES data---was widened in part by pro-Democratic voting among unaffiliated women.
 But in most elections, unaffiliated men and women exert roughly equal and opposite influences on the gender gap. 
 
-The final panel in Figure&nbsp;\ref{fig:partials-on-gap} shows the net gender gap, which is the sum of the gender gap in each mechanism in our model.
+The final panel in @fig-gap-partials shows the net gender gap, which is the sum of the gender gap in each mechanism in our model.
 This trend captures the common understanding of the gender gap as emerging in the 1980s and persisting mostly unchanged in the years since (1996 being a blip from the otherwise constant trend).
 We emphasize that our measure of the *net*gender gap shows a similar pattern to the conventional gender gap only because men and women are nearly equal in voting power.
 If we applied our analytical method to differently sized groups (such as racial groups), our net gap measure would differ greatly from the conventional measurement approach.
@@ -737,9 +756,12 @@ Our theoretical framework is designed to show how the gender gap and the Democra
 Now that we have decomposed the gender gap into partisanship, mobilization, persuasion, and unaffiliated voters, we show these forces aggregate into the final election outcome.
 
 ```{r}
-#| label: plot-vote-partials
+#| label: fig-vote-partials
 #| fig-height: 3
 #| fig-width: 9
+#| fig-cap: "Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes. Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms."
+#| output: true
+#| cache: false
 
 vote_partials %>%
   filter(leaners == "Leaners as Partisans") %>% 
@@ -772,8 +794,7 @@ vote_partials %>%
 ```
 
 
-
-Figure&nbsp;\ref{fig:partials-on-vote} shows how the Democratic advantage in each mechanism affects the net Democratic vote, with separate trends for men and women.
+@fig-vote-partials shows how the Democratic advantage in each mechanism affects the net Democratic vote, with separate trends for men and women.
 Positive values indicate a net Democratic advantage and, in turn, a positive influence on the net Democratic vote.
 A Democratic advantage among women both widens the gender gap and increases the Democratic vote, but a Democratic advantage among men would decrease the gender gap even as it increases the Democratic vote.
 A positive gender gap forms when the Democratic advantage in one mechanism is greater for women than it is for men---the size of the gender gap can be interpreted as the space between the trend lines for women and men.
@@ -802,14 +823,14 @@ If the gender gap in party ID was created by a sharp and enduring erosion of Dem
 
 The second panel shows how the Democrats' advantage in partisanship is transformed by differential mobilization.
 As discussed above, a negative gender gap in mobilization counteracted the gender gap in partisanship in its earliest years, preventing the net gender gap from emerging until 1980.
-We see this negative gap in Figure&nbsp;\ref{fig:partials-on-vote} as well, but the Democratic disadvantage in mobilization is much more apparent here.
+We see this negative gap in @fig-vote-partials as well, but the Democratic disadvantage in mobilization is much more apparent here.
 As much as the Democratic Party enjoyed an advantage in partisanship, it lost almost all of that advantage by failing to turn out its voters.
 As the time series progresses, Democrats dramatically improve their mobilization efforts, but that improvement does not greatly affect the difference between men's and women's mobilization.
 Data from 2016 suggest that even though Democratic women are a large group in the electorate, Democrats' lose more women through mobilization than Republicans do, so the negative gender gap in mobilization remains.
 In sum, the evidence from mobilization contradicts the conventional wisdom as well.
 Democratic gains in mobilization do not come disproportionately from women, and Republicans still have an edge on Democrats when it comes to mobilizing party-loyal women.
 
-Turning to the middle panel of Figure&nbsp;\ref{fig:partials-on-vote}, we see the effect of persuasion over time.
+Turning to the middle panel of @fig-vote-partials we see the effect of persuasion over time.
 Republicans were the historical beneficiaries of persuasion, as shown by the largely negative values in the plot, but the trends are essentially identical for men and women.
 As far as the conventional wisdom regarding the relationship between the gender gap and the Democratic vote is concerned, persuasion tells a similar story as mobilization: Democrats have benefited in recent years by *preventing* defection among their own ranks, but this benefit does not depend more heavily on women than on men.
 Moreover, we find no evidence that Democrats' recent messaging about the Republican "war on women" has a noticeable effect on the balance of crossover voting among women.
@@ -822,7 +843,7 @@ The final panel displays the net Democratic vote for women and men, which is the
 The early half of the time series fluctuates wildly between landslide elections in 1964, 1972, and 1984.
 By the latter half of the time series, stabilization in the preceding mechanisms leads to a more stable trend in the net Democratic vote.
 Men are almost equally divided in voting for the two parties, while women are decidedly Democratic.
-This is consistent with the high-level finding from Figure&nbsp;\ref{fig:toplines} that the gender gap weakly coincides with higher Democratic vote shares---both have increased in recent decades.
+This is consistent with the high-level finding from @fig-toplines that the gender gap weakly coincides with higher Democratic vote shares---both have increased in recent decades.
 But our examination of the various mechanisms that produce the vote suggests that the relationship between the gap and the overall vote is spurious in a specific way.
 The forces that boost the Democratic vote share in recent elections (Democrats stemming their losses in mobilization and persuasion) are not the same forces that cause the votes of men and women to diverge (partisan change among men).
 
