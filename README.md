@@ -49,6 +49,6 @@ Immediate:
 
 ## Notes on Git history
 
-This repository was nuked and recreated for large file reasons. History for this repository before August 2, 2019, can be found at <https://bitbucket.org/mikedecrescenzo/gender-gap/src>.
-
+This repository was nuked and recreated for large file reasons.
+History for this repository before August 2, 2019, can be found at <https://bitbucket.org/mikedecrescenzo/gender-gap/src>.
 
