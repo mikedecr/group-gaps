@@ -1,4 +1,3 @@
-# FONT_FAMILY <- "Source Sans Pro"
 box::use(ggplot2[...])
 box::use(ggthemes[theme_base])
 box::use(purrr[partial])
@@ -6,19 +5,15 @@ box::use(purrr[partial])
 
 # ----- graphics theme ----------
 
-theme_gaps <-
-    theme_base(base_size = 14) +
-    # theme_base(base_family = FONT_FAMILY, base_size = 14) +
-    theme(
-        plot.background = element_blank(),
+theme_gaps <- theme_base(base_size = 14) +
+  theme(plot.background = element_blank(),
         axis.ticks = element_line(lineend = "square"),
-        axis.ticks.length = grid::unit(0.25, "lines")
-    )
+        axis.ticks.length = grid::unit(0.25, "lines"))
 
 theme_set(theme_gaps)
 
-DCOLOR <- "#0072B2"
-RCOLOR <- "#D55E00"
+DCOLOR <- "#88CCEE"
+RCOLOR <- "#CC6677"
 
 party_colors = c("Dem" = DCOLOR, "Rep" = RCOLOR)
 scale_color_party <- partial(scale_color_manual, values = party_colors)
