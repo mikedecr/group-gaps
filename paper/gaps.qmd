@@ -159,7 +159,7 @@ Party ID is a relatively stable and slow-moving attitude, whereas vote choice is
 This insight is the basis of the Michigan school's classification of presidential elections as "maintaining,", "deviating," or "realigning" [@campbell1966classification] and the development of the concept of the "normal vote" based on party ID [@converse1966normalvote;@levendusky2008measuring].
 Indeed, two major reasons why election results do not perfectly reflect the distribution of party identification in the electorate are that rates of turnout vary between the parties and because partisans engage in swing voting at different rates.
 
-This framework is reminiscent of Axelrod's -@axelrod1972votes analysis of coalition composition [see also @stanley1986partisanship], but goes further in important ways.
+This framework is reminiscent of Axelrod's [-@axelrod1972votes] analysis of coalition composition [see also @stanley1986partisanship], but goes further in important ways.
 Whereas Axelrod defines the groups within a party's coalition *a priori* and examines the parties one a time, we examine group dynamics in both parties simultaneously and explicitly distinguish between votes from party supporters as well as party non-supporters.
 We believe that this framework resembles how campaign strategists actually think about building winning coalitions by turning out supporters who have long-term attachments to the party ("getting out the vote" or GOTV), persuading supporters of the opposing party to cross over, and attracting independent voters.^[
   We acknowledge that in both real campaigns and political analysis it can be challenging and perhaps even artificial to separate partisanship, mobilization, and persuasion, although authors have tried [@huber2007identifying].
