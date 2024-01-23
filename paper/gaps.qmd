@@ -582,18 +582,6 @@ ggplot(toplines, aes(x = gender_gap, y = dem_vote_share)) +
   NULL
 ```
 
-<!-- 
-  In order to include notes underneath plots, 
-  we hide the original plot (fig.show = "hide") and then call the image using TeX code
--->
-
-<!-- \begin{figure}[hbt] -->
-<!--   \centering -->
-<!--   \caption{The Gender Gap and the Presidential Vote} -->
-<!--   \includegraphics[width = \textwidth]{gaps\_files/figure-pdf/plot-toplines-1.pdf} -->
-<!--   \label{fig:toplines} -->
-<!--   \notes{Plots contain correlation coefficients (labeled ``r''), regression coefficients (``b''), coefficient standard errors (``se''), and $p$-values (``p''). Exit poll data were obtained from CNN and include Washington D.C.\ as a state. Election results from U.S.\ Election Atlas.} -->
-<!-- \end{figure} -->
 
 Taking these two tests together, we find little evidence of a positive relationship between the gender gap and the Democratic vote.
 However, there are theoretical grounds for questioning this superficial evidence.
@@ -683,6 +671,7 @@ A gender gap in a given mechanism arises if the Democratic advantage among women
 If the numerical impact of women's and men's behavior is equivalent (men and women are equally pro-Democratic or pro-Republican), the gender gap in a given mechanism is zero.
 Democratic advantages and gender gaps are calculated after normalization and thus are expressed as proportions of the overall electorate. 
 
+<!--todo: sideways figure in pdf only-->
 ```{r}
 #| label: fig-gap-partials
 #| fig-height: 3
@@ -785,6 +774,7 @@ If we applied our analytical method to differently sized groups (such as racial 
 Our theoretical framework is designed to show how the gender gap and the Democratic vote are composed from the same building blocks.
 Now that we have decomposed the gender gap into partisanship, mobilization, persuasion, and unaffiliated voters, we show these forces aggregate into the final election outcome.
 
+<!--todo: sideways figure in pdf only-->
 ```{r}
 #| label: fig-vote-partials
 #| fig-height: 3
@@ -831,14 +821,6 @@ A positive gender gap forms when the Democratic advantage in one mechanism is gr
 As with the previous figure, the first four panels plot the Democratic advantage in partisanship, mobilization, persuasion, and unaffiliated voters.
 The final panel shows the net Democratic vote among men and women, which is the sum of the four preceding mechanisms.
 All values reflect normalization and are expressed as a percentage of the eligible electorate. 
-
-\begin{sidewaysfigure}[p]
-  \centering
-  \caption{Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes}
-  \label{fig:partials-on-vote}
-  \includegraphics[width=\textwidth]{gaps_files/figure-pdf/plot-vote-partials-1.pdf}
-  \notes{Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms.}
-\end{sidewaysfigure}
 
 The left-most panel plots the Democratic advantage in partisanship for men and women.
 As before, we observe that a gender gap in partisanship emerges as early as the 1960s and widens as the Democratic advantage dissipates more quickly among men than among women.^[
