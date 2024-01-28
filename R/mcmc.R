@@ -1,31 +1,16 @@
+######################################
+#    fit mcmc models on ANES data    #
+######################################
+
+# 1. construct cross-product group codes from cleaned anes data
+# 2. define functions to aggregate such data into stan-ready format
+# 3. fit MCMC models and dump data to file.
+
 library("conflicted")
 library("here")
 library("dplyr")
 
 
-################################
-#    read subset of columns    #
-################################
-
-anes <- here("data", "clean", "anes_cdf.pq") |>
-    arrow::read_parquet() |>
-    as_tibble() |>
-    select(-starts_with("VCF"), -"Version") |>
-    print()
-
-
-############################
-#    create group codes    #
-############################
-
-# group = party x gender x vote
-# this step may contain NAs, but they are unleveled
-
-anes <- anes |>
-    mutate(
-        grp_init = forcats::fct_cross(gender, pid_init, vote_choice, sep = ":"),
-        grp_lean = forcats::fct_cross(gender, pid_lean, vote_choice, sep = ":")
-    )
 
 
 ################################################
@@ -70,32 +55,88 @@ prepare_model_data <- function(time, group, weight = rep(1, length(group)), ...)
 # (data, group) -> stan_data, fixing the time and wt components
 
 #####################################
-#    models for two leaner codes    #
+#    standata for two leaner codes    #
 #####################################
 
-stan_data_init = anes |>
+# ----- read subset of columns ----------
+
+anes <- here("data", "clean", "anes_cdf.pq") |>
+    arrow::read_parquet() |>
+    as_tibble() |>
+    select(-starts_with("VCF"), -"Version") |>
+    print()
+
+# ----- create group codes ----------
+
+# group = party x gender x vote
+# this step may contain NAs, but they are unleveled
+
+anes <- anes |>
+    mutate(
+        grp_init = forcats::fct_cross(gender, pid_init, vote_choice, sep = ":"),
+        grp_lean = forcats::fct_cross(gender, pid_lean, vote_choice, sep = ":")
+    )
+
+# ----- aggregate into stan data ----------
+
+# this could be a fn of (data, grp)
+grp_data_init = anes |>
     select(cycle, grp_init, wt) |>
     tidyr::drop_na() |>
-    (function(d) prepare_model_data(as.factor(d$cycle), d$grp_init, d$wt))()
+    (function(d) aggregate_group_weights(as.factor(d$cycle), d$grp_init, d$wt))()
 
-stan_data_lean = anes |>
+grp_data_lean = anes |>
     select(cycle, grp_lean, wt) |>
     tidyr::drop_na() |>
-    (function(d) prepare_model_data(as.factor(d$cycle), d$grp_lean, d$wt))()
+    (function(d) aggregate_group_weights(as.factor(d$cycle), d$grp_lean, d$wt))()
+
+# list of stan-compatible data
+stan_data = lapply(
+    list(init = grp_data_init, lean = grp_data_lean),
+    grouped_to_stan
+)
 
 ####################
 #    stan model    #
 ####################
 
+# we will want to export other hyperparameters about the stan model
+# such as warmup iterations, total samples, thin interval, n.chains,
+# NUTS params (delta, tree depth, ...)
+
 model_group <- cmdstanr::cmdstan_model(here("stan", "gaps_group.stan"))
 
-mcmc_init = model_group$sample(data = stan_data_init,
-                               parallel_chains = 4,
-                               refresh = 10)
-mcmc_lean = model_group$sample(data = stan_data_lean,
-                               parallel_chains = 4,
-                               refresh = 10)
+PARALLEL_CHAINS = 4
+fit_stan_model = function(d) {
+    model_group$sample(data = d,
+                       parallel_chains = PARALLEL_CHAINS)
+}
 
-readr::write_rds(mcmc_init, here("data", "models", "mcmc_init.rds"))
-readr::write_rds(mcmc_lean, here("data", "models", "mcmc_lean.rds"))
+# should take <10s per fit
+stanfits = lapply(stan_data, fit_stan_model)
+
+######################################
+#    save MCMCs and crosswalk key    #
+######################################
+
+# crosswalk
+crosswalk = grp_data_init |>
+    select(fct = group) |>
+    mutate(int = as.numeric(fct),
+           str = as.character(fct))
+
+arrow::write_parquet(crosswalk, here("data", "models", "mcmc_group_code_crosswalk.pq"))
+
+# MCMCs
+# every file is mcmc_{name}.rds
+lapply(
+    names(stanfits),
+    function(name) {
+        mcmc = stanfits[[name]]
+        filename = as.character(stringr::str_glue("mcmc_{name}.rds"))
+        readr::write_rds(mcmc, filename)
+    }
+)
+
+
 
