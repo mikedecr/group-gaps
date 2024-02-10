@@ -118,10 +118,13 @@ stan_data = lapply(
 
 model_group <- cmdstanr::cmdstan_model(here("stan", "gaps_group.stan"))
 
-PARALLEL_CHAINS = 4
+cfg_parallel_chains <- 8
 fit_stan_model = function(d) {
     model_group$sample(data = d,
-                       parallel_chains = PARALLEL_CHAINS)
+                       iter_warmup = 10000,
+                       iter_sampling = 10000,
+                       thin = 5,
+                       parallel_chains = cfg_parallel_chains)
 }
 
 # should take <10s per fit
