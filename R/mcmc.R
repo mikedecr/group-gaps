@@ -9,6 +9,7 @@
 library("conflicted")
 library("here")
 library("dplyr")
+library("ggplot2")
 
 
 
@@ -130,17 +131,93 @@ fit_stan_model = function(d) {
 # should take <10s per fit
 stanfits = lapply(stan_data, fit_stan_model)
 
+
+#####################################
+#    chain stats before you save    #
+#####################################
+
+# table of ESS and Rhat measurements per parameter, per model
+chain_stats = stanfits |>
+    lapply(posterior::summarise_draws) |>
+    bind_rows(.id = "model") |>
+    select(model, variable, rhat, contains("ess")) |>
+    dplyr::filter(stringr::str_detect(variable, "theta")) |>
+    mutate(param_index = row_number(), .by = model)
+
+# benchmark against some expected values
+good_rhats = chain_stats$rhat < 1.01
+stopifnot(all(good_rhats))
+
+good_tails = chain_stats$ess_tail > 2000
+stopifnot(all(good_tails))
+
+good_bulks = chain_stats$ess_bulk > 4000
+stopifnot(all(good_bulks))
+
+# ----- plot rhat and ESS, look for outliers ----------
+
+# want Rhat near 1, ESS should be large and uniform
+long_chain_stats = tidyr::pivot_longer(chain_stats,
+                                       c(rhat, ess_bulk, ess_tail))
+
+ggplot(long_chain_stats) +
+    aes(x = param_index, y = value) +
+    geom_point() +
+    facet_wrap(~ model + name, scale = "free_y")
+
+
+##########################
+#    autocorrelations    #
+##########################
+
+# long, by model
+draws = stanfits |>
+    lapply(tidybayes::tidy_draws) |>
+    bind_rows(.id = "model") |>
+    select(model, starts_with("theta"))
+
+# autocorrelation as a "normal function"
+auto_cor = function(x) {
+    ac_object = acf(x, plot = FALSE)
+    as.vector(ac_object$acf)
+}
+
+autocors = draws |>
+    group_by(model) |>
+    reframe(across(starts_with("theta"),
+                   auto_cor)) |>
+    mutate(lag = row_number(), .by = model)
+
+extreme_autocors = autocors |>
+    tidyr::pivot_longer(
+        starts_with("theta"),
+        names_to = "param",
+        values_to = "acf"
+    ) |>
+    summarize(
+        across(acf, list(min = min, max = max, mean = mean, median = median)),
+        .by = c(model, lag)
+    )
+
+ggplot(extreme_autocors) +
+    aes(x = lag, y = acf_mean) +
+    facet_wrap(~ model) +
+    geom_pointrange(aes(ymin = acf_min, ymax = acf_max)) +
+    geom_line(linetype = "dotted") +
+    scale_x_continuous(breaks = seq(0, 50, 5))
+
+
 ######################################
 #    save MCMCs and crosswalk key    #
 ######################################
 
-# crosswalk
-crosswalk = grp_data_init |>
-    select(fct = group) |>
-    mutate(int = as.numeric(fct),
-           str = as.character(fct))
+crosswalk_list = grp_data_init |>
+    select(t, group) |>
+    as.list() |>
+    lapply(unique) |>
+    lapply(function(x) setNames(x, as.integer(x)))
 
-arrow::write_parquet(crosswalk, here("data", "models", "mcmc_group_code_crosswalk.pq"))
+readr::write_rds(crosswalk_list, here("data", "models", "mcmc_factor_crosswalk.rds"))
 
 # MCMCs
 # every file is mcmc_{name}.rds
@@ -148,10 +225,8 @@ lapply(
     names(stanfits),
     function(name) {
         mcmc = stanfits[[name]]
-        filename = as.character(stringr::str_glue("mcmc_{name}.rds"))
-        readr::write_rds(mcmc, filename)
+        stub = as.character(stringr::str_glue("mcmc_{name}.rds"))
+        path = here("data", "models", stub)
+        mcmc$save_object(path)
     }
 )
-
-
-
