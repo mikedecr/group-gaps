@@ -66,15 +66,27 @@ anes <- here("data", "clean", "anes_cdf.pq") |>
     select(-starts_with("VCF"), -"Version") |>
     print()
 
+# relevant vote outcome
+anes <- anes |>
+    mutate(
+        vote_outcome = case_when(
+            voted_maj_party ~ vote_choice,
+            (!voted) | (vote_choice == "Other Cand") ~ "Other"
+        )
+    )
+
+anes |> count(voted, vote_choice, vote_outcome)
+
 # ----- create group codes ----------
 
 # group = party x gender x vote
 # this step may contain NAs, but they are unleveled
 
+
 anes <- anes |>
     mutate(
-        grp_init = forcats::fct_cross(gender, pid_init, vote_choice, sep = ":"),
-        grp_lean = forcats::fct_cross(gender, pid_lean, vote_choice, sep = ":")
+        grp_init = forcats::fct_cross(gender, pid_init, vote_outcome, sep = ":"),
+        grp_lean = forcats::fct_cross(gender, pid_lean, vote_outcome, sep = ":")
     )
 
 # ----- aggregate into stan data ----------
