@@ -24,8 +24,8 @@ aggregate_group_weights <- function(time, group, weight = rep(1, length(group)))
     nas = lapply(list(time, group, weight), \(x) sum(is.na(x)))
     stopifnot(all(nas == 0))
     tibble(t = time, group = group, wt = weight) |>
-    count(t, group, wt = wt, name = "wt") |>
-    arrange(t)
+        count(t, group, wt = wt, name = "wt") |>
+        arrange(t)
 }
 
 
