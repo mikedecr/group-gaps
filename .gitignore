@@ -35,6 +35,7 @@ tex/*
 
 
 data/posts/
+data/models
 ggmcmc-output.pdf
 
 .Rproj.user
