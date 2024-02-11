@@ -14,8 +14,8 @@ conflict_prefer("filter", "dplyr")
 #    MCMC data    #
 ###################
 
-mcmc_init = readr::read_rds(here("data/models/mcmc_init.rds"))
-# or mcmc_lean.rds
+mcmc = readr::read_rds(here("data/models/mcmc_lean.rds"))
+# or mcmc_init.rds
 
 # ----- crosswalk to group and time labels ----------
 
@@ -33,7 +33,7 @@ cw = readr::read_rds(here("data", "models", "mcmc_factor_crosswalk.rds"))
 item = `[[`
 
 draws =
-    gather_draws(mcmc_init, theta[t, group]) |>
+    gather_draws(mcmc, theta[t, group]) |>
     ungroup() |>
     mutate(
         group_label = cw$group[group],
