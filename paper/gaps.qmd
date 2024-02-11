@@ -80,6 +80,7 @@ knitr:
 # i.e. pkg code is state, not values
 library("knitr")
 library("here")
+library("readr")
 library("magrittr")
 library("tidyverse")
 library("ggplot2")
@@ -459,7 +460,7 @@ To make sense of these simultaneous trends, we require a theory to understand ho
 
 ```{r}
 #| label: read-regression-data
-regs = readr::read_rds(here("data", "models", "models.rds"))
+regs = read_rds(here("data", "models", "simple_regressions.rds"))
 ```
 
 ```{r}
@@ -601,9 +602,9 @@ load(here("data", "rmd-rdata", "05-viz.Rdata"))
 <!-- Mike: can we add some descriptive labels for axes such as "Helps Democrats more" or "Better for Dems"? -->
 <!-- also please change orange to a real red -->
 ```{r}
-#| label: fig-rhs
+#| label: -fig-rhs
 #| cache: false
-#| output: true
+#| output: false
 #| fig-height: 3.5
 #| fig-width: 7
 #| fig-cap: Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012. For presentational purposes, Column 2 displays the share of mobilized voters instead of the Mobilization term from the model equation. The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans. Leaning independents are coded as partisans.
@@ -629,6 +630,60 @@ rhs %>%
             legend.background = element_blank(),
             legend.text = element_text(size = rel(0.75)),
             legend.key.size = unit(1, "lines"))
+```
+
+```{r}
+paper_export = here("data", "to_paper")
+
+# "vote terms" for party x gender
+vote_components = read_rds(here(paper_export, "vote_components.rds"))
+
+# vote terms differenced into dem advantage.
+dem_adv = read_rds(here(paper_export, "dem_advantage_components.rds"))
+
+# dem advantage, signed to reflect impact on gender gap
+signed_dem_adv = here(paper_export, "gender_signed_dem_advantage_components.rds") |>
+    read_rds()
+
+# signed dem advantage terms differenced across gender
+gap_components = here(paper_export, "partial_gaps.rds") |>
+    read_rds()
+
+core_terms = c(
+    "partisanship",
+    "negmobilization",
+    "persuasion",
+    "unaffiliated"
+)
+
+core_terms_with_total = c(core_terms, "total")
+```
+
+```{r}
+#| label: fig-rhs
+#| cache: false
+#| output: true
+#| fig-height: 3.5
+#| fig-width: 7
+#| fig-cap: Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012. For presentational purposes, Column 2 displays the share of mobilized voters instead of the Mobilization term from the model equation. The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans. Leaning independents are coded as partisans.
+intelligible_terms = c(
+    "partisanship",
+    "loyalty",
+    "persuasion",
+    "unaffiliated"
+)
+
+ggplot(vote_components |> filter(term %in% intelligible_terms)) +
+    aes(x = cycle_label, y = mean, color = str_to_title(party), shape = gender) +
+    facet_grid(. ~ fct_relevel(term,
+                               "partisanship",
+                               "loyalty",
+                               "persuasion",
+                               "unaffiliated")) +
+    geom_line() +
+    geom_point() +
+    scale_color_party() +
+    theme(legend.position = "none")
 ```
 
 Applying our framework to the ANES data, we are now prepared to describe how these mechanisms connect the gender gap to the vote.
@@ -678,6 +733,36 @@ Democratic advantages and gender gaps are calculated after normalization and thu
 #| fig-width: 9
 #| fig-cap: How Each Mechanism Affects the Gender Gap. Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect. Women are shown with solid points, men with hollow points. The thick line indicates the gender gap in each mechanism. The right-most panel is the sum of the net gender gap across all mechanisms.
 #| output: true
+#| cache: false
+ggplot(filter(signed_dem_adv, term %in% core_terms_with_total, term != "total")) +
+    aes(x = cycle_label, y = mean, color = gender) +
+    facet_grid(. ~ fct_relevel(term,
+                               "partisanship",
+                               "negmobilization",
+                               "persuasion",
+                               "unaffiliated")) +
+    geom_ribbon(data = filter(gap_components, term %in% core_terms_with_total),
+                aes(ymin = q05, ymax = q95),
+                fill = "gray",
+                color = NA,
+                alpha = 0.4) +
+    geom_hline(yintercept = 0) +
+    geom_line(data = filter(gap_components, term %in% core_terms_with_total),
+              aes(y = mean), color = "black") +
+    geom_line() +
+    geom_point() +
+    theme_gaps +
+    scale_color_gender() +
+    theme(legend.position = "none")
+```
+
+<!--todo: sideways figure in pdf only-->
+```{r}
+#| label: -fig-gap-partials
+#| fig-height: 3
+#| fig-width: 9
+#| fig-cap: How Each Mechanism Affects the Gender Gap. Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect. Women are shown with solid points, men with hollow points. The thick line indicates the gender gap in each mechanism. The right-most panel is the sum of the net gender gap across all mechanisms.
+#| output: false
 #| cache: false
 
 gap_partials %>%
@@ -774,13 +859,45 @@ If we applied our analytical method to differently sized groups (such as racial 
 Our theoretical framework is designed to show how the gender gap and the Democratic vote are composed from the same building blocks.
 Now that we have decomposed the gender gap into partisanship, mobilization, persuasion, and unaffiliated voters, we show these forces aggregate into the final election outcome.
 
+```{r}
+dem_adv = read_rds(here("data", "to_paper", "dem_advantage_components.rds"))
+```
+
+
+```{r}
+#| label: -fig-vote-partials
+#| fig-height: 3
+#| fig-width: 9
+#| fig-cap: "Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes. Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms."
+#| output: true
+#| cache: false
+ggplot(filter(dem_adv, term %in% core_terms_with_total)) +
+    aes(x = cycle_label, y = mean, color = gender, fill = gender) +
+    facet_grid(. ~ fct_relevel(term,
+                               "partisanship",
+                               "negmobilization",
+                               "persuasion",
+                               "unaffiliated",
+                               "total")) +
+    geom_ribbon(aes(ymin = q05, ymax = q95),
+                color = NA,
+                alpha = 0.4) +
+    geom_hline(yintercept = 0) +
+    geom_line() +
+    geom_point() +
+    scale_color_gender() +
+    scale_fill_gender() +
+    theme_gaps +
+    theme(legend.position = "none")
+```
+
 <!--todo: sideways figure in pdf only-->
 ```{r}
 #| label: fig-vote-partials
 #| fig-height: 3
 #| fig-width: 9
 #| fig-cap: "Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes. Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms."
-#| output: true
+#| output: false
 #| cache: false
 
 vote_partials %>%
