@@ -26,11 +26,15 @@ cw = readr::read_rds(here("data", "models", "mcmc_factor_crosswalk.rds"))
 #    long stack of posterior draws    #
 #######################################
 
-# use crosswalk to add semantic labels
+# one row per parameter, per draw
+
+# use crosswalk to add semantic labels for cycle and "outcome" code
 # we are hard-coding the group factorization... might want to relax that
 
-# this is some functional silliness
-item = `[[`
+# same as item = `[[`
+item = function(x, i) {
+    x[[i]]
+}
 
 draws =
     gather_draws(mcmc, theta[t, group]) |>
@@ -52,20 +56,20 @@ draws =
 #    summary stats of draws per param    #
 ##########################################
 
-index = `[`
 posterior_stats = draws |>
     summarize(
         mean = mean(.value),
         q05 = quantile(.value, .05),
         q95 = quantile(.value, .95),
-        .by = c(group_label, cycle_label, .variable)
+        .by = c(group_label, cycle_label)
     ) |>
     mutate(
         split = stringr::str_split(group_label, ":"),
-        gender = map_chr(split, index, 1),
-        party = map_chr(split, index, 2),
-        vote_choice = map_chr(split, index, 3),
-    )
+        gender = map_chr(split, item, 1),
+        party = map_chr(split, item, 2),
+        vote_choice = map_chr(split, item, 3),
+    ) |>
+    select(-split)
 
 ggplot(posterior_stats) +
     aes(x = cycle_label, y = mean, color = gender, fill = gender) +
@@ -132,7 +136,6 @@ long_terms = terms |>
     select(-spl, -party_term)
 
 dem_adv_draws = long_terms |>
-    select(-party_term) |>
     pivot_wider(
         names_from = party,
         values_from = value
@@ -193,6 +196,10 @@ ggplot(filter(gap_term_sums, term %in% core_terms, term != "total")) +
     geom_point()
 
 
+paper_export = here("data", "to_paper")
+readr::write_rds(gap_term_sums, here(paper_export, "gender_signed_dem_advantage_components.rds"))
+readr::write_rds(partial_gap_sums, here(paper_export, "partial_gaps.rds"))
+
 # ----- plot partial votes ----------
 
 ggplot(filter(dem_adv_sums, term %in% core_terms)) +
@@ -210,6 +217,8 @@ ggplot(filter(dem_adv_sums, term %in% core_terms)) +
     geom_line() +
     geom_point()
 
+readr::write_rds(dem_adv_sums, here(paper_export, "dem_advantage_components.rds"))
+
 ##################################
 #    summary of raw estimates    #
 ##################################
@@ -222,6 +231,8 @@ long_term_sums = long_terms |>
         .by = c(cycle_label, gender, party, term)
     )
 
+readr::write_rds(long_term_sums, here(paper_export, "vote_components.rds"))
+
 ggplot(long_term_sums |> filter(term != "nonmobilization")) +
     aes(x = cycle_label, y = mean, color = party, shape = gender) +
     facet_grid(. ~ fct_relevel(term,
@@ -230,8 +241,6 @@ ggplot(long_term_sums |> filter(term != "nonmobilization")) +
                                "persuasion",
                                "unaffiliated",
                                "total")) +
-    geom_ribbon(aes(ymin = q05, ymax = q95, fill = party),
-                color = NA,
-                alpha = 0.2) +
     geom_line() +
     geom_point()
+
