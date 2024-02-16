@@ -28,4 +28,6 @@ gender_colors <- c("M" = MCOLOR, "W" = WCOLOR)
 scale_color_gender <- partial(scale_color_manual, values = gender_colors)
 scale_fill_gender <- partial(scale_fill_manual, values = gender_colors)
 
+gender_shapes <- c("M" = 22, "W" = 16)
+scale_shape_gender = partial(scale_shape_manual, values = gender_shapes)
 
