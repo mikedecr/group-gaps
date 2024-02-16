@@ -5,10 +5,13 @@ box::use(purrr[partial])
 
 # ----- graphics theme ----------
 
-theme_gaps <- theme_base(base_size = 14) +
+theme_gaps <- function(...) {
+  theme_bw(base_size = 12) +
   theme(plot.background = element_blank(),
         axis.ticks = element_line(lineend = "square"),
-        axis.ticks.length = grid::unit(0.25, "lines"))
+        axis.ticks.length = grid::unit(0.25, "lines"),
+        ...)
+}
 
 theme_set(theme_gaps)
 
