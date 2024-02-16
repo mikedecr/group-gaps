@@ -13,7 +13,6 @@ theme_gaps <- function(...) {
         ...)
 }
 
-theme_set(theme_gaps)
 
 DCOLOR <- "#88CCEE"
 RCOLOR <- "#CC6677"
