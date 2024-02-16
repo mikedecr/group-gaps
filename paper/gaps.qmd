@@ -464,6 +464,22 @@ regs = read_rds(here("data", "models", "simple_regressions.rds"))
 ```
 
 ```{r}
+# do something with this table eventually?
+reg_summary = regs |>
+    # get the coef
+    unnest(coefs) |>
+    filter(term == "gender_gap") |>
+    select(dataset, term, estimate, std.error, summary, data) |>
+    unnest(summary) |>
+    mutate(
+        r = sign(estimate) * sqrt(r.squared),
+        n = map_int(data, nrow)
+    ) |>
+    select(-data)
+```
+
+
+```{r}
 #| label: prep-topline-data
 topline_plot_data = regs |>
     select(dataset, prediction) |>
@@ -496,7 +512,11 @@ topline_plot_data_dc = topline_plot_data |>
 mgray <- "gray50"
 lgray <- "gray80"
 
-with_dc_line = geom_line(data = topline_plot_data_dc, aes(y = .fitted), linetype = "dashed")
+with_dc_line = geom_line(
+    data = topline_plot_data_dc,
+    aes(y = .fitted),
+    linetype = "dashed"
+)
 
 no_dc_line = list(
     geom_ribbon(data = topline_plot_data_nodc, 
@@ -512,10 +532,14 @@ ggplot(topline_plot_data_dc) +
     no_dc_line + 
     with_dc_line + 
     geom_text(aes(label = obs_label), size = rel(2)) +
-    facet_wrap(~ dataset_label) +
-    labs(x = "Gender gap", y = "Democratic share of\ntwo-party vote") +
-    scale_x_continuous(breaks = seq(-1, 1, .05)) +
-    scale_y_continuous(breaks = seq(0, 1, .10))
+    facet_wrap(~ dataset_label, scales = "free") +
+    labs(
+        x = "Gender gap (pct. points)",
+        y = "Dem. two-party vote share"
+    ) +
+    scale_x_continuous(breaks = seq(-1, 1, .05), labels = function(x) round(x * 100)) +
+    scale_y_continuous(breaks = seq(0, 1, .10), labels = scales::percent) +
+    theme_gaps()
 ```
 <!--
 The coefs are actually pretty notable.
@@ -523,66 +547,86 @@ Given that women and men and equal sizes and fairly close in partisanship, the c
 Compare against the std. deviation of each...
 -->
 
+```{r}
+dataset_name_map = c(
+    "ANESxLeip" = "ANES & National Vote",
+    "ExitPollNoDC_2004" = "State Exit Polls, 2004",
+    "ExitPollNoDC_2008" = "State Exit Polls, 2008",
+    "ExitPoll_2004" = "State Exit Polls w/ DC, 2004",
+    "ExitPoll_2008" = "State Exit Polls w/ DC, 2008"
+)
+
+dataset_name_frame = regs |>
+    select(dataset) |>
+    mutate(
+        dataset_label = dataset_name_map[dataset] |> fct_relevel(dataset_name_map)
+    )
+```
+
+```{r}
+#| label: tbl-reg-summary
+#| output: true
+#| tbl-cap: Summary of OLS regressions predicting the Democratic vote share (possible values from 0 to 1) with the gender gap (possible values from -1 to 1). 
+reg_summary |>
+    left_join(dataset_name_frame, by = "dataset") |>
+    select(
+        Dataset = dataset_label,
+        -term,
+        `Gender Gap Coef` = estimate,
+        `Std. Err` = std.error,
+        `$p$-value` = p.value,
+        `Pearson's $r$` = r,
+        `Sample Size` = n
+    ) |>
+    arrange(Dataset) |>
+    mutate_if(is.numeric, round, 2) |>
+    knitr::kable()
+```
+
+```{r}
+# some useful tools
+reg_access_table = split(reg_summary, reg_summary$dataset)
+
+reg_extrema = regs |>
+    unnest(data) |>
+    group_by(dataset) |>
+    summarize(
+        mean_gender_gap = mean(gender_gap),
+        min_gender_gap = min(gender_gap),
+        max_gender_gap = max(gender_gap),
+    ) |>
+    left_join(reg_summary |> select(dataset, estimate), by = "dataset") |>
+    mutate(
+        min_effect = min_gender_gap * estimate,
+        mean_effect = mean_gender_gap * estimate,
+        max_effect = max_gender_gap * estimate
+    )
+
+anes_agg = filter(regs, dataset == "ANESxLeip") |> unnest(data)
+
+mean_gap_anes = mean(anes_agg$gender_gap)
+
+# a regression on first-differences, coef is negative!
+reg_first_diffs = lm(diff(dem_share) ~ diff(gender_gap), data = anes_agg)
+```
+
+
 We suggest the relationship between the gender gap and the Democratic vote is not a simple one.
 First, we analyze the relationship using national data from 1952 through 2016.
 This approach covers a wide range of elections from landslides such as 1972 to nail-biters such as 2000.
 The dependent variable is the official percentage of the two-party popular vote won by the Democratic ticket.
 We calculate the gender gap as the Democratic share of the two-party vote among women minus the Democratic share among men using the American National Election Studies cumulative data file.
-The first panel of @fig-toplines displays the data with an OLS regression line, the 95 percent confidence interval, and statistics to characterize the estimated relationship.
-There is little sign of a meaningful relationship, as the correlation is low and the $p$-value is high.
+The first panel of @fig-toplines displays the data with an OLS regression line and 95 percent confidence intervals.
+Summary statistics for this regression are presented in the first row of @tbl-reg-summary.
+At first glance, there is only slight evidence of a positive relationship, with a coefficient of `r round(reg_access_table$ANESxLeip$estimate, 2)` that is smaller than its standard error of `r round(reg_access_table$ANESxLeip$std.error, 2)`.
 A second way to evaluate the relationship is cross-sectionally, using state level data from individual elections.
-For this cross-sectional test, we calculate the gender gap from exit poll data for the 50 states and Washington D.C.\ from the 2004 and 2008 presidential elections.^[
-  More recent data would also be useful, but exit polls excluded 19 states in 2012 and 22 states in 2016.  
-]
+For this cross-sectional test, we calculate the gender gap from state-level exit poll data from the 2004 and 2008 presidential elections, which were the last elections to feature exit polls in all 50 states.
 We again compute the Democratic share of the two-party vote as the outcome of interest, this time using official state-level results.
-The state-level data appear in the second and third panels.
+The state-level data appear in the second and third panels of @fig-toplines.
 The cross-sectional data tell the same story as the longitudinal analysis.
-There is little sign of a meaningful relationship, as evidenced by the weak and insignificant correlations and regression slopes.
+There is a weak sign of a meaningful relationship, but the sample is small, and the uncertainty is high relative to the coefficient value.
 
-<!-- get topline data and plot descriptives -->
-
-
-
-```{r}
-#| label: get-descriptive-data
-load(here("data", "rmd-rdata", "03-descriptives.Rdata"))
-```
-
-```{r}
-#| label: define-colors
-
-lgray <- "gray50"
-mgray <- "gray80"
-```
-
-```{r}
-#| label: plot-toplines-old
-#| output: false
-#| fig-cap: The Gender Gap and the Presidential Vote. Plots contain correlation coefficients (labeled "r"), regression coefficients ("b"), coefficient standard errors ("se"), and $p$-values ("p"). Exit poll data were obtained from CNN and include Washington D.C.\ as a state. Election results from U.S.\ Election Atlas.
-#| fig-width: 7
-#| fig-height: 3
-
-ggplot(toplines, aes(x = gender_gap, y = dem_vote_share)) +
-  facet_wrap( ~ panel) +
-  coord_cartesian(ylim = c(0.2, 0.95), xlim = c(-.07, .18)) +
-  geom_hline(yintercept = 0.5, color = lgray) +
-  geom_vline(xintercept = 0, color = lgray) +
-  geom_text(data = exit_stat_labels,
-            family = "Consolas",
-            aes(x = 0.13, y = 0.825,
-                label = as.character(str_glue("{' '}r = {ifelse(nchar(r) == 3, paste0(r, '0'), r)}\n b = {beta}\nse = {se}\n p = {p}"))),
-            size = 3) +
-  geom_smooth(method = "lm", color = "gray20", 
-              size = 0.75, alpha = 0.35) +
-  geom_point(size = 1, shape = 1) +
-  scale_x_continuous(breaks = seq(-0.20, .20, .05), 
-                     labels = function(x) percent(x, accuracy = 1)) +
-  scale_y_continuous(breaks = seq(.1, .9, .2), 
-                     labels = function(x) percent(x, accuracy = 1)) +
-  labs(x = "Gender Gap", y = "Democratic Share of\nTwo-Party Vote") +
-  NULL
-```
-
+<!-- The wave elections that resulted in Democrats' best year (`r with(anes_agg, cycle[dem_share == max(dem_share)])`) and worst year (`r with(anes_agg, cycle[dem_share == min(dem_share)])`) featured gender gaps that were typical in size (`r with(anes_agg, gender_gap[dem_share == max(dem_share)]) |> round(3)` and `r with(anes_agg, gender_gap[dem_share == min(dem_share)]) |> round(3)`, compared to the average gender gap of `r mean(anes_agg$gender_gap) |> round(3)`) -->
 
 Taking these two tests together, we find little evidence of a positive relationship between the gender gap and the Democratic vote.
 However, there are theoretical grounds for questioning this superficial evidence.
@@ -604,7 +648,7 @@ load(here("data", "rmd-rdata", "05-viz.Rdata"))
 ```{r}
 #| label: -fig-rhs
 #| cache: false
-#| output: false
+#| output: true
 #| fig-height: 3.5
 #| fig-width: 7
 #| fig-cap: Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012. For presentational purposes, Column 2 displays the share of mobilized voters instead of the Mobilization term from the model equation. The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans. Leaning independents are coded as partisans.
@@ -663,27 +707,54 @@ core_terms_with_total = c(core_terms, "total")
 #| label: fig-rhs
 #| cache: false
 #| output: true
-#| fig-height: 3.5
+#| fig-height: 5
 #| fig-width: 7
 #| fig-cap: Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012. For presentational purposes, Column 2 displays the share of mobilized voters instead of the Mobilization term from the model equation. The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans. Leaning independents are coded as partisans.
+
 intelligible_terms = c(
-    "partisanship",
-    "loyalty",
-    "persuasion",
-    "unaffiliated"
+    "partisanship" = "Partisanship",
+    "loyalty" = "Loyal Votes",
+    "persuasion" = "Persuaded Votes",
+    "unaffiliated" = "Unaffiliated Votes"
 )
 
-ggplot(vote_components |> filter(term %in% intelligible_terms)) +
+seq_bounds = function(x, ...) {
+    seq(from = min(x), to = max(x), ...)
+}
+
+gender_label_data = vote_components |>
+    filter(term == "partisanship") |>
+    group_by(party) |>
+    filter(
+        (gender == "M" & mean == min(mean)) |
+        (gender == "W" & mean == max(mean))
+    ) |>
+    mutate(gender_label = c(M = "Men", W = "Women")[gender])
+
+ggplot(vote_components |> filter(term %in% names(intelligible_terms))) +
     aes(x = cycle_label, y = mean, color = str_to_title(party), shape = gender) +
-    facet_grid(. ~ fct_relevel(term,
-                               "partisanship",
-                               "loyalty",
-                               "persuasion",
-                               "unaffiliated")) +
+    facet_grid(
+        party ~ fct_relevel(term, names(intelligible_terms)),
+        labeller = as_labeller(c(intelligible_terms, dem = "Democrats", rep = "Republicans"))
+    ) +
     geom_line() +
-    geom_point() +
+    geom_point(fill = "white") +
+    geom_text(
+        data = gender_label_data,
+        aes(label = gender_label,
+            y = mean + .025 * sign((gender == "W") - .5)),
+        color = "black",
+        hjust = 0
+    ) +
     scale_color_party() +
-    theme(legend.position = "none")
+    scale_y_continuous(labels = scales::percent, name = "Pct. of electorate") +
+    scale_x_continuous(breaks = seq_bounds(vote_components$cycle_label, by = 16)) +
+    scale_shape_gender() +
+    labs(x = "Election cycle") +
+    theme_gaps(
+        legend.position = "none",
+        axis.text.x = element_text(angle = 45, vjust = 0.5)
+    )
 ```
 
 Applying our framework to the ANES data, we are now prepared to describe how these mechanisms connect the gender gap to the vote.
@@ -751,7 +822,7 @@ ggplot(filter(signed_dem_adv, term %in% core_terms_with_total, term != "total"))
               aes(y = mean), color = "black") +
     geom_line() +
     geom_point() +
-    theme_gaps +
+    theme_gaps() +
     scale_color_gender() +
     theme(legend.position = "none")
 ```
@@ -762,7 +833,7 @@ ggplot(filter(signed_dem_adv, term %in% core_terms_with_total, term != "total"))
 #| fig-height: 3
 #| fig-width: 9
 #| fig-cap: How Each Mechanism Affects the Gender Gap. Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect. Women are shown with solid points, men with hollow points. The thick line indicates the gender gap in each mechanism. The right-most panel is the sum of the net gender gap across all mechanisms.
-#| output: false
+#| output: true
 #| cache: false
 
 gap_partials %>%
@@ -887,7 +958,7 @@ ggplot(filter(dem_adv, term %in% core_terms_with_total)) +
     geom_point() +
     scale_color_gender() +
     scale_fill_gender() +
-    theme_gaps +
+    theme_gaps() +
     theme(legend.position = "none")
 ```
 
@@ -897,7 +968,7 @@ ggplot(filter(dem_adv, term %in% core_terms_with_total)) +
 #| fig-height: 3
 #| fig-width: 9
 #| fig-cap: "Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes. Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms."
-#| output: false
+#| output: true
 #| cache: false
 
 vote_partials %>%
