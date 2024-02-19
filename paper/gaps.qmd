@@ -119,7 +119,7 @@ source(here::here("R", "lib", "graphics_theme.R"))
 
 In an electoral democracy such as the United States, parties and candidates win control of government by assembling coalitions of social groups to form a majority of those voting.
 Looking back on particular election outcomes, it is common to hear casual observations that the result was due to such things as "strong backing from the Hispanic community" or "lower-than-expected turnout among rural voters."
-But these conclusions may unwittingly blur key distinctions in how groups actually contribute to election outcomes.
+But these vague characterizations can obscure how group dynamics contribute to election outcomes in the aggregate.
 
 We develop a general theory and an empirical approach to describe how voting gaps between groups in the electorate can advantage one party over another.
 Our approach can be applied to various group cleavages in voting, including racial and ethnic groups, college and non-college educated citizens, the working and non-working classes, and urban and rural residents.
@@ -154,7 +154,6 @@ During roughly the same time period, the Democratic Party's historical disadvant
 <!-- Unaffiliated voters contribute to election outcomes in important ways, but aggregate voting differences between independent men and independent women were also small compared to the large effects of partisan change. These trends essentially cancel out one another to obscure the effects of the gender gap on election outcomes. -->
 
 <!-- \todo[inline]{Independents are growing but not affecting the gender gap} -->
-
 
 
 # A Theory of Group Voting Gaps
@@ -240,15 +239,17 @@ $$
 $$
 where $p \in \{D, \, R\}$ represents Democrats and Republicans, and $g \in \{A, B\}$ represents two groups in the electorate that we will temporarily refer to as $A$ and $B$.
 To specify the filtering process, we add terms to represent mobilization and persuasion, plus an additional term to capture the remaining votes that party $p$ earns from voters not affiliated with either major party, such as independents and third-party identifiers.
-Equation&nbsp;\ref{eq:the-model-pgt} specifies this decomposition of the vote, which forms the basis of several useful quantities in the analysis.
+@eq-the-model-pgt specifies this decomposition of the vote, which forms the basis of several useful quantities in the analysis.
+
 $$
 \begin{aligned}
-    \label{eq:the-model-pgt}
     \mathrm{Votes}_{pgt} &= 
         \mathrm{Partisans}_{pgt} + \mathrm{Mobilization}_{pgt} + \mathrm{Persuasion}_{pgt} + \mathrm{Unaffiliated}_{pgt}
 \end{aligned}
-$$
+$$ {#eq-the-model-pgt}
 
+<!-- for more equation hacks... -->
+<!-- https://github.com/quarto-dev/quarto-cli/issues/2275#issuecomment-1399047519 -->
 
 To measure baseline partisanship, we recommend a simple version of the party ID index that appears in surveys such as the American National Election Study (ANES).
 This makes it possible to code every respondent as either a Democratic identifier, a Republican identifier, or unaffiliated with any major party.
@@ -906,7 +907,7 @@ If we applied our analytical method to differently sized groups (such as racial 
 
 ## Gender Gaps and the Formation of the Democratic Vote
 
-Our theoretical framework is designed to show how the gender gap and the Democratic vote are composed from the same building blocks.
+Our theoretical framework is designed to show how the gender gap and the Democratic vote are composed of the same building blocks.
 Now that we have decomposed the gender gap into partisanship, mobilization, persuasion, and unaffiliated voters, we show these forces aggregate into the final election outcome.
 
 ```{r}
@@ -1059,9 +1060,8 @@ Thus, some of the stability of women's behavior appears to be influenced by a gr
 In turn, it appears that near-term campaign maneuvers and election-specific forces have more influence over the voting decisions of white women than nonwhite women. -->
 
 
-
 <!-- bibliography page -->
 \newpage
 \singlespacing
-<!-- refs section goes here -->
+<!-- references implicitly here -->
 
