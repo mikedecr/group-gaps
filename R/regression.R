@@ -4,6 +4,7 @@
 
 # Longitudinal: gap (ANES) vs. vote (LEIP)
 # cross-sectional: gap (exists) vs. vote (?? also exits??)
+# fit models and dump summary tables to file
 
 ##############
 #    libs    #
