@@ -579,13 +579,19 @@ reg_summary |>
         -term,
         `Gender Gap Coef` = estimate,
         `Std. Err` = std.error,
-        `$p$-value` = p.value,
-        `Pearson's $r$` = r,
-        `Sample Size` = n
+        `$p$` = p.value,
+        `$r$` = r,
+        `$n$` = n
     ) |>
     arrange(Dataset) |>
     mutate_if(is.numeric, round, 2) |>
-    knitr::kable()
+    gt::gt() |>
+    gt::cols_align(align = "left", columns = "Dataset")
+    # knitr::kable(
+    #     booktabs = TRUE,
+    #     longtable = FALSE,
+    #     table.envir = "table"
+    # )
 ```
 
 ```{r}
