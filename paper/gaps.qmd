@@ -921,65 +921,50 @@ dem_adv = read_rds(here("data", "to_paper", "dem_advantage_components.rds"))
 #| fig-cap: "Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes. Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms."
 #| output: true
 #| cache: false
-ggplot(filter(dem_adv, term %in% core_terms_with_total)) +
+
+vote_label_data = dem_adv |>
+    filter(cycle_label == 1996) |>
+    filter(term == "partisanship") |>
+    group_by(term) |>
+    mutate(
+        gender_label = c(M = "Men", W = "Women")[gender],
+        gender_sign = case_match(gender, "M" ~ -1, "W" ~ 1)
+    )
+
+vote_terms = c(
+    "partisanship" = "Partisanship",
+    "negmobilization" = "Disloyalty and\nAbstention",
+    "persuasion" = "Persuaded Votes",
+    "unaffiliated" = "Unaffiliated Votes",
+    "total" = "Net Democratic Vote"
+)
+
+ggplot(filter(dem_adv, term %in% names(vote_terms))) +
     aes(x = cycle_label, y = mean, color = gender, fill = gender) +
-    facet_grid(. ~ fct_relevel(term,
-                               "partisanship",
-                               "negmobilization",
-                               "persuasion",
-                               "unaffiliated",
-                               "total")) +
+    facet_grid(. ~ fct_relevel(term, names(vote_terms)),
+        labeller = as_labeller(vote_terms)) +
     geom_ribbon(aes(ymin = q05, ymax = q95),
                 color = NA,
                 alpha = 0.4) +
     geom_hline(yintercept = 0) +
     geom_line() +
-    geom_point() +
+    geom_point(aes(shape = gender), fill = "white") +
+    geom_text(
+        data = vote_label_data,
+        aes(label = gender_label, y = mean + (gender_sign * .05)),
+        color = "black"
+    ) +
     scale_color_gender() +
+    scale_shape_gender() +
     scale_fill_gender() +
     theme_gaps() +
-    theme(legend.position = "none")
+    labs(x = "Election Cycle", y = "Effect on Net Democratic Vote") +
+    scale_x_continuous(breaks = seq_bounds(vote_components$cycle_label, by = 16)) +
+    theme_gaps(
+        legend.position = "none",
+        axis.text.x = element_text(angle = 45, vjust = 0.5)
+    )
 ```
-
-<!--todo: sideways figure in pdf only-->
-```{r}
-#| label: fig-vote-partials
-#| fig-height: 3
-#| fig-width: 9
-#| fig-cap: "Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes. Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms."
-#| output: true
-#| cache: false
-
-vote_partials %>%
-  filter(leaners == "Leaners as Partisans") %>% 
-  ggplot(aes(x = cycle, y = estimate)) +
-    facet_grid(. ~ mech) +
-    geom_hline(yintercept = 0, color = mgray, size = 0.25) +
-    geom_ribbon(aes(ymin = conf.low, ymax = conf.high,
-                    fill = gender),
-                color = NA,
-                alpha = 0.5,
-                show.legend = FALSE) +
-    geom_line(aes(color = gender), show.legend = FALSE, size = 0.5) +
-    geom_point(aes(shape = gender, color = gender),
-               fill = "white",
-               show.legend = FALSE) +
-    scale_shape_manual(values = c(22, 16)) +
-    scale_linetype_manual(values = c(1, 2)) +
-    scale_color_manual(values = c(mcolor, wcolor)) +
-    scale_fill_manual(values = c(mcolor, wcolor)) +
-    scale_y_continuous(labels = scales::percent) +
-    scale_x_continuous(breaks = seq(1952, 2016, 16)) +
-    theme(axis.text.x = element_text(angle = 45, vjust=0.75),
-          panel.grid.minor.x = element_blank()) +
-    labs(x = "Election Cycle",
-         y = "Effect of Democratic Advantage \n on Net Democratic Votes\n(Pct. of Total Electorate)") +
-    geom_text(data = gender_labels_vote, aes(x = x, y = y, label = lab),
-              size = 2.75,
-              family = "Source Sans Pro") +
-    theme(panel.grid.minor.x = element_blank())
-```
-
 
 @fig-vote-partials shows how the Democratic advantage in each mechanism affects the net Democratic vote, with separate trends for men and women.
 Positive values indicate a net Democratic advantage and, in turn, a positive influence on the net Democratic vote.
