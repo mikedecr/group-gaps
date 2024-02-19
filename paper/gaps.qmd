@@ -177,12 +177,6 @@ We formalize these illustrations into equations in the following section.
 To present the logic in a clear fashion, we temporarily ignore voters who are unaffiliated with either party; they will be incorporated in the empirical analysis.
 These illustrations should make clear that our methodological approach relies on simple math such as addition and percentages rather than regression modeling.
 
-<!-- This script compiles the diagrams (written in .dot) -->
-```{r}
-#| label: compile-dots
-source(here("code", "dot", "compile-dots.R"))
-```
-
 In the U.S.\ two-party system, every citizen must make one of three potential choices in the election: voting Democratic, voting Republican, or not voting.^[
   We begin by assuming only two parties (ignoring minor parties and independent candidates) for ease of exposition.
 ]
@@ -190,10 +184,39 @@ Assuming that voters have some baseline affiliation for one party, the raw numbe
 We refer to the number of votes one party earns over the other as *net Democratic votes*.
 The flowchart below visualizes how the number of net Democratic votes in an election is the result of partisan mobilization and persuasion.
 
-```{r}
-#| label: dot-net-votes
-#| output: true
-include_graphics(here("paper", "assets", "dot-img", "net-votes.pdf"))
+```{dot}
+//| label: dot-net-votes
+//| output: true
+digraph {
+
+  center = 1
+  rankdir = LR
+  // node [fontname = "Minion Pro" shape = record]
+  node [shape = record]
+
+  subgraph cluster_d {
+    style = filled
+    color = white
+    md [label="Mobilization of Democrats"]
+    pr [label = "Persuasion of Republicans"]
+    dv [label = "Democratic Votes"]
+  }
+
+  subgraph cluster_r {
+    style = filled
+    color = white
+    mr [label="Mobilization of Republicans"]
+    pd [label = "Persuasion of Democrats"]
+    rv [label = "Republican Votes"]
+  }
+
+  ndv [label = "Net Democratic Votes"]
+
+  {md, pr} -> dv [label = "+"]
+  {mr, pd} -> rv [label = "+"]
+  {dv} -> ndv [label = "+"]
+  {rv} -> ndv [label = "–"]
+}
 ```
 
 The number of net Democratic votes differs from the conventional measure of two-party vote share, but it is advantageous because its components can be rearranged in several valuable ways.
@@ -205,10 +228,42 @@ In cases where turnout and swing voting rates are similar between the parties, o
 Our approach handles these cases by accounting for the size of the partisan bases.
 
 
-```{r}
-#| label: dot-net-mechanisms
-#| output: true
-include_graphics(here("paper", "assets", "dot-img", "net-vote-mechanisms.pdf"))
+```{dot}
+//| label: dot-net-mechanisms
+//| output: true
+digraph {
+
+  center = 1
+  rankdir = LR
+  // node [fontname = "Minion Pro" shape = record]
+  node [shape = record]
+
+  subgraph cluster_d {
+    style = filled
+    color = white
+    md [label="Mobilization of Democrats"]
+    mr [label = "Mobilization of Republicans"]
+    ndm [label = "Net Dem Mobilization"]
+  }
+
+  subgraph cluster_r {
+    style = filled
+    color = white
+    pd [label = "Persuasion of Democrats"]
+    pr [label="Persuasion of Republicans"]
+    ndp [label = "Net Dem Persuasion"]
+  }
+
+  ndv [label = "Net Dem Votes"]
+
+  md -> ndm [label = "+"]
+  mr -> ndm [label = "–"]
+
+  pd -> ndp [label = "+"]
+  pr -> ndp [label = "–"]
+
+  {ndm, ndp} -> ndv [label = "+"]
+}
 ```
 
 Our method allows us to measure the group gap in terms of mobilization and persuasion as well.
@@ -218,10 +273,44 @@ This is done by calculating net Democratic advantages in mobilization and persua
 The net group gap is thus the sum of the gaps in each of these mechanisms. 
 
 <!-- Mike: this figure needs to be redone to remove references to the genders -->
-```{r}
-#| label: dot-net-gap
-#| output: true
-include_graphics(here("paper", "assets", "dot-img", "net-gap-mechanisms.pdf"))
+```{dot}
+//| label: dot-net-gap
+//#| output: true
+digraph {
+
+  center = 1
+  rankdir = LR
+  // node [fontname = "Minion Pro" shape = record]
+    node [shape = record]
+
+  subgraph cluster_d {
+    style = filled
+    color = white
+    ndmw [label="Net Dem Mobilization, Women"]
+    ndmm [label = "Net Dem Mobilization, Men"]
+    gm [label = "Gap in Mobilization"]
+  }
+
+  subgraph cluster_r {
+    style = filled
+    color = white
+    ndpw [label="Net Dem Persuasion, Women"]
+    ndpm [label = "Net Dem Persuasion, Men"]
+    gp [label = "Gap in Persuasion"]
+  }
+
+  ndv [label = "Net Gender Gap"]
+
+  ndmw -> gm [label = "+"]
+  ndmm -> gm [label = "–"]
+
+  ndpw -> gp [label = "+"]
+  ndpm -> gp [label = "–"]
+
+  {gm, gp} -> ndv [label = "+"]
+  
+        
+}
 ```
 
 
