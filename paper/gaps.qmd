@@ -656,36 +656,6 @@ load(here("data", "rmd-rdata", "05-viz.Rdata"))
 
 <!-- Mike: can we add some descriptive labels for axes such as "Helps Democrats more" or "Better for Dems"? -->
 <!-- also please change orange to a real red -->
-```{r}
-#| label: -fig-rhs
-#| cache: false
-#| output: true
-#| fig-height: 3.5
-#| fig-width: 7
-#| fig-cap: Measures of Mobilization, Persuasion, and Voting by the Unaffiliated 1952-2012. For presentational purposes, Column 2 displays the share of mobilized voters instead of the Mobilization term from the model equation. The share of mobilized voters is the share of partisans minus the share of non-mobilized partisans. Leaning independents are coded as partisans.
-
-rhs %>%
-  filter(leaners == "Leaners as Partisans") %>%
-  mutate(PG = str_replace(PG, "Democratic", "Dem."),
-         PG = str_replace(PG, "Republican", "Rep.")) %>%
-  ggplot(aes(x = cycle, y = estimate, color = PG, shape = PG)) +
-      facet_grid(. ~ term) +
-      geom_hline(yintercept = 0, color = mgray, size = 0.25) +
-      geom_line(size = 0.4, show.legend = FALSE) +
-      geom_point(aes(shape = PG), fill = "white") +
-      scale_y_continuous(labels = scales::percent) +
-      scale_color_manual(values = c(DCOLOR, DCOLOR, RCOLOR, RCOLOR)) +
-      scale_shape_manual(values = c(22, 16, 22, 16)) +
-      # scale_shape_manual(values = c(15, 16, 21, 22)) +
-      labs(x = "Election Cycle", y = "Percent of Eligible Electorate",
-           shape = NULL, color = NULL) +
-      scale_x_continuous(breaks = seq(1952, 2016, 16)) +
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.75),
-            legend.position = c(0.875, 0.75),
-            legend.background = element_blank(),
-            legend.text = element_text(size = rel(0.75)),
-            legend.key.size = unit(1, "lines"))
-```
 
 ```{r}
 paper_export = here("data", "to_paper")
@@ -725,6 +695,7 @@ core_terms_with_total = c(core_terms, "total")
 intelligible_terms = c(
     "partisanship" = "Partisanship",
     "loyalty" = "Loyal Votes",
+    # "negmobilization" = "Non-Mobilization",
     "persuasion" = "Persuaded Votes",
     "unaffiliated" = "Unaffiliated Votes"
 )
@@ -758,10 +729,10 @@ ggplot(vote_components |> filter(term %in% names(intelligible_terms))) +
         hjust = 0
     ) +
     scale_color_party() +
-    scale_y_continuous(labels = scales::percent, name = "Pct. of electorate") +
-    scale_x_continuous(breaks = seq_bounds(vote_components$cycle_label, by = 16)) +
     scale_shape_gender() +
     labs(x = "Election cycle") +
+    scale_y_continuous(labels = scales::percent, name = "Pct. of electorate") +
+    scale_x_continuous(breaks = seq_bounds(vote_components$cycle_label, by = 16)) +
     theme_gaps(
         legend.position = "none",
         axis.text.x = element_text(angle = 45, vjust = 0.5)
