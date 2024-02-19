@@ -377,7 +377,6 @@ This normalization is appealing for our purposes because we aim to compare parti
 
 # Does the Gender Gap Help the Democrats?
 
-
 Having established a way to understand how groups contribute to election outcomes, we now apply our framework to address important questions about the gender gap.
 Much research on the gender gap already examines where men and women's vote preferences come from in the first place: policy attitudes, economic circumstances, social position, partisan sorting, and other gender-specific experiences that may bear on one's personal political orientation [@box2004dynamics;@chaney1998explaining;@conover1988;@edlund2002;@gillionetal;@kaufmann1999changing;@manza1998gender].^[
   We acknowledge that gender is in fact more complex and contested than the binary classification of "male" and "female" suggests.
@@ -572,6 +571,7 @@ dataset_name_frame = regs |>
 #| label: tbl-reg-summary
 #| output: true
 #| tbl-cap: Summary of OLS regressions predicting the Democratic vote share (possible values from 0 to 1) with the gender gap (possible values from -1 to 1). 
+
 reg_summary |>
     left_join(dataset_name_frame, by = "dataset") |>
     select(
@@ -770,7 +770,6 @@ Lastly, the number of votes obtained through unaffiliated voters is generally sm
 
 ## Sources of the Gender Gap
 
-
 Using these new measures of partisanship, mobilization, persuasion, and party-unaffiliated voting, we compute gender differences in the partisan impact of each trend to trace how each mechanism contributes to the net gender gap.
 To do this, we first calculate the Democratic advantage in each mechanism separately for women and men (Equations&nbsp;\ref{eq:vote-net-mechanisms-women} and&nbsp;\ref{eq:vote-net-mechanisms-men}).
 For example, there is a Democratic advantage in partisanship among women if a greater number of women identify as Democrats than as Republicans.
@@ -779,7 +778,7 @@ A gender gap in a given mechanism arises if the Democratic advantage among women
 If the numerical impact of women's and men's behavior is equivalent (men and women are equally pro-Democratic or pro-Republican), the gender gap in a given mechanism is zero.
 Democratic advantages and gender gaps are calculated after normalization and thus are expressed as proportions of the overall electorate. 
 
-<!--todo: sideways figure in pdf only-->
+
 ```{r}
 #| label: fig-gap-partials
 #| fig-height: 3
@@ -787,13 +786,38 @@ Democratic advantages and gender gaps are calculated after normalization and thu
 #| fig-cap: How Each Mechanism Affects the Gender Gap. Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect. Women are shown with solid points, men with hollow points. The thick line indicates the gender gap in each mechanism. The right-most panel is the sum of the net gender gap across all mechanisms.
 #| output: true
 #| cache: false
-ggplot(filter(signed_dem_adv, term %in% core_terms_with_total, term != "total")) +
+
+gap_terms = c(
+    "partisanship" = "Partisanship",
+    "negmobilization" = "Disloyalty and\nAbstention",
+    "persuasion" = "Persuaded Votes",
+    "unaffiliated" = "Unaffiliated Votes",
+    "total" = "Net Gender Gap"
+)
+
+# TODO: label men and women in first two panels
+gap_label_data = signed_dem_adv |>
+    filter(term %in% c("partisanship", "negmobilization")) |>
+    group_by(term) |>
+    filter(
+        (gender == "M" & term == "partisanship" & mean == min(mean)) |
+        (gender == "M" & term == "negmobilization" & mean == max(mean)) |
+        (gender == "W" & term == "partisanship" & mean == max(mean)) |
+        (gender == "W" & term == "negmobilization" & mean == min(mean))
+    ) |>
+    mutate(gender_label = c(M = "Men", W = "Women")[gender])
+
+# ggplot(filter(signed_dem_adv, term %in% core_terms_with_total, term != "total")) +
+ggplot(filter(signed_dem_adv, term %in% names(gap_terms), term != "total")) +
     aes(x = cycle_label, y = mean, color = gender) +
-    facet_grid(. ~ fct_relevel(term,
-                               "partisanship",
-                               "negmobilization",
-                               "persuasion",
-                               "unaffiliated")) +
+    facet_grid(
+        . ~ fct_relevel(term, names(gap_terms)),
+        labeller = as_labeller(gap_terms)
+    ) +
+                               # "partisanship",
+                               # "negmobilization",
+                               # "persuasion",
+                               # "unaffiliated")) +
     geom_ribbon(data = filter(gap_components, term %in% core_terms_with_total),
                 aes(ymin = q05, ymax = q95),
                 fill = "gray",
@@ -803,49 +827,22 @@ ggplot(filter(signed_dem_adv, term %in% core_terms_with_total, term != "total"))
     geom_line(data = filter(gap_components, term %in% core_terms_with_total),
               aes(y = mean), color = "black") +
     geom_line() +
-    geom_point() +
+    geom_point(aes(shape = gender), fill = "white") +
+    geom_text(
+        data = gap_label_data,
+        aes(label = gender_label, y = mean + sign(mean) * .02),
+        color = "black",
+        hjust = 0
+    ) +
+    labs(x = "Election Cycle", y = "Effect on Net Gender Gap") +
     theme_gaps() +
     scale_color_gender() +
-    theme(legend.position = "none")
-```
-
-<!--todo: sideways figure in pdf only-->
-```{r}
-#| label: -fig-gap-partials
-#| fig-height: 3
-#| fig-width: 9
-#| fig-cap: How Each Mechanism Affects the Gender Gap. Democratic advantage among women exerts a positive effect on the net gender gap, while Democratic advantage among men exerts a negative effect. Women are shown with solid points, men with hollow points. The thick line indicates the gender gap in each mechanism. The right-most panel is the sum of the net gender gap across all mechanisms.
-#| output: true
-#| cache: false
-
-gap_partials %>%
-  filter(leaners == "Leaners as Partisans") %>% 
-  ggplot(aes(x = cycle, y = estimate)) +
-    facet_grid(. ~ mech) +
-    geom_hline(yintercept = 0, color = mgray, size = 0.25) +
-    geom_ribbon(data = filter(mc_gap, leaners == "Leaners as Unaffiliated"), 
-                aes(ymin = conf.low, ymax = conf.high),
-                color = NA, fill = mgray,
-                alpha = 0.5) +
-    geom_line(aes(color = gender), show.legend = FALSE, size = 0.5) +
-    geom_point(aes(shape = gender, color = gender),
-               fill = "white",
-               show.legend = FALSE) +
-    geom_line(data = filter(mc_gap, leaners == "Leaners as Unaffiliated"), 
-              aes(x = cycle, y = estimate)) +
-    scale_shape_manual(values = c(22, 16)) +
-    scale_linetype_manual(values = c(1, 2)) +
-    scale_color_manual(values = c(mcolor, wcolor)) +
-    scale_fill_manual(values = c(mcolor, wcolor)) +
-    scale_y_continuous(labels = scales::percent) +
-    scale_x_continuous(breaks = seq(1952, 2016, 16)) +
-    theme(axis.text.x = element_text(angle = 45, vjust=0.75),
-          panel.grid.minor.x = element_blank()) +
-    labs(x = "Election Cycle",
-         y = "Effect of Democratic Advantage \n on Net Gender Gap\n(Pct. of Total Electorate)") +
-    geom_text(data = gender_labels_gap, aes(x = x, y = y, label = lab),
-              family = "Source Sans Pro",
-              size = 2.75)
+    scale_shape_gender() +
+    scale_x_continuous(breaks = seq_bounds(vote_components$cycle_label, by = 16)) +
+    theme_gaps(
+        legend.position = "none",
+        axis.text.x = element_text(angle = 45, vjust = 0.5)
+    )
 ```
 
 In @fig-gap-partials, we decompose the net gender gap into the separate mechanisms of partisanship, mobilization, persuasion, and votes from unaffiliated individuals.
