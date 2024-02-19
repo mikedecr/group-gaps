@@ -7,48 +7,24 @@ author: |
 
 # Abstract
 
-Groups in the electorate vote differently from one another. Racial minorities and young voters prefer Democratic candidates on average, while evangelicals and rural voters prefer Republican candidates. How do these group differences affect party vote shares, given that the underlying groups are differently sized? We provide a theoretical framework to understand group differences in voting and party vote by expressing each as the result of partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters. We apply this method to the gender gap in U.S. presidential voting. We find that the size of the gender gap has no necessary bearing on the partisan vote outcome. Rather, the relationship is contingent on the changing numerical impact of partisanship, partisan mobilization, and persuasion over time. Although the gender gap and the Democratic vote in presidential elections have both increased over the years, this relationship is spurious. The primary cause of the gender gap (partisan change) was actually harmful to the Democrats. Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap. 
+Groups in the electorate vote differently from one another.
+Racial minorities and young voters prefer Democratic candidates on average, while evangelicals and rural voters prefer Republican candidates.
+How do these group differences affect party vote shares, given that the underlying groups are differently sized? We provide a theoretical framework to understand group differences in voting and party vote by expressing each as the result of partisan predispositions in the electorate that are transformed through partisan mobilization, partisan defection, and the choices of unaffiliated voters.
+We apply this method to the gender gap in U.S. presidential voting.
+We find that the size of the gender gap has no necessary bearing on the partisan vote outcome.
+Rather, the relationship is contingent on the changing numerical impact of partisanship, partisan mobilization, and persuasion over time.
+Although the gender gap and the Democratic vote in presidential elections have both increased over the years, this relationship is spurious.
+The primary cause of the gender gap (partisan change) was actually harmful to the Democrats.
+Meanwhile, forces that increased the Democratic vote (mobilization and persuasion) were minor influences on the gender gap.
 
 
-# Repo to-do notes
+# Setup instructions
 
-Immediate:
-
-- fix DK/R responses to vote choice
-- re-check stats after fixing vote choice
-- abstract away two-group example?
-- create a multi-group example
-    - age?
-    - white non-college
-    - maybe check the grimmer paper
-- abstract the multi-group problem
-    - if everything is comparison to a "random" null then that encapsulates the binary group?
-
-- [ ] normalization
-    - [ ] exits
-    - [ ] ANES
-- [ ] Cursory analysis
-    - [ ] ANES
-    - [ ] exits
-- [ ] Model
-    - [ ] `.stan`
-    - [ ] library of supporting fns?
-    - [ ] data prep and implementation 
-    - [ ] post-estimation: stats
-    - [ ] post-estimation: figs
-- [ ] flowcharts
-    - [ ] are we keeping .dot?
-    - [ ] how to integrate stylistically / parameterize?
-- [ ] data needs
-    - [ ] ANES 2020 cumulative
-- Admin
-    - [ ] data storage solution
-        - [ ] Do something about raw ANES data (LFS? Download from remote if file not present?)
+tbd
 
 
+# Other notes
 
-## Notes on Git history
-
-This repository was nuked and recreated for large file reasons.
+- The history for this repository was destroyed and recreated because large data files were checked in and difficult to remove.
 History for this repository before August 2, 2019, can be found at <https://bitbucket.org/mikedecrescenzo/gender-gap/src>.
 

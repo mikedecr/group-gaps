@@ -2,6 +2,40 @@
 title: Gender gap notes
 ---
 
+# 2024/02/19 from readme, should be sorted later
+
+Immediate:
+
+- abstract away two-group example?
+- create a multi-group example
+    - age?
+    - white non-college
+    - maybe check the grimmer paper
+- abstract the multi-group problem
+    - if everything is comparison to a "random" null then that encapsulates the binary group?
+
+- [ ] normalization
+    - [ ] exits
+    - [ ] ANES
+- [ ] Cursory analysis
+    - [ ] ANES
+    - [ ] exits
+- [ ] Model
+    - [ ] `.stan`
+    - [ ] library of supporting fns?
+    - [ ] data prep and implementation 
+    - [ ] post-estimation: stats
+    - [ ] post-estimation: figs
+- [ ] flowcharts
+    - [ ] are we keeping .dot?
+    - [ ] how to integrate stylistically / parameterize?
+- [ ] data needs
+    - [ ] ANES 2020 cumulative
+- Admin
+    - [ ] data storage solution
+        - [ ] Do something about raw ANES data (LFS? Download from remote if file not present?)
+
+
 # 2023/04/12 plan for refactoring:
 
 Do this little by little:
@@ -154,6 +188,9 @@ Filtering questions
 - we've been doing presidential only but never checked midterms
   + maybe make a "valid cycles" vector and have analysis depend on that
 - should we omit everyone who votes third-party? code them as not mobilized?
+- addresss DK/R responses to party, vote, gender
+
+
 
 
 party ID code
