@@ -1,3 +1,12 @@
+###############################################
+#    okay here is the lowdown on this file    #
+###############################################
+
+# we should have some file that documents the basic countervailing trends
+# in party ID, turnout, etc.
+# but we can separate it from all the regression nonsense happening in this current file.
+
+
 # --------------------------------------------------
 #  rewriting this file as we go
 #  to find some abstractions therein
