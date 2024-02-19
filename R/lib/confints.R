@@ -10,7 +10,7 @@ prop_ci <- function(successes, n, level = 0.05) {
 
     # value: vector
     return(c(estimate = estimate,
-             std_error = std_error,
+             std_error = std_err,
              lower = estimate - moe,
              upper = estimate + moe))
 
