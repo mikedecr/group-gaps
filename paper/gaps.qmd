@@ -65,7 +65,7 @@ execute:
     warning: true       # display warning msgs
     error: true         # display err. msgs
     fig-align: center   # vertical figure alignment
-    cache: true         # cache chunk results if chunk code is unchanged
+    cache: false         # cache chunk results if chunk code is unchanged
     # freeze: auto      # don't re-render documenet during "global" quarto build if src has not changed
                         # turning this on seems dangerous, 
                         # as the paper depends on stateful data not detectable in code per se.
@@ -83,16 +83,16 @@ knitr:
 # we set cache to false because
 # we _need_ this to eval if later chunks want to use these packages
 # i.e. pkg code is state, not values
-library("knitr")
+# library("knitr")
 library("here")
 library("readr")
-library("magrittr")
+# library("magrittr")
 library("tidyverse")
 library("ggplot2")
-library("scales")
-library("labelled")
-library("broom")
-library("latex2exp")
+# library("scales")
+# library("labelled")
+# library("broom")
+# library("latex2exp")
 ```
 
 ```{r}
