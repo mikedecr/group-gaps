@@ -1,5 +1,4 @@
 box::use(ggplot2[...])
-box::use(ggthemes[theme_base])
 box::use(purrr[partial])
 
 
