@@ -20,7 +20,30 @@ Meanwhile, forces that increased the Democratic vote (mobilization and persuasio
 
 # Setup instructions
 
-tbd
+### Micromamba for package management
+
+Installation instructions [here](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html),
+
+```sh
+"${SHELL}" <(curl -L micro.mamba.pm/install.sh)
+```
+
+### Conda environment
+
+```sh
+micromamba env create -f conda/gaps.yml --no-rc -y
+micromamba activate gaps
+```
+
+```{r}
+renv::install("box")
+renv::install("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+```
+
+```sh
+quarto render paper/gaps.qmd --to pdf
+```
+
 
 
 # Other notes
