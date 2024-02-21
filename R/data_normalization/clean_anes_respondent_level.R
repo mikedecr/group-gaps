@@ -8,9 +8,9 @@ library("here")
 library("dplyr")
 
 
-
 # --- ANES raw data -----------------------
 
+# update this and read from some more raw format
 anes <- haven::read_dta(here("data", "ANES-2016", "anes_timeseries_cdf.dta"))
 
 # NOTE remove labels?
@@ -163,9 +163,6 @@ anes <- anes |>
 
 
 # NUKE consider adding more filters based on other code
-
-
-library(arrow)
 
 
 # --- save it -----------------------

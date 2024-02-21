@@ -19,13 +19,15 @@ library("here")
 library("tibble")
 library("purrr")
 library("ggplot2")
+library("broom")
 
 conflicts_prefer(dplyr::filter)
 
-box::use(intervals = ./R/lib/confints)
-box::use(plt = ./R/lib/graphics_theme)
-box::use(pfx = ./R/lib/prefix)
-box::use(./R/lib/maps[...])
+options(box.path = here::here())
+box::use(intervals = R/lib/confints)
+box::use(plt = R/lib/graphics_theme)
+box::use(pfx = R/lib/prefix)
+box::use(R/lib/maps[...])
 
 # ----------------------------------------------------
 #   data

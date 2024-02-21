@@ -1,5 +1,6 @@
 # raw exit poll data -> normalized exit poll data
 
+options(box.path = c(here::here()))
 box::use(conflicted)
 box::use(dplyr[rename, rename_all, mutate, select])
 box::use(readr[read_csv, write_csv])

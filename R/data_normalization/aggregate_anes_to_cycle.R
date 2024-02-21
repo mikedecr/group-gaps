@@ -14,8 +14,9 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 
-box::use(intervals = ./R/lib/confints)
-box::use(prefix = ./R/lib/prefix)
+options(box.path = c(here::here()))
+box::use(intervals = R/lib/confints)
+box::use(prefix = R/lib/prefix)
 
 
 ##############################
