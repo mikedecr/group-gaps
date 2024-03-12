@@ -20,7 +20,7 @@ Meanwhile, forces that increased the Democratic vote (mobilization and persuasio
 
 # Setup instructions
 
-### Micromamba for package management
+## Computational environment handled by `Micromamba`
 
 Installation instructions [here](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html),
 
@@ -28,39 +28,16 @@ Installation instructions [here](https://mamba.readthedocs.io/en/latest/installa
 "${SHELL}" <(curl -L micro.mamba.pm/install.sh)
 ```
 
-### Conda environment
+## Scripts for managing local development
 
-```sh
-micromamba env create -f conda/gaps.yml --no-rc -y -r conda
-micromamba activate conda/envs/gaps
-```
+1. `build_scripts/01_setup_environment.sh`: builds and activates conda / micromamba environment.
+   Installs R, R packages, Stan, and Quarto for rendering the paper.
+2. `build_scripts/02_download_data.sh`: downloads ANES 2020 cumulative data file with `curl`
+3. `build_scripts/03_analysis.sh`: executes R scripts that clean and analyze data.
+   Artifacts are saved for consumption by the paper.
+4. `build_scripts/04_compile_paper.sh`: compiles the paper with Quarto.
 
-```{r}
-# these need to be versioned...
-renv::install("box")
-renv::install("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
-```
-
-```sh
-# download ANES cumulative file
-curl -LO https://electionstudies.org/anes_timeseries_cdf_stata_20220916
-# move it to data folder
-mv anes_timeseries_cdf_stata_20220916 data/anes_2020.zip
-# unzip
-unzip data/anes_2020.zip -d data/anes_2020
-```
-
-
-```sh
-Rscript R/data_normalization/aggregate_anes_to_cycle.R
-Rscript R/data_normalization/clean_anes_respondent_level.R
-Rscript R/data_normalization/clean_state_exit_polls.R
-Rscript R/regression.R
-Rscript R/mcmc.R
-Rscript R/post_mc.R
-
-quarto render paper/gaps.qmd --to pdf
-```
+The commands in each of these scripts is perfectly appropriate for interactive use in the terminal as well.
 
 
 # Other notes
