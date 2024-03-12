@@ -31,8 +31,8 @@ Installation instructions [here](https://mamba.readthedocs.io/en/latest/installa
 ### Conda environment
 
 ```sh
-micromamba env create -f conda/gaps.yml --no-rc -y
-micromamba activate gaps
+micromamba env create -f conda/gaps.yml --no-rc -y -r conda
+micromamba activate conda/envs/gaps
 ```
 
 ```{r}
