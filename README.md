@@ -41,6 +41,16 @@ renv::install("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption
 ```
 
 ```sh
+# download ANES cumulative file
+curl -LO https://electionstudies.org/anes_timeseries_cdf_stata_20220916
+# move it to data folder
+mv anes_timeseries_cdf_stata_20220916 data/anes_2020.zip
+# unzip
+unzip data/anes_2020.zip -d data/anes_2020
+```
+
+
+```sh
 quarto render paper/gaps.qmd --to pdf
 ```
 
