@@ -685,6 +685,8 @@ reg_summary |>
 ```
 
 ```{r}
+#| label: reg-processing
+
 # some useful tools
 reg_access_table = split(reg_summary, reg_summary$dataset)
 
@@ -736,13 +738,6 @@ Uncovering the partisan impact of the gender gap requires more theoretical and e
 
 
 # How Mobilization and Persuasion Shape Elections
-
-```{r}
-#| label: load-mcmc
-load(here("data", "rmd-rdata", "05-viz.Rdata"))
-```
-
-
 
 <!-- Mike: can we add some descriptive labels for axes such as "Helps Democrats more" or "Better for Dems"? -->
 <!-- also please change orange to a real red -->
@@ -1005,7 +1000,7 @@ dem_adv = read_rds(here("data", "to_paper", "dem_advantage_components.rds"))
 
 
 ```{r}
-#| label: -fig-vote-partials
+#| label: fig-vote-partials
 #| fig-height: 3
 #| fig-width: 9
 #| fig-cap: "Relating the Gender Gap and the Election Outcome: Gender differences in the sources of Democratic votes. Women are shown with orange solid points, men with hollow green points. The right-most panel is the Net Democratic Vote for each gender, summing across mechanisms."
