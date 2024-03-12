@@ -173,7 +173,7 @@ print(head(anes))
 clean_data = here("data", "clean")
 
 if (file.exists(clean_data) == FALSE) {
-    dir.create(clean_data, showWarnings = False)
+    dir.create(clean_data, showWarnings = FALSE)
 }
 
 arrow::write_parquet(anes, here(clean_data, "anes_cdf.pq"))
