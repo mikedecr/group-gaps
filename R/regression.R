@@ -81,7 +81,7 @@ models = regdata |>
 #########################
 
 model_dir = here("data", "models") 
-if (!file.exists(model_dir)) {
+if (file.exists(model_dir) == FALSE) {
     dir.create(model_dir)
 }
 readr::write_rds(models, here(model_dir, "simple_regressions.rds"))

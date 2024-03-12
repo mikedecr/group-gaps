@@ -12,8 +12,6 @@ library("dplyr")
 library("ggplot2")
 
 
-
-
 ################################################
 #    map from group data to stan model data    #
 ################################################
@@ -217,7 +215,13 @@ crosswalk_list = grp_data_init |>
     lapply(unique) |>
     lapply(function(x) setNames(x, as.integer(x)))
 
-readr::write_rds(crosswalk_list, here("data", "models", "mcmc_factor_crosswalk.rds"))
+data_models = here("data", "models")
+
+if (file.exists(data_models) == FALSE) {
+    dir.create(data_models)
+}
+
+readr::write_rds(crosswalk_list, here(data_models, "mcmc_factor_crosswalk.rds"))
 
 # MCMCs
 # every file is mcmc_{name}.rds
@@ -226,7 +230,7 @@ lapply(
     function(name) {
         mcmc = stanfits[[name]]
         stub = as.character(stringr::str_glue("mcmc_{name}.rds"))
-        path = here("data", "models", stub)
+        path = here(data_models, stub)
         mcmc$save_object(path)
     }
 )

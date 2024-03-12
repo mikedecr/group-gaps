@@ -72,9 +72,13 @@ agg = full_join(leip, agg_anes, by = "cycle")
 #    save cleaned data    #
 ###########################
 
-arrow::write_parquet(agg, here("data", "clean", "gap_vote_x_cycle.pq"))
+print(head(agg))
 
-# preview
-agg |> head() |> print()
+clean_data = here("data", "clean")
+if (file.exists(clean_data) == FALSE) {
+    dir.create(clean_data)
+}
+
+arrow::write_parquet(agg, here(clean_data, "gap_vote_x_cycle.pq"))
 
 

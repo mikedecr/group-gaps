@@ -35,4 +35,14 @@ ex <- ex_raw |>
     ) |>
     print()
 
-arrow::write_parquet(ex, here("data", "clean", "exits.pq"))
+###############
+#    write    #
+###############
+
+clean_data = here("data", "clean")
+
+if (file.exists(clean_data) == FALSE) {
+    dir.create(clean_data)
+}
+
+arrow::write_parquet(ex, here(clean_data, "exits.pq"))

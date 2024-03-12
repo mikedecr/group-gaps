@@ -196,9 +196,13 @@ ggplot(filter(gap_term_sums, term %in% core_terms, term != "total")) +
     geom_point()
 
 
-paper_export = here("data", "to_paper")
-readr::write_rds(gap_term_sums, here(paper_export, "gender_signed_dem_advantage_components.rds"))
-readr::write_rds(partial_gap_sums, here(paper_export, "partial_gaps.rds"))
+data_paper = here("data", "to_paper")
+if (file.exists(data_paper) == FALSE) {
+    dir.create(data_paper)
+}
+
+readr::write_rds(gap_term_sums, here(data_paper, "gender_signed_dem_advantage_components.rds"))
+readr::write_rds(partial_gap_sums, here(data_paper, "partial_gaps.rds"))
 
 # ----- plot partial votes ----------
 
@@ -217,7 +221,7 @@ ggplot(filter(dem_adv_sums, term %in% core_terms)) +
     geom_line() +
     geom_point()
 
-readr::write_rds(dem_adv_sums, here(paper_export, "dem_advantage_components.rds"))
+readr::write_rds(dem_adv_sums, here(data_paper, "dem_advantage_components.rds"))
 
 ##################################
 #    summary of raw estimates    #
@@ -231,7 +235,7 @@ long_term_sums = long_terms |>
         .by = c(cycle_label, gender, party, term)
     )
 
-readr::write_rds(long_term_sums, here(paper_export, "vote_components.rds"))
+readr::write_rds(long_term_sums, here(data_paper, "vote_components.rds"))
 
 ggplot(long_term_sums |> filter(term != "nonmobilization")) +
     aes(x = cycle_label, y = mean, color = party, shape = gender) +

@@ -11,7 +11,8 @@ library("dplyr")
 # --- ANES raw data -----------------------
 
 # update this and read from some more raw format
-anes <- haven::read_dta(here("data", "ANES-2016", "anes_timeseries_cdf.dta"))
+# anes <- haven::read_dta(here("data", "ANES-2016", "anes_timeseries_cdf.dta"))
+anes <- haven::read_dta(here("data", "anes_2020", "anes_timeseries_cdf_stata_20220916.dta"))
 
 # NOTE remove labels?
 
@@ -168,5 +169,12 @@ anes <- anes |>
 # --- save it -----------------------
 
 print(head(anes))
-arrow::write_parquet(anes, here("data", "clean", "anes_cdf.pq"))
+
+clean_data = here("data", "clean")
+
+if (file.exists(clean_data) == FALSE) {
+    dir.create(clean_data, showWarnings = False)
+}
+
+arrow::write_parquet(anes, here(clean_data, "anes_cdf.pq"))
 
