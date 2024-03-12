@@ -36,6 +36,7 @@ micromamba activate conda/envs/gaps
 ```
 
 ```{r}
+# these need to be versioned...
 renv::install("box")
 renv::install("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
 ```
@@ -51,9 +52,15 @@ unzip data/anes_2020.zip -d data/anes_2020
 
 
 ```sh
+Rscript R/data_normalization/aggregate_anes_to_cycle.R
+Rscript R/data_normalization/clean_anes_respondent_level.R
+Rscript R/data_normalization/clean_state_exit_polls.R
+Rscript R/regression.R
+Rscript R/mcmc.R
+Rscript R/post_mc.R
+
 quarto render paper/gaps.qmd --to pdf
 ```
-
 
 
 # Other notes
