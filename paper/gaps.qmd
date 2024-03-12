@@ -724,7 +724,7 @@ The dependent variable is the official percentage of the two-party popular vote 
 We calculate the gender gap as the Democratic share of the two-party vote among women minus the Democratic share among men using the American National Election Studies cumulative data file.
 The first panel of @fig-toplines displays the data with an OLS regression line and 95 percent confidence intervals.
 Summary statistics for this regression are presented in the first row of @tbl-reg-summary.
-At first glance, there is only slight evidence of a positive relationship, with a coefficient of `r round(reg_access_table$ANESxLeip$estimate, 2)` that is smaller than its standard error of `r round(reg_access_table$ANESxLeip$std.error, 2)`.
+At first glance, there is only slight evidence of a positive relationship, with a coefficient of `{r} I(round(reg_access_table$ANESxLeip$estimate, 2))` that is smaller than its standard error of `{r} I(round(reg_access_table$ANESxLeip$std.error, 2))`.
 A second way to evaluate the relationship is cross-sectionally, using state level data from individual elections.
 For this cross-sectional test, we calculate the gender gap from state-level exit poll data from the 2004 and 2008 presidential elections, which were the last elections to feature exit polls in all 50 states.
 We again compute the Democratic share of the two-party vote as the outcome of interest, this time using official state-level results.
