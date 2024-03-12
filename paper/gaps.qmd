@@ -65,14 +65,17 @@ execute:
     warning: true       # display warning msgs
     error: true         # display err. msgs
     fig-align: center   # vertical figure alignment
-    cache: false         # cache chunk results if chunk code is unchanged
-    # freeze: auto      # don't re-render documenet during "global" quarto build if src has not changed
-                        # turning this on seems dangerous, 
-                        # as the paper depends on stateful data not detectable in code per se.
+    cache: false        # cache chunk results if chunk code is unchanged
+    # freeze: auto      # don't re-render documenet during "global" quarto build
+                        # if src has not changed
+                        # turning this on seems dangerous, as the paper depends
+                        # on stateful data not detectable in code per se.
+
 
 # knitr-specific options
 knitr:
     opts_chunk:
+        cache: false
         dev: cairo_pdf  # pdf images with "Cairo" device
 ---
 
