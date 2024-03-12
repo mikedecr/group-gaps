@@ -1,3 +1,18 @@
+###############
+#    conda    #
+###############
+conda/pkgs
+conda/envs
+
+
+#####################
+#    source data    #
+#####################
+data/anes_2020
+data/*.zip
+
+
+
 # general BS
 *.DS_Store
 *.Rapp.history
