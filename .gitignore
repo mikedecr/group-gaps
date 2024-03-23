@@ -1,6 +1,25 @@
+###############
+#    conda    #
+###############
+conda/pkgs
+conda/envs
+
+
+#####################
+#    source data    #
+#####################
+data/anes_2020
+data/*.zip
+
+
+
 # general BS
 *.DS_Store
 *.Rapp.history
+
+# ignore stan binaries but track source
+stan/*
+!stan/*.stan
 
 # got lost in a git shuffle =[
 forum/
@@ -12,8 +31,8 @@ code/*/*.tex
 # presentation output and overhead
 slides/*/*.html
 slides/*/*.css
-slides/*/*_cache/
-slides/*/*_files/
+slides/*/*cache/
+slides/*/*files/
 # slides/*/data/
 # slides/*/imgs/
 
@@ -30,39 +49,33 @@ tex/*
 !tex/bib
 
 
-
 data/posts/
+data/models
 ggmcmc-output.pdf
-
-
 
 .Rproj.user
 
-
-
-
-
 data/r-dump/
 
-writing-rmd/test-r-markdown\.pdf
-writing-rmd/test-r-markdown\.Rmd
-writing-rmd/test-r-markdown\.tex
-writing-rmd/figs/
+paper/test-r-markdown\.pdf
+paper/test-r-markdown\.Rmd
+paper/test-r-markdown\.tex
+paper/figs/
 
 code/rmd-race/explore-race-gap_cache/
 code/rmd-race/figs/
 code/rmd-race/race-out/
 
-writing-rmd/gender-gap-new_cache/
-writing-rmd/test-r-markdown_files/
-writing-rmd/assets/img/
-writing-rmd/gender-gap-new\.aux
-writing-rmd/gender-gap-new\.bbl
-writing-rmd/gender-gap-new\.blg
-writing-rmd/gender-gap-new\.out
-writing-rmd/gender-gap-new.tex
-writing-rmd/assets/r-dump/03-descriptives.Rdata
-writing-rmd/assets/r-dump/05-viz.Rdata
+paper/*cache/
+paper/*files/
+paper/assets/img/
+paper/gender-gap-new\.aux
+paper/gender-gap-new\.bbl
+paper/gender-gap-new\.blg
+paper/gender-gap-new\.out
+paper/gender-gap-new.tex
+paper/assets/r-dump/03-descriptives.Rdata
+paper/assets/r-dump/05-viz.Rdata
 
 
 rmd-practice
@@ -75,3 +88,19 @@ data/clean
 data/rmd-rdata
 data/ANES-2016/docs/anes_timeseries_cdf_codebook_pdf
 anes_timeseries_cdf.dta
+data/mcmc
+data/mcmc-params
+paper/assets/dot-img
+paper/paper-cache
+paper/paper-figs
+paper/gender-gap-new.log
+
+writing-rmd/paper-cache
+paper/gaps.tex
+paper/chunk-figs
+paper/_freeze/gaps
+paper/gaps.html
+data/ANES-2016/anes-cdf-2016.RDS
+data/to_paper
+.Rhistory
+.RData

@@ -1,0 +1,309 @@
+\documentclass[12pt,]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin = 1.25in]{geometry}
+\usepackage{hyperref}
+\PassOptionsToPackage{usenames,dvipsnames}{color} % color is loaded by hyperref
+\hypersetup{unicode=true,
+            pdftitle={Memo: The Racial Voting Gap and the Democratic Vote},
+            pdfauthor={Michael G. DeCrescenzo},
+            colorlinks=true,
+            linkcolor=red,
+            citecolor=black,
+            urlcolor=blue,
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[style=chicago-authordate]{biblatex}
+
+\addbibresource{/Users/michaeldecrescenzo/Dropbox/bib.bib}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Memo: The Racial Voting Gap and the Democratic Vote}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Michael G. DeCrescenzo\footnote{Ph.D.~Candidate, Political Science,
+  University of Wisconsin--Madison}}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{Updated December 13, 2018}
+
+% ----------------------------------------------------
+%   a preamble file for use with R Markdown
+% ----------------------------------------------------
+
+% --- text and typography -----------------------
+
+% not actually sure that microtype works!
+% \usepackage{microtype}   % microtypography
+
+\usepackage{mathptmx} % serif = times (with math)
+\usepackage{helvet} % sens-serif = helvetica clone
+\usepackage[varqu, scaled = 0.95]{zi4}             % mono w/ straight quotes
+
+% are these needed??
+% \usepackage[utf8]{inputenc} % better interpretation of input characters
+% \usepackage[T1]{fontenc}    % better output glyphs/behaviors
+% I'm not sure how well these two packages work either!
+
+
+\usepackage{bm}
+
+% --- floats -----------------------
+% is this needed??
+% \usepackage{booktabs}
+% \usepackage{longtable} % for selective float-prevention
+\usepackage{dcolumn} % decimal-aligned columns
+\usepackage{rotating}
+\usepackage{placeins}
+
+
+% --- Styles -----------------------
+
+% TITLE
+\usepackage{titling}
+
+  % title field
+  \pretitle{\begin{center} \LARGE}
+  \posttitle{\par\end{center}\vskip 12pt}
+
+  % author field
+  \preauthor{\begin{center}\large}
+  \postauthor{% \\ \normalsize 
+              % \emph{University of Wisconsin--Madison}
+              \par\end{center}}
+
+  % date field
+  \predate{\begin{center}}
+  \postdate{\par\end{center}}
+
+% ABSTRACT
+\usepackage{abstract}
+  \renewcommand{\abstractname}{}    % clear the title
+  \renewcommand{\absnamepos}{empty} % originally center
+
+% % SECTIONS
+\usepackage[small, bf]{titlesec}
+  % \titleformat*{\subsection}{\itshape}
+  \titleformat*{\subsubsection}{\itshape} 
+  \titleformat*{\paragraph}{\itshape} 
+
+
+
+% --- Other document logic -----------------------
+
+% to-do notes
+\usepackage[colorinlistoftodos, 
+            prependcaption, 
+            obeyFinal,
+            textsize = footnotesize]{todonotes}
+  \presetkeys{todonotes}{fancyline, color = violet!30}{}
+
+
+% --- bib -----------------------
+
+% natbib declared in RMD
+% \usepackage{natbib}
+ % \bibpunct[: ]{(}{)}{;}{a}{}{,}
+\usepackage[lf, mathtabular, minionint]{MinionPro} % serif
+\usepackage{MyriadPro}                             % sans family
+\usepackage[varqu, scaled = 0.95]{zi4}             % mono w/ straight quotes
+
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{proposition}{Proposition}[section]
+\theoremstyle{definition}
+\newtheorem{example}{Example}[section]
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}[section]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{solution}{Solution}
+\begin{document}
+\maketitle
+\begin{abstract}
+This document applies the method laid out in
+\textcite{burden-decrescenzo-gap} to the political cleavage of race
+(White and Nonwhite). This case is of interest because the groups are of
+vastly different sizes, so the benefit of targeting one group over the
+other is obscured.
+\end{abstract}
+
+\hypertarget{exposition}{%
+\section{Exposition}\label{exposition}}
+
+We begin with data that codes each voter along race (white or nonwhite),
+party affiliation (Democrat, Republican, or unaffiliated) and vote
+choice (Democrat, Republican, or other). This results in \(18\) possible
+outcome categories in each election, each with an associated probability
+of incidence in the electorate.
+
+As before, we estimate these probabilities with uncertainty using Markov
+chain Monte Carlo. MCMC generates a distribution of parameter estimates
+that are compatible with the model and the data. The ``posterior''
+distribution of samples reflects a flat Dirichlet prior and thus should
+be proportional to the likelihood of the data.
+
+We run the sampler on four chains with 2,000 iterations per chain,
+setting aside the first 1,000 that are used for adaptive warmup.
+Following \textcite{Link2011}, we elect not to thin the parameter
+chains.
+
+\hypertarget{model-estimates}{%
+\section{Model Estimates}\label{model-estimates}}
+
+This exercise would benefit from one figure that we don't include: a
+comparison of the size of the White and Nonwhite groups in the total
+electorate. We would do this by summing all of the ``White'' and
+``Nonwhite'' probabilities, respectively, to show the fraction of the
+electorate in each group.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{figs/plot-rhs-1} 
+
+}
+
+\caption{Right-hand side terms}\label{fig:plot-rhs}
+\end{figure}
+
+Showing group totals would help explain the results in
+Figure~\ref{fig:plot-rhs}, where the share of white Democrats is falling
+precipitously, but white Republicans isn't gaining nearly as fast. This
+is because the nonwhite share of the electorate is growing while white
+voters are converting from Democrats to Republicans. The racial
+composition of Democratic partisans changes dramatically, but the
+distribution of partisanship in the electorate is barely affected at the
+high level.
+
+\FloatBarrier
+
+\hypertarget{creating-the-race-gap}{%
+\section{Creating the Race Gap}\label{creating-the-race-gap}}
+
+\begin{sidewaysfigure}
+
+{\centering \includegraphics[width=1\linewidth]{figs/plot-gap-1} 
+
+}
+
+\caption{Effects on Gap}\label{fig:plot-gap}
+\end{sidewaysfigure}
+
+Figure~\ref{fig:plot-gap} shows how Democratic advantages in each
+mechanism affect the racial voting gap. Democratic advantage is
+positively related to the gap for Nonwhites, and negatively related for
+Whites.
+
+Nonwhites' contribution to the gap is essentially partisanship (mostly
+population growth?). Whites contribute the gap primarily by a higher
+Republican mobilization and persuasion advantages in the early years (a
+positive effect on the gap that diminishes over time), and a strong
+partisan drift across the entire series (a negative effect that becomes
+a positive effect). The final panel shows that a race gap has existed
+throughout the entire series, but the underlying mechanisms for it have
+changed dramatically over time.
+
+\FloatBarrier
+
+\hypertarget{creating-the-democratic-vote}{%
+\section{Creating the Democratic
+Vote}\label{creating-the-democratic-vote}}
+
+\begin{sidewaysfigure}
+
+{\centering \includegraphics[width=1\linewidth]{figs/plot-vote-1} 
+
+}
+
+\caption{Effects on Vote}\label{fig:plot-vote}
+\end{sidewaysfigure}
+
+Figure~\ref{fig:plot-vote} shows how the Democratic advantage in each
+mechanism affects the vote. The race gap is positive when Democrats net
+more votes from Nonwhites than they do from Whites.
+
+In partisanship, we can see the Democratic advantage among Nonwhites
+slowly growing, while Democratic support among whites shifts and turns a
+``negative'' race gap into a positive one.
+
+Mobilization shows the advantage among non-mobilized votes. We find that
+the numerical impact of Nonwhite mobilization is mostly flat. This means
+that Democrats lose more nonwhite voters than Republicans in an an
+absolute number, but there are more Democratic voters to start with. The
+stability in the trend is striking; if we assume a fixed
+non-mobilization rate among Nonwhite Democrats, then the number of lost
+votes should increase as the number of Nonwhite Democrats. Instead, we
+find that non-mobilization stays constant even as the number of
+partisans increases. This could indicate that there are two forces in
+equilibrium: an increasing number of Nonwhite Democrats and increasingly
+turnout among Nonwhites at the same time. We would want to divide the
+proportion of Nonwhite Democratic voters by the proportion of Nonwhite
+Democratic identifiers to get the turnout rate among Nonwhite Democrats.
+
+The final panel clearly shows the trade-off between White and Non-white
+votes. Democrats have nearly always netted more votes from Nonwhite
+voters than from White voters, but since 2008 has Democratic performance
+among Nonwhites \emph{made up} for their losses among Whites. The racial
+voting gap has grown gradually from the growth of Nonwhite Democratic
+partisans, but acute change in the gap is driven largely by short-term
+movement among Whites.
+
+\printbibliography
+
+
+\end{document}

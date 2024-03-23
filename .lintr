@@ -1,0 +1,4 @@
+linters: linters_with_defaults(
+    assignment_linter = NULL,
+    indentation_linter = indentation_linter(indent = 4L)  # controversial
+  )

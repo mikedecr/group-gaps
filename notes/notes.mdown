@@ -1,0 +1,255 @@
+---
+title: Gender gap notes
+---
+
+# 2024/02/19 from readme, should be sorted later
+
+Immediate:
+
+- abstract away two-group example?
+- create a multi-group example
+    - age?
+    - white non-college
+    - maybe check the grimmer paper
+- abstract the multi-group problem
+    - if everything is comparison to a "random" null then that encapsulates the binary group?
+
+- [ ] normalization
+    - [ ] exits
+    - [ ] ANES
+- [ ] Cursory analysis
+    - [ ] ANES
+    - [ ] exits
+- [ ] Model
+    - [ ] `.stan`
+    - [ ] library of supporting fns?
+    - [ ] data prep and implementation 
+    - [ ] post-estimation: stats
+    - [ ] post-estimation: figs
+- [ ] flowcharts
+    - [ ] are we keeping .dot?
+    - [ ] how to integrate stylistically / parameterize?
+- [ ] data needs
+    - [ ] ANES 2020 cumulative
+- Admin
+    - [ ] data storage solution
+        - [ ] Do something about raw ANES data (LFS? Download from remote if file not present?)
+
+
+# 2023/04/12 plan for refactoring:
+
+Do this little by little:
+
+- renv w/ Rmarkdown
+- qmd w/ no code changes
+- refactor the code
+- redo some match + writing (ambiguous)
+
+deps:
+
+- quarto
+- tinytex?
+- xquartz (mac) for Cairo img (remove?)
+- graphviz / dot (remove?)
+
+# Agenda
+
+- [ ] dot compilation: shell, do its own `mkdir`, part of some "build" routine?
+- [ ] cleanup tex preamble still
+
+
+# Revisions
+
+apw
+
+- see notebook for written comments
+
+*Check most recent email from APR?*
+
+Reorder: theory and then case
+
+- why theory?
+- Daron Shaw: why/how are elections not just partisanship
+  - work this to a *group* analysis
+  - parties are already coalitions
+  - race a helpful motivator/framing device
+- how do we get away with doing just one case
+    - hype the conventional wisdom
+- landslides reduce the gender gap since everybody flows together?
+
+
+
+Argument
+
+- Confront Axelrod more
+  - table to show shortcomings?
+- Slower definitions of concepts
+  - persuasion means partisan, voted, and disloyal
+  - mobilized means partisan, voted, and loyal
+- (delete earlier references to *net gender gap*? Still applicable?)
+
+Gender as a case
+
+- rework the framing of the conventional wisdom
+  - Conventional wisdom as media but not scholarly?
+  - need scholarly cites
+  - Norrander
+  - Ondercin
+- Confront gender gap lit more
+  - will mayer (http://journals.sagepub.com/doi/pdf/10.1177/1532673X06297000) finds men more swingy
+  - what isn't it doing for us?
+  - Kaufmann Petrocik paragraph up front
+    - maybe they don't have the mechanism
+    - maybe it's just old
+    - (*still applicable?*)
+
+
+
+Introduce probability model earlier?
+
+- Why start at party:
+  - standing decision, a starting point
+  - if you're a campaign, you start there
+
+
+Integrate methods with example?
+
+- you can derive some quantity, as we do here...
+- start w/ model, manipulate, show something
+- emphasize what it tells you *about the case*
+
+Old notes on "figure pathway":
+
+- gender gap
+- scatters (make this three panels?)
+- Party ID (cut? collapse panels into one by differencing across party?)
+- RHS (both party assumptions)
+- gap partials
+- vote partials
+
+
+Aesthetics:
+
+- revisit colors
+- bigger labels
+- interpretive labels! This is how you read the figure
+
+
+Recommendations for future analysis:
+
+- polytomous groups
+- dynamic parameters for over-time smoothing
+- differencing over time
+  - we just use our eyeballs to judge how shifts in mechanisms are related to gap and vote
+  - a subsection demonstrating the use of parameter differencing?
+- An example w/ unequally sized groups (what did I mean for this?)
+- Other political change: enfranchisement, compositional change
+
+
+Promises:
+
+- "net gender gap"
+  - we promise "trace how mechanisms create the gender gap and the democratic vote" but we don't really visualize the gender gap 
+  - it is an important concept, but we need to do something to visualize it
+  - in the operationalization: show a comparison of gender gap to net gender gap (and net votes to dem margin)
+  - Normal measure doesn't have the information we need in it. New measure looks similar, constructed in a way that lets us back out important quantities
+  - net gender gap looks so similar because the groups are evenly sized. For any other group this would look quite different. Not that it's a no-value-added measure.
+
+Empirics:
+
+- Making the gap
+  - partisanship:
+    - early series: men and women each have Democratic advantage, offsetting influence on gender gap
+    - Men move first, gap in PID emerges far earlier than voting suggests
+  - mobilization
+    - mobilization *decreased* the gender gap, because Democratic women not turnout out outweighed Republican's turnout advantage among men
+  - Persuasion
+    - men and women tend to move together, no clear net impact on the gender gap
+  - Unaffiliated:
+    - Men swing vote toward GOP as they became more Republican, so there is some boost in the middle period
+    - more recently, no clear impact, similar dynamics to persuasion
+- Gap value(?): 
+  - there may be some difference in the amount of advantage that Dems get from women vs men, or Republicans get from men vs women
+  - A key question is whether Democrats' numerical advantage from women (over men) is greater than the Republicans' numerical advantage from men (over women)
+  - this is actually *equivalent* to the Net Democratic Vote. So *statistically*, the Net Democratic Vote that contains information 
+  - *dynamically*, which is maybe what we mean
+- Link gap to vote, formally
+  - there should be a regression in each panel
+  - and first differences!
+
+
+
+
+# Code
+
+Filtering questions
+
+- we've been dropping 1948 (662 responses)
+- we've been doing presidential only but never checked midterms
+  + maybe make a "valid cycles" vector and have analysis depend on that
+- should we omit everyone who votes third-party? code them as not mobilized?
+- addresss DK/R responses to party, vote, gender
+
+
+
+
+party ID code
+
+- DK to "Other" but drop NA or explicit refusals?
+  + DKs don't seem to be kept in the 3-cat lean variable
+  + should I do this all myself?
+
+Notes to self
+
+- recheck weights
+  - Ask Barry and Alex about rescaling weights so `max(wt) == 1`
+- add notes to main notes file:
+  + delete notes to self in recode file (omitted recodes)
+  + use code NUKE
+  + uncomment source() commands in build file
+
+model:
+
+- Approximate binomial? 
+- k and n in each group are a rounding of weighted data
+
+prop_ci function:
+
+- T-distribution?
+- where does this get defined?
+
+Data cleaning:
+
+- Redo data cleaning
+- redo other code?
+- folders for output and stuff?
+
+
+
+
+
+
+# Publication
+
+- grayscale-friendly figures
+- acknowledgements
+- non-anonymous
+- contact info
+- replication information
+- check with Barry why the net vote would be so high?
+
+
+
+# Future papers
+
+Try race:
+
+- Rmd report
+- if race, then QJPS??
+- if race, PB or BJPS?
+
+Hierarchical version
+
+
+
+
