@@ -104,3 +104,4 @@ data/ANES-2016/anes-cdf-2016.RDS
 data/to_paper
 .Rhistory
 .RData
+doc/notes.md
